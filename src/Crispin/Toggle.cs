@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -12,6 +13,14 @@ namespace Crispin
 
 			var toggle = new Toggle();
 			toggle.ApplyEvent(new ToggleCreated(Guid.NewGuid(), name.Trim(), description));
+
+			return toggle;
+		}
+
+		public static Toggle LoadFrom(IEnumerable<object> events)
+		{
+			var toggle = new Toggle();
+			toggle.LoadFromEvents(events);
 
 			return toggle;
 		}

@@ -31,5 +31,11 @@ namespace Crispin.Infrastructure
 		{
 			_pendingEvents.Clear();
 		}
+
+		public void LoadFromEvents(IEnumerable<object> events)
+		{
+			foreach (var @event in events)
+				_handlers[@event.GetType()](@event);
+		}
 	}
 }

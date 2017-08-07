@@ -1,4 +1,5 @@
-﻿using Crispin.Infrastructure;
+﻿using System.Collections.Generic;
+using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
 
@@ -53,11 +54,31 @@ namespace Crispin.Tests.Infrastructure
 			_aggregate.GetPendingEvents().ShouldBe(events);
 		}
 
+		[Fact]
+		public void When_loading_from_events()
+		{
+			var events = new[]
+			{
+				new TestEventOne(),
+				new TestEventOne(),
+				new TestEventOne()
+			};
+			_aggregate.LoadFromEvents(events);
+
+			_aggregate.ShouldSatisfyAllConditions(
+				() => _aggregate.GetPendingEvents().ShouldBeEmpty(),
+				() => _aggregate.SeenEvents.ShouldBe(events)
+			);
+		}
+
 		private class TestAggregate : AggregateRoot
 		{
+			public List<object> SeenEvents { get; private set; }
+
 			public TestAggregate()
 			{
-				Register<TestEventOne>(e => { });
+				SeenEvents = new List<object>();
+				Register<TestEventOne>(SeenEvents.Add);
 			}
 
 			public void Raise(object e) => ApplyEvent(e);
