@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Crispin.Tests
 {
-	public class AcceptanceTests
+	public class ToggleCreatedTests
 	{
 		[Fact]
 		public void When_creating_feature_toggle_without_a_description()
