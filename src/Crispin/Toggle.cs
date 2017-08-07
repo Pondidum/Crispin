@@ -20,7 +20,7 @@ namespace Crispin
 		public static Toggle LoadFrom(IEnumerable<object> events)
 		{
 			var toggle = new Toggle();
-			toggle.LoadFromEvents(events);
+			((IEvented)toggle).LoadFromEvents(events);
 
 			return toggle;
 		}

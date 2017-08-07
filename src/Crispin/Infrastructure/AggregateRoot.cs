@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crispin.Infrastructure
 {
-	public abstract class AggregateRoot
+	public abstract class AggregateRoot : IEvented
 	{
 		private readonly Dictionary<Type, Action<object>> _handlers;
 		private readonly List<object> _pendingEvents;
@@ -22,17 +22,17 @@ namespace Crispin.Infrastructure
 			_handlers[@event.GetType()](@event);
 		}
 
-		public IEnumerable<object> GetPendingEvents()
+		IEnumerable<object> IEvented.GetPendingEvents()
 		{
 			return _pendingEvents;
 		}
 
-		public void ClearPendingEvents()
+		void IEvented.ClearPendingEvents()
 		{
 			_pendingEvents.Clear();
 		}
 
-		public void LoadFromEvents(IEnumerable<object> events)
+		void IEvented.LoadFromEvents(IEnumerable<object> events)
 		{
 			foreach (var @event in events)
 				_handlers[@event.GetType()](@event);
