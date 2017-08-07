@@ -1,3 +1,6 @@
+# Crispin
+Restful Feature Toggle Service
+
 
 # Ideas
 
@@ -20,6 +23,9 @@
   * fetching toggle statistics (id, name, description, state, events=[])
   * compatability endpoints
     * e.g. `/darkly` for LaunchDarkly
+* security
+  * hand off to something else? e.g. IdentityServer
+  * possibly implement as a lambda-type callback?
 * ui
   * dashboard
     * list of toggles & states
