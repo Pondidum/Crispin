@@ -18,6 +18,11 @@ namespace Crispin.Infrastructure
 
 		protected void ApplyEvent<TEvent>(TEvent @event)
 		{
+			var timestamped = @event as ITimeStamped;
+
+			if (timestamped != null)
+				timestamped.TimeStamp = DateTime.Now;
+
 			_pendingEvents.Add(@event);
 			_handlers[@event.GetType()](@event);
 		}

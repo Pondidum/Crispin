@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
@@ -71,6 +73,29 @@ namespace Crispin.Tests.Infrastructure
 			);
 		}
 
+		[Fact]
+		public void When_a_timestampable_event_is_applied()
+		{
+			_aggregate.Raise(new Stamped());
+
+			_aggregate
+				.SeenEvents
+				.Cast<Stamped>()
+				.Single()
+				.TimeStamp
+				.ShouldNotBeNull();
+		}
+
+		[Fact]
+		public void When_a_timestampable_event_is_loaded()
+		{
+			var stamp = new DateTime(2017, 2, 3);
+
+			_aggregate.LoadFrom(new Stamped { TimeStamp = stamp });
+
+			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);
+		}
+
 		private class TestAggregate : AggregateRoot
 		{
 			public List<object> SeenEvents { get; private set; }
@@ -79,11 +104,22 @@ namespace Crispin.Tests.Infrastructure
 			{
 				SeenEvents = new List<object>();
 				Register<TestEventOne>(SeenEvents.Add);
+				Register<Stamped>(SeenEvents.Add);
+			}
+
+			public void LoadFrom(params object[] events)
+			{
+				((IEvented)this).LoadFromEvents(events);
 			}
 
 			public void Raise(object e) => ApplyEvent(e);
 		}
 
 		private class TestEventOne {}
+
+		private class Stamped : ITimeStamped
+		{
+			public DateTime TimeStamp { get; set; }
+		}
 	}
 }
