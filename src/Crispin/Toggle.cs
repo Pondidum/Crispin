@@ -30,6 +30,7 @@ namespace Crispin
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 		public bool Active { get; private set; }
+		public DateTime? LastToggled { get; private set; }
 
 		private Toggle()
 		{
@@ -67,11 +68,13 @@ namespace Crispin
 		private void Apply(ToggleSwitchedOff e)
 		{
 			Active = false;
+			LastToggled = e.TimeStamp;
 		}
 
 		private void Apply(ToggleSwitchedOn e)
 		{
 			Active = true;
+			LastToggled = e.TimeStamp;
 		}
 	}
 }

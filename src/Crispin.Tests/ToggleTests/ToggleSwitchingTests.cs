@@ -77,5 +77,31 @@ namespace Crispin.Tests.ToggleTests
 			_toggle.Active.ShouldBe(false);
 			Events.ShouldBeEmpty();
 		}
+
+		[Fact]
+		public void When_a_toggle_has_not_been_switched()
+		{
+			CreateToggle();
+
+			_toggle.LastToggled.HasValue.ShouldBe(false);
+		}
+
+		[Fact]
+		public void When_switching_on()
+		{
+			var now = DateTime.Now.AddHours(-123);
+			CreateToggle(new ToggleSwitchedOn { TimeStamp = now });
+
+			_toggle.LastToggled.ShouldBe(now);
+		}
+
+		[Fact]
+		public void When_switch_off()
+		{
+			var now = DateTime.Now.AddHours(-123);
+			CreateToggle(new ToggleSwitchedOff { TimeStamp = now });
+
+			_toggle.LastToggled.ShouldBe(now);
+		}
 	}
 }
