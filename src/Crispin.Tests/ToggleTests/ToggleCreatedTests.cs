@@ -2,7 +2,7 @@ using System;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Tests
+namespace Crispin.Tests.ToggleTests
 {
 	public class ToggleCreatedTests
 	{

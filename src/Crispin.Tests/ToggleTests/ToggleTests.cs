@@ -3,7 +3,7 @@ using Crispin.Events;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Tests
+namespace Crispin.Tests.ToggleTests
 {
 	public class ToggleTests
 	{
