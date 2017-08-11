@@ -59,7 +59,7 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(Guid.NewGuid(), "toggle-1", "");
 
 			_projection.Consume(created);
-			_projection.Consume(new ToggleSwitchedOn());
+			_projection.Consume(new ToggleSwitchedOn() { AggregateID = created.ID });
 
 			_projection.Toggles.ShouldBe(new Dictionary<Guid, string>
 			{
