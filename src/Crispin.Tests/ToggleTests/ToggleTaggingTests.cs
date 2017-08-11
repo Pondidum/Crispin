@@ -66,5 +66,28 @@ namespace Crispin.Tests.ToggleTests
 			});
 			_toggle.Tags.ShouldBeEmpty();
 		}
+
+		[Fact]
+		public void When_adding_a_toggle_which_differs_by_case()
+		{
+			CreateToggle(new TagAdded("testing"));
+			_toggle.AddTag("TESTING");
+
+			Events.ShouldBeEmpty();
+			_toggle.Tags.ShouldBe(new[] { "testing" });
+		}
+
+		[Fact]
+		public void When_removing_a_toggle_which_differs_by_case()
+		{
+			CreateToggle(new TagAdded("testing"));
+			_toggle.RemoveTag("TESTING");
+
+			Events.ShouldBe(new[]
+			{
+				typeof(TagRemoved)
+			});
+			_toggle.Tags.ShouldBeEmpty();
+		}
 	}
 }

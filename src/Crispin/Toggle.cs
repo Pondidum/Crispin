@@ -38,7 +38,7 @@ namespace Crispin
 
 		private Toggle()
 		{
-			_tags = new HashSet<string>();
+			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			Register<ToggleCreated>(Apply);
 			Register<ToggleSwitchedOn>(Apply);
