@@ -1,8 +1,9 @@
 ﻿using System;
+using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
-	public class ToggleCreated
+	public class ToggleCreated : Event
 	{
 		public Guid ID { get; }
 		public string Name { get; }

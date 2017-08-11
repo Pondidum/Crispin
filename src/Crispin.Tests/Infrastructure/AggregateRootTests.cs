@@ -112,14 +112,10 @@ namespace Crispin.Tests.Infrastructure
 				((IEvented)this).LoadFromEvents(events);
 			}
 
-			public void Raise(object e) => ApplyEvent(e);
+			public void Raise(Event e) => ApplyEvent(e);
 		}
 
-		private class TestEventOne {}
-
-		private class Stamped : ITimeStamped
-		{
-			public DateTime TimeStamp { get; set; }
-		}
+		private class TestEventOne : Event {}
+		private class Stamped : Event {}
 	}
 }

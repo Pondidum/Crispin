@@ -1,23 +1,12 @@
-﻿using System;
-using Crispin.Infrastructure;
+﻿using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
-	public class ToggleSwitchedOn : ITimeStamped
+	public class ToggleSwitchedOn : Event
 	{
-		public ToggleSwitchedOn()
-		{
-		}
-
-		public DateTime TimeStamp { get; set; }
 	}
 
-	public class ToggleSwitchedOff : ITimeStamped
+	public class ToggleSwitchedOff : Event
 	{
-		public ToggleSwitchedOff()
-		{
-		}
-
-		public DateTime TimeStamp { get; set; }
 	}
 }

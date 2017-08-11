@@ -14,14 +14,16 @@ namespace Crispin.Infrastructure
 			_pendingEvents = new List<object>();
 		}
 
-		protected void Register<TEvent>(Action<TEvent> handler) => _handlers.Add(typeof(TEvent), e => handler((TEvent)e));
+		protected void Register<TEvent>(Action<TEvent> handler) 
+			where TEvent : Event
+		{
+			_handlers.Add(typeof(TEvent), e => handler((TEvent)e));
+		}
 
 		protected void ApplyEvent<TEvent>(TEvent @event)
+			where TEvent : Event
 		{
-			var timestamped = @event as ITimeStamped;
-
-			if (timestamped != null)
-				timestamped.TimeStamp = DateTime.Now;
+			@event.TimeStamp = DateTime.Now;
 
 			_pendingEvents.Add(@event);
 			_handlers[@event.GetType()](@event);

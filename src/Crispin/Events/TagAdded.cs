@@ -1,6 +1,8 @@
-﻿namespace Crispin.Events
+﻿using Crispin.Infrastructure;
+
+namespace Crispin.Events
 {
-	public class TagAdded
+	public class TagAdded : Event
 	{
 		public string Name { get; }
 
@@ -10,7 +12,7 @@
 		}
 	}
 
-	public class TagRemoved
+	public class TagRemoved : Event
 	{
 		public string Name { get; }
 
