@@ -96,15 +96,30 @@ namespace Crispin.Tests.Infrastructure
 			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);
 		}
 
+		[Fact]
+		public void When_applying_an_event()
+		{
+			var id = Guid.NewGuid();
+			_aggregate.Raise(new TestAggregateCreated(id));
+			_aggregate.Raise(new TestEventOne());
+
+			_aggregate.SeenEvents.Last().AggregateID.ShouldBe(id);
+		}
+
 		private class TestAggregate : AggregateRoot
 		{
-			public List<object> SeenEvents { get; private set; }
+			public List<Event> SeenEvents { get; private set; }
 
 			public TestAggregate()
 			{
-				SeenEvents = new List<object>();
+				SeenEvents = new List<Event>();
 				Register<TestEventOne>(SeenEvents.Add);
 				Register<Stamped>(SeenEvents.Add);
+				Register<TestAggregateCreated>(e =>
+				{
+					ID = e.ID;
+					SeenEvents.Add(e);
+				});
 			}
 
 			public void LoadFrom(params object[] events)
@@ -117,5 +132,15 @@ namespace Crispin.Tests.Infrastructure
 
 		private class TestEventOne : Event {}
 		private class Stamped : Event {}
+
+		private class TestAggregateCreated : Event
+		{
+			public Guid ID { get; }
+
+			public TestAggregateCreated(Guid id)
+			{
+				ID = id;
+			}
+		}
 	}
 }

@@ -14,6 +14,8 @@ namespace Crispin.Infrastructure
 			_pendingEvents = new List<object>();
 		}
 
+		public Guid ID { get; protected set; }
+
 		protected void Register<TEvent>(Action<TEvent> handler) 
 			where TEvent : Event
 		{
@@ -27,6 +29,8 @@ namespace Crispin.Infrastructure
 
 			_pendingEvents.Add(@event);
 			_handlers[@event.GetType()](@event);
+
+			@event.AggregateID = ID;
 		}
 
 		IEnumerable<object> IEvented.GetPendingEvents()
