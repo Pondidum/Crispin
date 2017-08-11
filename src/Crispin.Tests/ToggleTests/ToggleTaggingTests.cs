@@ -19,7 +19,8 @@ namespace Crispin.Tests.ToggleTests
 			_toggle = Toggle.LoadFrom(new[] { create }.Concat(events));
 		}
 
-		private IEnumerable<object> Events => ((IEvented)_toggle).GetPendingEvents().Select(e => e.GetType());
+		private IEnumerable<object> Events => ((IEvented)_toggle).GetPendingEvents();
+		private TEvent SingleEvent<TEvent>() => (TEvent)Events.Single();
 
 		[Fact]
 		public void When_adding_a_new_tag_to_a_toggle()
@@ -27,10 +28,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle();
 			_toggle.AddTag("first-tag");
 
-			Events.ShouldBe(new[]
-			{
-				typeof(TagAdded)
-			});
+			SingleEvent<TagAdded>().Name.ShouldBe("first-tag");
 			_toggle.Tags.ShouldBe(new [] { "first-tag" });
 		}
 
@@ -60,10 +58,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(new TagAdded("something"));
 			_toggle.RemoveTag("something");
 
-			Events.ShouldBe(new[]
-			{
-				typeof(TagRemoved)
-			});
+			SingleEvent<TagRemoved>().Name.ShouldBe("something");
 			_toggle.Tags.ShouldBeEmpty();
 		}
 
@@ -83,10 +78,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(new TagAdded("testing"));
 			_toggle.RemoveTag("TESTING");
 
-			Events.ShouldBe(new[]
-			{
-				typeof(TagRemoved)
-			});
+			SingleEvent<TagRemoved>().Name.ShouldBe("TESTING");
 			_toggle.Tags.ShouldBeEmpty();
 		}
 	}
