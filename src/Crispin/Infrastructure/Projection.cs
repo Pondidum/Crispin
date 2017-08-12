@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crispin.Projections
+namespace Crispin.Infrastructure
 {
 	public abstract class Projection
 	{
