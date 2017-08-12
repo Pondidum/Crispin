@@ -16,7 +16,9 @@ namespace Crispin.Tests.ToggleTests
 		{
 			var create = new ToggleCreated(Guid.NewGuid(), "Test Toggle", "");
 
-			_toggle = Toggle.LoadFrom(new[] { create }.Concat(events));
+			_toggle = Toggle.LoadFrom(
+				() => string.Empty,
+				new[] { create }.Concat(events));
 		}
 
 		private IEnumerable<object> Events => ((IEvented)_toggle).GetPendingEvents().Select(e => e.GetType());

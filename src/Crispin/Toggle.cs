@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -7,20 +8,20 @@ namespace Crispin
 {
 	public class Toggle : AggregateRoot
 	{
-		public static Toggle CreateNew(string name, string description = "")
+		public static Toggle CreateNew(Func<string> getCurrentUserID, string name, string description = "")
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentNullException(nameof(name), "Toggles must have a non-whitespace name.");
 
-			var toggle = new Toggle();
+			var toggle = new Toggle(getCurrentUserID);
 			toggle.ApplyEvent(new ToggleCreated(Guid.NewGuid(), name.Trim(), description));
 
 			return toggle;
 		}
 
-		public static Toggle LoadFrom(IEnumerable<object> events)
+		public static Toggle LoadFrom(Func<string> getCurrentUserID, IEnumerable<object> events)
 		{
-			var toggle = new Toggle();
+			var toggle = new Toggle(getCurrentUserID);
 			((IEvented)toggle).LoadFromEvents(events);
 
 			return toggle;
@@ -34,9 +35,11 @@ namespace Crispin
 		public IEnumerable<string> Tags => _tags;
 
 		private readonly HashSet<string> _tags;
+		private readonly Func<string> _getCurrentUserID;
 
-		private Toggle()
+		private Toggle(Func<string> getCurrentUserID)
 		{
+			_getCurrentUserID = getCurrentUserID;
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			Register<ToggleCreated>(Apply);
@@ -78,6 +81,12 @@ namespace Crispin
 				return;
 
 			ApplyEvent(new TagRemoved(tag));
+		}
+
+		protected override void PopulateExtraEventData(Event @event)
+		{
+			@event.UserID = _getCurrentUserID();
+			base.PopulateExtraEventData(@event);
 		}
 
 		//handlers which apply the results of the domainy things

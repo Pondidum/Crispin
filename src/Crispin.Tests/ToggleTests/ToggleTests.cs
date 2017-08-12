@@ -11,7 +11,9 @@ namespace Crispin.Tests.ToggleTests
 		public void When_loading_from_an_event_stream()
 		{
 			var toggleCreated = new ToggleCreated(Guid.NewGuid(), "toggle name", "toggle desc");
-			var toggle = Toggle.LoadFrom(new object[] { toggleCreated });
+			var toggle = Toggle.LoadFrom(
+				() => string.Empty,
+				new object[] { toggleCreated });
 			
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(toggleCreated.ID),
