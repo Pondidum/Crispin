@@ -10,15 +10,10 @@ namespace Crispin.Events
 		{
 			Name = name;
 		}
-	}
 
-	public class TagRemoved : Event
-	{
-		public string Name { get; }
-
-		public TagRemoved(string name)
+		public override string ToString()
 		{
-			Name = name;
+			return $"Added Tag '{Name}' to Toggle '{AggregateID}'";
 		}
 	}
 }

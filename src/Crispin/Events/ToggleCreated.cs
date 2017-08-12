@@ -15,5 +15,10 @@ namespace Crispin.Events
 			Name = name;
 			Description = description;
 		}
+
+		public override string ToString()
+		{
+			return $"Creating Toggle '{ID}' called '{Name}' with description '{Description}'";
+		}
 	}
 }

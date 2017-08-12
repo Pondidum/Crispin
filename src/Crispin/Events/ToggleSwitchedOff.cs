@@ -2,11 +2,11 @@
 
 namespace Crispin.Events
 {
-	public class ToggleSwitchedOn : Event
+	public class ToggleSwitchedOff : Event
 	{
 		public override string ToString()
 		{
-			return $"Toggle '{AggregateID}' turned On";
+			return $"Toggle '{AggregateID}' turned Off";
 		}
 	}
 }
