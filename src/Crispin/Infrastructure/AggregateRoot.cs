@@ -30,6 +30,11 @@ namespace Crispin.Infrastructure
 			_pendingEvents.Add(@event);
 			_handlers[@event.GetType()](@event);
 
+			PopulateExtraEventData(@event);
+		}
+
+		protected virtual void PopulateExtraEventData(Event @event)
+		{
 			@event.AggregateID = ID;
 		}
 

@@ -6,5 +6,6 @@ namespace Crispin.Infrastructure
 	{
 		public Guid AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
+		public string UserID { get; set; }
 	}
 }
