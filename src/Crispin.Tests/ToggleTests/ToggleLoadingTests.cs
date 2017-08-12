@@ -5,20 +5,20 @@ using Xunit;
 
 namespace Crispin.Tests.ToggleTests
 {
-	public class ToggleTests
+	public class ToggleLoadingTests : ToggleTest
 	{
 		[Fact]
 		public void When_loading_from_an_event_stream()
 		{
 			var toggleCreated = new ToggleCreated(Guid.NewGuid(), "toggle name", "toggle desc");
-			var toggle = Toggle.LoadFrom(
+			Toggle = Toggle.LoadFrom(
 				() => string.Empty,
 				new object[] { toggleCreated });
 			
-			toggle.ShouldSatisfyAllConditions(
-				() => toggle.ID.ShouldBe(toggleCreated.ID),
-				() => toggle.Name.ShouldBe(toggleCreated.Name),
-				() => toggle.Description.ShouldBe(toggleCreated.Description)
+			Toggle.ShouldSatisfyAllConditions(
+				() => Toggle.ID.ShouldBe(toggleCreated.ID),
+				() => Toggle.Name.ShouldBe(toggleCreated.Name),
+				() => Toggle.Description.ShouldBe(toggleCreated.Description)
 			);
 		}
 	}

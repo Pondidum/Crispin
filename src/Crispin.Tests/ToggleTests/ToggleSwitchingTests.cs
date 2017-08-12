@@ -1,28 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Crispin.Events;
-using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
 
 namespace Crispin.Tests.ToggleTests
 {
-	public class ToggleSwitchingTests
+	public class ToggleSwitchingTests : ToggleTest
 	{
-		private Toggle _toggle;
-
-		public void CreateToggle(params object[] events)
-		{
-			var create = new ToggleCreated(Guid.NewGuid(), "Test Toggle", "");
-
-			_toggle = Toggle.LoadFrom(
-				() => string.Empty,
-				new[] { create }.Concat(events));
-		}
-
-		private IEnumerable<object> Events => ((IEvented)_toggle).GetPendingEvents().Select(e => e.GetType());
-
 		[Fact]
 		public void When_nothing_has_happened()
 		{
@@ -35,9 +19,9 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle();
 
-			_toggle.SwitchOn();
+			Toggle.SwitchOn();
 
-			_toggle.Active.ShouldBe(true);
+			Toggle.Active.ShouldBe(true);
 			Events.ShouldBe(new[]
 			{
 				typeof(ToggleSwitchedOn)
@@ -49,9 +33,9 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(new ToggleSwitchedOn());
 
-			_toggle.SwitchOn();
+			Toggle.SwitchOn();
 
-			_toggle.Active.ShouldBe(true);
+			Toggle.Active.ShouldBe(true);
 			Events.ShouldBeEmpty();
 		}
 
@@ -60,9 +44,9 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(new ToggleSwitchedOn());
 
-			_toggle.SwitchOff();
+			Toggle.SwitchOff();
 
-			_toggle.Active.ShouldBe(false);
+			Toggle.Active.ShouldBe(false);
 			Events.ShouldBe(new[]
 			{
 				typeof(ToggleSwitchedOff)
@@ -74,9 +58,9 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(new ToggleSwitchedOff());
 
-			_toggle.SwitchOff();
+			Toggle.SwitchOff();
 
-			_toggle.Active.ShouldBe(false);
+			Toggle.Active.ShouldBe(false);
 			Events.ShouldBeEmpty();
 		}
 
@@ -85,7 +69,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle();
 
-			_toggle.LastToggled.HasValue.ShouldBe(false);
+			Toggle.LastToggled.HasValue.ShouldBe(false);
 		}
 
 		[Fact]
@@ -94,7 +78,7 @@ namespace Crispin.Tests.ToggleTests
 			var now = DateTime.Now.AddHours(-123);
 			CreateToggle(new ToggleSwitchedOn { TimeStamp = now });
 
-			_toggle.LastToggled.ShouldBe(now);
+			Toggle.LastToggled.ShouldBe(now);
 		}
 
 		[Fact]
@@ -103,7 +87,7 @@ namespace Crispin.Tests.ToggleTests
 			var now = DateTime.Now.AddHours(-123);
 			CreateToggle(new ToggleSwitchedOff { TimeStamp = now });
 
-			_toggle.LastToggled.ShouldBe(now);
+			Toggle.LastToggled.ShouldBe(now);
 		}
 	}
 }
