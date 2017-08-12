@@ -1,4 +1,6 @@
 using System;
+using Crispin.Events;
+using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
 
@@ -18,6 +20,14 @@ namespace Crispin.Tests.ToggleTests
 				() => Toggle.Name.ShouldBe("first-toggle"),
 				() => Toggle.Description.ShouldBe(string.Empty)
 			);
+
+			var created = SingleEvent<ToggleCreated>();
+			created.ShouldSatisfyAllConditions(
+				() => created.ID.ShouldBe(Toggle.ID),
+				() => created.AggregateID.ShouldBe(Toggle.ID),
+				() => created.Name.ShouldBe("first-toggle"),
+				() => created.Description.ShouldBe(string.Empty)
+			);
 		}
 
 		[Fact]
@@ -32,6 +42,14 @@ namespace Crispin.Tests.ToggleTests
 				() => Toggle.ID.ShouldNotBe(Guid.Empty),
 				() => Toggle.Name.ShouldBe("first-toggle"),
 				() => Toggle.Description.ShouldBe("my cool description")
+			);
+
+			var created = SingleEvent<ToggleCreated>();
+			created.ShouldSatisfyAllConditions(
+				() => created.ID.ShouldBe(Toggle.ID),
+				() => created.AggregateID.ShouldBe(Toggle.ID),
+				() => created.Name.ShouldBe("first-toggle"),
+				() => created.Description.ShouldBe("my cool description")
 			);
 		}
 
@@ -56,10 +74,12 @@ namespace Crispin.Tests.ToggleTests
 		[InlineData("  three  ")]
 		public void When_creating_a_toggle_and_the_name_has_leading_or_trailing_whitespace(string name)
 		{
-			Toggle
-				.CreateNew(getCurrentUserID: () => string.Empty, name: name)
-				.Name
-				.ShouldBe(name.Trim());
+			Toggle = Toggle.CreateNew(
+				getCurrentUserID: () => string.Empty,
+				name: name);
+
+			Toggle.Name.ShouldBe(name.Trim());
+			SingleEvent<ToggleCreated>().Name.ShouldBe(name.Trim());
 		}
 	}
 }
