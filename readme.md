@@ -1,8 +1,26 @@
 # Crispin
 Restful Feature Toggle Service
 
+[![Build status](https://ci.appveyor.com/api/projects/status/3lb4vib738nog3nn?svg=true)](https://ci.appveyor.com/project/Pondidum/crispin)
 
-# Ideas
+## Tasks
+
+* [x] create `aggregateRoot` base class
+* [x] create `Toggle` class
+* [x] add ability to switch toggles on and off
+* [x] add tagging functionality
+* [x] implement `AllToggles` projection
+* [x] implement `LoggingProjection`
+* [x] ensure all events have a userID
+* [ ] design storage api
+  * [ ] in memory implementation
+* [ ] design http api
+  * [ ] UI use cases
+  * [ ] Client use cases
+* [ ] design statistics logging
+  * [ ] stats include querying
+
+## Ideas
 
 * distribute as a docker container
 * should have user providable storage backends
