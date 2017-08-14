@@ -70,7 +70,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_saving_an_aggregate()
+		public void When_saving_an_aggregate_and_commit_is_not_called()
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
@@ -78,11 +78,79 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			_session.Save(toggle);
 
+			_eventStore.ShouldNotContainKey(toggle.ID);
+		}
+
+		[Fact]
+		public void When_saving_an_aggregate_and_commit_is_called()
+		{
+			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			toggle.AddTag("one");
+			toggle.SwitchOn();
+
+			_session.Save(toggle);
+			_session.Commit();
+
 			_eventStore[toggle.ID].Select(e => e.GetType()).ShouldBe(new []
 			{
 				typeof(ToggleCreated),
 				typeof(TagAdded),
 				typeof(ToggleSwitchedOn)
+			});
+		}
+
+		[Fact]
+		public void When_loading_an_aggregate_saved_in_the_current_session()
+		{
+			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			toggle.AddTag("one");
+			toggle.SwitchOn();
+
+			_session.Save(toggle);
+
+			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
+
+			loaded.ShouldSatisfyAllConditions(
+				() => loaded.ID.ShouldBe(toggle.ID),
+				() => loaded.Active.ShouldBe(true),
+				() => loaded.Tags.ShouldContain("one")
+			);
+		}
+
+		[Fact]
+		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
+		{
+			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			toggle.AddTag("one");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			toggle.SwitchOn();
+			_session.Save(toggle);
+
+			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
+
+			loaded.ShouldSatisfyAllConditions(
+				() => loaded.ID.ShouldBe(toggle.ID),
+				() => loaded.Active.ShouldBe(true),
+				() => loaded.Tags.ShouldContain("one")
+			);
+		}
+
+		[Fact]
+		public void When_there_are_pending_events_and_dispose_is_called()
+		{
+			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			toggle.AddTag("one");
+
+			_session.Save(toggle);
+			_session.Dispose();
+
+			_eventStore[toggle.ID].Select(e => e.GetType()).ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(TagAdded)
 			});
 		}
 	}
