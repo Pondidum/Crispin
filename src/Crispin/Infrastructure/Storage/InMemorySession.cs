@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Crispin.Infrastructure.Storage
 {
@@ -22,19 +23,31 @@ namespace Crispin.Infrastructure.Storage
 
 		public TAggregate LoadAggregate<TAggregate>(Guid aggregateID) where TAggregate : AggregateRoot
 		{
-			List<Event> eventsToLoad;
-
-			if (_events.TryGetValue(aggregateID, out eventsToLoad) == false)
-				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
-
 			Func<List<Event>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new NotSupportedException($"No builder for type {typeof(TAggregate).Name} found.");
 
+			List<Event> eventsToLoad;
+
+			if (_events.TryGetValue(aggregateID, out eventsToLoad) == false || eventsToLoad.Any() == false)
+				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
+
 			var aggregate = builder(eventsToLoad);
 
 			return (TAggregate)aggregate;
+		}
+
+		
+		public void Save<TAggregate>(TAggregate aggregate)
+			where TAggregate : AggregateRoot, IEvented
+		{
+			if (_events.ContainsKey(aggregate.ID) == false)
+				_events.Add(aggregate.ID, new List<Event>());
+
+			_events[aggregate.ID].AddRange(aggregate.GetPendingEvents().Cast<Event>());
+
+			aggregate.ClearPendingEvents();
 		}
 
 		public void Commit()

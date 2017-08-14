@@ -9,6 +9,9 @@ namespace Crispin.Infrastructure.Storage
 		TAggregate LoadAggregate<TAggregate>(Guid aggregateID)
 			where TAggregate : AggregateRoot;
 
+		void Save<TAggregate>(TAggregate aggregate)
+			where TAggregate: AggregateRoot, IEvented;
+
 		void Commit();
 		void Close();
 	}
