@@ -153,5 +153,21 @@ namespace Crispin.Tests.Infrastructure.Storage
 				typeof(TagAdded)
 			});
 		}
+
+		[Fact]
+		public void When_commit_is_called_twice()
+		{
+			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			toggle.AddTag("one");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			_eventStore[toggle.ID].Count.ShouldBe(2);
+			_eventStore[toggle.ID].Clear();
+
+			_session.Commit();
+			_eventStore[toggle.ID].ShouldBeEmpty();
+		}
 	}
 }

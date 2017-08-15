@@ -33,10 +33,10 @@ namespace Crispin.Infrastructure.Storage
 				throw new NotSupportedException($"No builder for type {typeof(TAggregate).Name} found.");
 
 			var eventsToLoad = new List<Event>();
-			
+
 			if (_storeEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_storeEvents[aggregateID]);
-			
+
 			if (_pendingEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_pendingEvents[aggregateID]);
 
@@ -69,6 +69,8 @@ namespace Crispin.Infrastructure.Storage
 
 				_storeEvents[pair.Key].AddRange(pair.Value);
 			}
+
+			_pendingEvents.Clear();
 		}
 
 		public void Dispose()
