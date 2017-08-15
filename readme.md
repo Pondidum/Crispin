@@ -12,8 +12,8 @@ Restful Feature Toggle Service
 * [x] implement `AllToggles` projection
 * [x] implement `LoggingProjection`
 * [x] ensure all events have a userID
-* [ ] design storage api
-  * [ ] in memory implementation
+* [x] design storage api
+  * [x] in memory implementation
 * [ ] design http api
   * [ ] UI use cases
   * [ ] Client use cases
