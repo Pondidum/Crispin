@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
+using Crispin.Projections;
 using Shouldly;
 using Xunit;
 
@@ -11,10 +12,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 {
 	public class InMemorySessionTests
 	{
-		private InMemorySession _session;
-		private Dictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
-		private Dictionary<Guid, List<Event>> _eventStore;
-		private Guid _aggregateID;
+		private readonly InMemorySession _session;
+		private readonly Dictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
+		private readonly Dictionary<Guid, List<Event>> _eventStore;
+		private readonly List<Projection> _projections;
+		private readonly Guid _aggregateID;
 
 		public InMemorySessionTests()
 		{
@@ -25,7 +27,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 			};
 
 			_eventStore = new Dictionary<Guid, List<Event>>();
-			_session = new InMemorySession(_builders, _eventStore);
+			_projections = new List<Projection>();
+
+			_session = new InMemorySession(_builders, _projections, _eventStore);
 		}
 
 		[Fact]
@@ -168,6 +172,43 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			_session.Commit();
 			_eventStore[toggle.ID].ShouldBeEmpty();
+		}
+
+		[Fact]
+		public void When_there_is_a_projection()
+		{
+			var projection = new AllToggles();
+			_projections.Add(projection);
+
+			var toggle = Toggle.CreateNew(() => "", "Projected", "yes");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			projection.Toggles.ShouldBe(new[]
+			{
+				new KeyValuePair<Guid, string>(toggle.ID, toggle.Name)
+			});
+		}
+
+		[Fact]
+		public void When_there_is_a_projection_with_multiple_aggregates()
+		{
+			var projection = new AllToggles();
+			_projections.Add(projection);
+
+			var first = Toggle.CreateNew(() => "", "First", "yes");
+			var second = Toggle.CreateNew(() => "", "Second", "yes");
+
+			_session.Save(first);
+			_session.Save(second);
+			_session.Commit();
+
+			projection.Toggles.ShouldBe(new[]
+			{
+				new KeyValuePair<Guid, string>(first.ID, first.Name),
+				new KeyValuePair<Guid, string>(second.ID, second.Name)
+			});
 		}
 	}
 }

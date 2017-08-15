@@ -8,14 +8,17 @@ namespace Crispin.Infrastructure.Storage
 	public class InMemorySession : IStorageSession
 	{
 		private readonly IDictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
+		private readonly List<Projection> _projections;
 		private readonly IDictionary<Guid, List<Event>> _storeEvents;
 		private readonly Dictionary<Guid, List<Event>> _pendingEvents;
 
 		public InMemorySession(
 			IDictionary<Type, Func<List<Event>, AggregateRoot>> builders,
+			List<Projection> projections,
 			IDictionary<Guid, List<Event>> storeEvents)
 		{
 			_builders = builders;
+			_projections = projections;
 			_storeEvents = storeEvents;
 			_pendingEvents = new Dictionary<Guid, List<Event>>();
 		}
@@ -69,6 +72,14 @@ namespace Crispin.Infrastructure.Storage
 
 				_storeEvents[pair.Key].AddRange(pair.Value);
 			}
+
+			var eventsForProjection = _pendingEvents
+				.SelectMany(p => p.Value)
+				.ToArray();
+
+			foreach (var projection in _projections)
+			foreach (var @event in eventsForProjection)
+				projection.Consume(@event);
 
 			_pendingEvents.Clear();
 		}
