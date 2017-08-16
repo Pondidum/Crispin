@@ -61,3 +61,38 @@ Restful Feature Toggle Service
 * implementation
   * elixir hype? or Go perhaps? could then distribute an .exe. hhmm.
   * eventsourced filestorage perhaps
+
+
+
+# Http Api
+
+* POST /toggles/
+  * => `{ name: "my-first-toggle", description: "hi there" }`
+  * 201 CREATED, url: "/toggles/name/{name:string}"
+* GET /toggles/
+  * `[ { id, name, description, active, links: { self: "/toggles/name/{name:string}", tags: "", state: "" } }, { ... }, { ... } ]`
+* GET /toggles/id/{id:guid}
+  * `{ id, name, description, active }`
+* GET /toggles/name/{name:string}
+  * `{ id, name, description, active }`
+* POST /toggles/name/{name:string}
+  * => `{ active: false }`
+  * => `{ active: true }`
+  * => `{ tags: { add: [ "some", "tags" ], remove: [ "other", "tag" ] } }`
+  * => `{ tags: { add: [ "some", "tags" ], remove: [ "other", "tag" ] }, active: true }`
+* GET /toggles/name/{name:string}/active
+  * => `{ active: true, links: { self: "", toggle: "" } }`
+* POST /toggles/name/{name:string}/active
+  * => `{ active: false }`
+  * => `{ active: true }`
+* POST|PATCH|PUT /toggles/name/{name:string}/tags
+  * => `{ add: [ "some", "tags" ], remove: [ "other", "tag" ] }`
+  BAD:
+* POST /toggles/name/{name:string}/addTag
+
+
+
+* /stats/toggle/{id}
+* /stats/tag/{tag}
+* /stats/state/active
+* /stats/state/inactive
