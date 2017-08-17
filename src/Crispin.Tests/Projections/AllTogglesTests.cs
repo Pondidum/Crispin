@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Crispin.Events;
 using Crispin.Projections;
 using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Crispin.Tests.Projections
@@ -28,10 +29,15 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(Guid.NewGuid(), "toggle-1", "");
 			_projection.Consume(created);
 
-			_projection.Toggles.ShouldBe(new Dictionary<Guid, string>
-			{
-				{ created.ID, created.Name }
-			});
+			var view = _projection.Toggles.Single();
+
+			view.ShouldSatisfyAllConditions(
+				() => view.ID.ShouldBe(created.ID),
+				() => view.Name.ShouldBe(created.Name),
+				() => view.Description.ShouldBe(created.Description),
+				() => view.Active.ShouldBe(false),
+				() => view.Tags.ShouldBeEmpty()
+			);
 		}
 
 		[Fact]
@@ -45,12 +51,12 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(second);
 			_projection.Consume(third);
 
-			_projection.Toggles.ShouldBe(new Dictionary<Guid, string>
+			_projection.Toggles.Select(v => v.ID).ShouldBe(new[]
 			{
-				{ first.ID, first.Name },
-				{ second.ID, second.Name },
-				{ third.ID, third.Name }
-			});
+				first.ID,
+				second.ID,
+				third.ID
+			}, ignoreOrder: true);
 		}
 
 		[Fact]
@@ -61,10 +67,43 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(created);
 			_projection.Consume(new ToggleSwitchedOn() { AggregateID = created.ID });
 
-			_projection.Toggles.ShouldBe(new Dictionary<Guid, string>
-			{
-				{ created.ID, created.Name }
-			});
+			_projection.Toggles.Single().Active.ShouldBe(true);
+		}
+
+		[Fact]
+		public void When_a_toggle_is_switched_off()
+		{
+			var created = new ToggleCreated(Guid.NewGuid(), "toggle-1", "");
+
+			_projection.Consume(created);
+			_projection.Consume(new ToggleSwitchedOn() { AggregateID = created.ID });
+			_projection.Consume(new ToggleSwitchedOff() { AggregateID = created.ID });
+
+			_projection.Toggles.Single().Active.ShouldBe(false);
+		}
+
+		[Fact]
+		public void When_a_toggle_has_a_tag_added()
+		{
+			var created = new ToggleCreated(Guid.NewGuid(), "toggle-1", "");
+
+			_projection.Consume(created);
+			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });
+
+			_projection.Toggles.Single().Tags.ShouldBe(new[] { "one" });
+		}
+
+		[Fact]
+		public void When_a_toggle_has_a_tag_removed()
+		{
+			var created = new ToggleCreated(Guid.NewGuid(), "toggle-1", "");
+
+			_projection.Consume(created);
+			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });
+			_projection.Consume(new TagAdded("two") { AggregateID = created.ID });
+			_projection.Consume(new TagRemoved("one") { AggregateID = created.ID });
+
+			_projection.Toggles.Single().Tags.ShouldBe(new[] { "two" });
 		}
 	}
 }

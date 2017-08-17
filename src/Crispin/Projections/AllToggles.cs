@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -8,31 +7,26 @@ namespace Crispin.Projections
 {
 	public class AllToggles : Projection
 	{
-		public IEnumerable<KeyValuePair<Guid, string>> Toggles => _toggles;
+		public IEnumerable<ToggleView> Toggles => _toggles.Values;
 
-		private readonly Dictionary<Guid, string> _toggles;
+		private readonly Dictionary<Guid, ToggleView> _toggles;
 
 		public AllToggles()
 		{
-			_toggles = new Dictionary<Guid, string>();
+			_toggles = new Dictionary<Guid, ToggleView>();
 
 			Register<ToggleCreated>(Apply);
+			Register<ToggleSwitchedOn>(e => _toggles[e.AggregateID].Active = true);
+			Register<ToggleSwitchedOff>(e => _toggles[e.AggregateID].Active = false);
+			Register<TagAdded>(e => _toggles[e.AggregateID].Tags.Add(e.Name));
+			Register<TagRemoved>(e => _toggles[e.AggregateID].Tags.Remove(e.Name));
 		}
 
-		private void Apply(ToggleCreated e) => _toggles[e.ID] = e.Name;
-	}
-
-	public class ToggleView
-	{
-		public Guid ID { get; set; }
-		public string Name { get; set; }
-		public string Description { get; set; }
-		public bool Active { get; set; }
-		public IEnumerable<string> Tags { get; set; }
-
-		public ToggleView()
+		private void Apply(ToggleCreated e) => _toggles.Add(e.ID, new ToggleView
 		{
-			Tags = Enumerable.Empty<string>();
-		}
+			ID = e.ID,
+			Name = e.Name,
+			Description = e.Description
+		});
 	}
 }

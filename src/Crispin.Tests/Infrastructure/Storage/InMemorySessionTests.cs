@@ -185,10 +185,15 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_session.Save(toggle);
 			_session.Commit();
 
-			projection.Toggles.ShouldBe(new[]
-			{
-				new KeyValuePair<Guid, string>(toggle.ID, toggle.Name)
-			});
+			var view = projection.Toggles.Single();
+
+			view.ShouldSatisfyAllConditions(
+				() => view.ID.ShouldBe(toggle.ID),
+				() => view.Name.ShouldBe(toggle.Name),
+				() => view.Description.ShouldBe(toggle.Description),
+				() => view.Active.ShouldBe(false),
+				() => view.Tags.ShouldBeEmpty()
+			);
 		}
 
 		[Fact]
@@ -204,11 +209,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_session.Save(second);
 			_session.Commit();
 
-			projection.Toggles.ShouldBe(new[]
+			projection.Toggles.Select(v => v.ID).ShouldBe(new[]
 			{
-				new KeyValuePair<Guid, string>(first.ID, first.Name),
-				new KeyValuePair<Guid, string>(second.ID, second.Name)
-			});
+				first.ID,
+				second.ID
+			}, ignoreOrder: true);
 		}
 	}
 }
