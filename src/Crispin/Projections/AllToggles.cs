@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -19,5 +20,19 @@ namespace Crispin.Projections
 		}
 
 		private void Apply(ToggleCreated e) => _toggles[e.ID] = e.Name;
+	}
+
+	public class ToggleView
+	{
+		public Guid ID { get; set; }
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public bool Active { get; set; }
+		public IEnumerable<string> Tags { get; set; }
+
+		public ToggleView()
+		{
+			Tags = Enumerable.Empty<string>();
+		}
 	}
 }
