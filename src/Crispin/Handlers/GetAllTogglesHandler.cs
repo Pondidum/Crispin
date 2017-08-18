@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
 
@@ -8,17 +9,24 @@ namespace Crispin.Handlers
 {
 	public class GetAllTogglesHandler : IAsyncRequestHandler<GetAllTogglesRequest, GetAllTogglesResponse>
 	{
+		private readonly IStorage _storage;
+
+		public GetAllTogglesHandler(IStorage storage)
+		{
+			_storage = storage;
+		}
+
 		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
 		{
-			return new GetAllTogglesResponse
+			using (var session = _storage.BeginSession())
 			{
-				Toggles = new []
+				var projection = session.LoadProjection<AllToggles>();
+
+				return new GetAllTogglesResponse
 				{
-					new ToggleView { ID = Guid.NewGuid(), Name = "one", Description = "no", Tags = new HashSet<string> { "a", "b" }},
-					new ToggleView { ID = Guid.NewGuid(), Name = "two", Description = "yes", Tags = new HashSet<string> { "b" }},
-					new ToggleView { ID = Guid.NewGuid(), Name = "three", Description = "unsubscribe" },
-				}
-			};
+					Toggles = projection.Toggles
+				};
+			}
 		}
 	}
 }
