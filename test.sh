@@ -1,3 +1,3 @@
 #! /bin/sh
 
-dotnet test src/Crispin.Tests/Crispin.Tests.csproj
+find src -iname *.tests.csproj -type f -exec dotnet test {} \;
