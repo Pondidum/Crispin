@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Crispin.Handlers;
 using Crispin.Projections;
@@ -47,7 +48,39 @@ namespace Crispin.Rest.Tests.Toggles
 			var jsonResult = await _controller.Get() as JsonResult;
 
 			jsonResult.Value.ShouldBe(response.Toggles);
+		}
 
+		[Fact]
+		public async Task When_creating_a_toggle_the_response_location_is_set()
+		{
+			var response = new CreateTogglesResponse { ToggleID = Guid.NewGuid() };
+			_mediator
+				.Send(Arg.Any<CreateToggleRequest>())
+				.Returns(response);
+
+			var result = await _controller.Post(new TogglePostRequest()) as CreatedResult;
+
+			result.Location.ShouldBe("/toggles/id/" + response.ToggleID);
+		}
+
+		[Fact]
+		public async Task When_creating_a_toggle_the_request_is_populated()
+		{
+			_mediator
+				.Send(Arg.Any<CreateToggleRequest>())
+				.Returns(new CreateTogglesResponse());
+
+			var model = new TogglePostRequest
+			{
+				Name = "the name",
+				Description = "the desc"
+			};
+
+			await _controller.Post(model);
+
+			_mediator.Received().Send(Arg.Is<CreateToggleRequest>(
+				request => request.Name == model.Name && request.Description == model.Description
+			));
 		}
 	}
 }
