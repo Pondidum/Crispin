@@ -215,5 +215,23 @@ namespace Crispin.Tests.Infrastructure.Storage
 				second.ID
 			}, ignoreOrder: true);
 		}
+
+		[Fact]
+		public void When_retrieving_a_projection_which_exists_in_the_session()
+		{
+			var projection = new AllToggles();
+			_projections.Add(projection);
+
+			_session.LoadProjection<AllToggles>()
+				.ShouldBe(projection);
+		}
+
+		[Fact]
+		public void When_retrieving_a_projection_which_doesnt_exist_in_the_session()
+		{
+			Should.Throw<ProjectionNotRegisteredException>(
+				() => _session.LoadProjection<AllToggles>()
+			);
+		}
 	}
 }

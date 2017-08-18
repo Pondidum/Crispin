@@ -28,7 +28,21 @@ namespace Crispin.Infrastructure.Storage
 			//nothing
 		}
 
-		public TAggregate LoadAggregate<TAggregate>(Guid aggregateID) where TAggregate : AggregateRoot
+		public TProjection LoadProjection<TProjection>()
+			where TProjection : Projection
+		{
+			var projection = _projections
+				.OfType<TProjection>()
+				.FirstOrDefault();
+
+			if (projection != null)
+				return projection;
+
+			throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
+		}
+
+		public TAggregate LoadAggregate<TAggregate>(Guid aggregateID)
+			where TAggregate : AggregateRoot
 		{
 			Func<List<Event>, AggregateRoot> builder;
 
