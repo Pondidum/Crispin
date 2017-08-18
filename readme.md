@@ -66,11 +66,11 @@ Restful Feature Toggle Service
 
 # Http Api
 
-* [ ] GET /toggles/
-  * [ ] `[ { id, name, description, active, links: { self: "/toggles/name/{name:string}", tags: "", state: "" } }, { ... }, { ... } ]`
-* [ ] POST /toggles/
-  * [ ] => `{ name: "my-first-toggle", description: "hi there" }`
-  * [ ] 201 CREATED, url: "/toggles/name/{name:string}"
+* [x] GET /toggles/
+  * [x] `[ { id, name, description, active, links: { self: "/toggles/name/{name:string}", tags: "", state: "" } }, { ... }, { ... } ]`
+* [x] POST /toggles/
+  * [x] => `{ name: "my-first-toggle", description: "hi there" }`
+  * [x] 201 CREATED, url: "/toggles/name/{name:string}"
 * [ ] GET /toggles/id/{id:guid}
   * [ ] `{ id, name, description, active }`
 * [ ] GET /toggles/name/{name:string}
