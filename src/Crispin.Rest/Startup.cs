@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Crispin.Infrastructure.Storage;
+using Crispin.Projections;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +21,12 @@ namespace Crispin.Rest
         {
             services.AddMvc();
             services.AddMediatR(typeof(Toggle).Assembly);
+
+            var store = new InMemoryStorage();
+            store.RegisterProjection(new AllToggles());
+            store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+
+            services.AddSingleton<IStorage>(store);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
