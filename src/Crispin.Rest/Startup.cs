@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Crispin.Rest
 {
@@ -27,6 +29,7 @@ namespace Crispin.Rest
             store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
 
             services.AddSingleton<IStorage>(store);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TimingBehavior<,>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
