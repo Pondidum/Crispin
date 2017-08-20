@@ -19,24 +19,13 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle();
 
-			Toggle.SwitchOn();
+			Toggle.SwitchOn("user-1");
 
-			Toggle.IsActive("").ShouldBe(true);
+			Toggle.IsActive("user-1").ShouldBe(true);
 			Events.ShouldBe(new[]
 			{
 				typeof(ToggleSwitchedOn)
 			});
-		}
-
-		[Fact]
-		public void When_an_on_toggle_is_turned_on()
-		{
-			CreateToggle(new ToggleSwitchedOn());
-
-			Toggle.SwitchOn();
-
-			Toggle.IsActive("").ShouldBe(true);
-			Events.ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -51,17 +40,6 @@ namespace Crispin.Tests.ToggleTests
 			{
 				typeof(ToggleSwitchedOff)
 			});
-		}
-
-		[Fact]
-		public void When_an_off_toggle_is_turned_off()
-		{
-			CreateToggle(new ToggleSwitchedOff());
-
-			Toggle.SwitchOff();
-
-			Toggle.IsActive("").ShouldBe(false);
-			Events.ShouldBeEmpty();
 		}
 
 		[Fact]

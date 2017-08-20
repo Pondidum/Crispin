@@ -35,12 +35,16 @@ namespace Crispin
 
 		private readonly HashSet<string> _tags;
 		private readonly Func<string> _getCurrentUserID;
+		private readonly HashSet<string> _usersActive;
+		private readonly HashSet<string> _usersInActive;
 
-		private bool _isActive;
 		private Toggle(Func<string> getCurrentUserID)
 		{
 			_getCurrentUserID = getCurrentUserID;
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			_usersActive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			_usersInActive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			Register<ToggleCreated>(Apply);
 			Register<ToggleSwitchedOn>(Apply);
@@ -52,23 +56,23 @@ namespace Crispin
 		//public methods which do domainy things
 		public bool IsActive(string userID)
 		{
-			return _isActive;
+			if (_usersInActive.Contains(userID))
+				return false;
+
+			if (_usersActive.Contains(userID))
+				return true;
+
+			return false;
 		}
 
-		public void SwitchOn()
+		public void SwitchOn(string user = null, string group = null)
 		{
-			if (_isActive)
-				return;
-
-			ApplyEvent(new ToggleSwitchedOn());
+			ApplyEvent(new ToggleSwitchedOn(user, group));
 		}
 
-		public void SwitchOff()
+		public void SwitchOff(string user = null, string group = null)
 		{
-			if (_isActive == false)
-				return;
-
-			ApplyEvent(new ToggleSwitchedOff());
+			ApplyEvent(new ToggleSwitchedOff(user, group));
 		}
 
 		public void AddTag(string tag)
@@ -103,14 +107,25 @@ namespace Crispin
 
 		private void Apply(ToggleSwitchedOff e)
 		{
-			_isActive = false;
+			//_isActive = false;
 			LastToggled = e.TimeStamp;
+
+			if (string.IsNullOrWhiteSpace(e.User) == false)
+			{
+				_usersActive.Remove(e.User);
+				_usersInActive.Add(e.User);
+			}
 		}
 
 		private void Apply(ToggleSwitchedOn e)
 		{
-			_isActive = true;
 			LastToggled = e.TimeStamp;
+
+			if (string.IsNullOrWhiteSpace(e.User) == false)
+			{
+				_usersActive.Add(e.User);
+				_usersInActive.Remove(e.User);
+			}
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
