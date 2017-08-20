@@ -30,13 +30,13 @@ namespace Crispin
 
 		public string Name { get; private set; }
 		public string Description { get; private set; }
-		public bool Active { get; private set; }
 		public DateTime? LastToggled { get; private set; }
 		public IEnumerable<string> Tags => _tags;
 
 		private readonly HashSet<string> _tags;
 		private readonly Func<string> _getCurrentUserID;
 
+		private bool _isActive;
 		private Toggle(Func<string> getCurrentUserID)
 		{
 			_getCurrentUserID = getCurrentUserID;
@@ -50,10 +50,14 @@ namespace Crispin
 		}
 
 		//public methods which do domainy things
+		public bool IsActive(string userID)
+		{
+			return _isActive;
+		}
 
 		public void SwitchOn()
 		{
-			if (Active)
+			if (_isActive)
 				return;
 
 			ApplyEvent(new ToggleSwitchedOn());
@@ -61,7 +65,7 @@ namespace Crispin
 
 		public void SwitchOff()
 		{
-			if (Active == false)
+			if (_isActive == false)
 				return;
 
 			ApplyEvent(new ToggleSwitchedOff());
@@ -99,13 +103,13 @@ namespace Crispin
 
 		private void Apply(ToggleSwitchedOff e)
 		{
-			Active = false;
+			_isActive = false;
 			LastToggled = e.TimeStamp;
 		}
 
 		private void Apply(ToggleSwitchedOn e)
 		{
-			Active = true;
+			_isActive = true;
 			LastToggled = e.TimeStamp;
 		}
 

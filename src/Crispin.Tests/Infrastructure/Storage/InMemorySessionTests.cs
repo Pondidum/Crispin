@@ -68,7 +68,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(_aggregateID),
-				() => toggle.Active.ShouldBe(true),
+				() => toggle.IsActive("").ShouldBe(true),
 				() => toggle.Tags.ShouldContain("one")
 			);
 		}
@@ -116,7 +116,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.Active.ShouldBe(true),
+				() => loaded.IsActive("").ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -137,7 +137,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.Active.ShouldBe(true),
+				() => loaded.IsActive("").ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
