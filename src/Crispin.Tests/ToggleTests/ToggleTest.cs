@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using NSubstitute;
 
 namespace Crispin.Tests.ToggleTests
 {
 	public abstract class ToggleTest
 	{
 		protected Toggle Toggle { get; set; }
+		protected IGroupMembership Membership { get; }
+
+		public ToggleTest()
+		{
+			Membership = Substitute.For<IGroupMembership>();
+		}
 
 		protected void CreateToggle(params object[] events)
 		{

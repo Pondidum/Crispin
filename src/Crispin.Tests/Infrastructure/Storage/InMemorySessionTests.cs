@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Projections;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -17,6 +18,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		private readonly Dictionary<Guid, List<Event>> _eventStore;
 		private readonly List<Projection> _projections;
 		private readonly Guid _aggregateID;
+		private readonly IGroupMembership _membership;
 
 		public InMemorySessionTests()
 		{
@@ -30,6 +32,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_projections = new List<Projection>();
 
 			_session = new InMemorySession(_builders, _projections, _eventStore);
+			_membership = Substitute.For<IGroupMembership>();
 		}
 
 		[Fact]
@@ -68,7 +71,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(_aggregateID),
-				() => toggle.IsActive("user-1").ShouldBeTrue(),
+				() => toggle.IsActive(_membership, "user-1").ShouldBeTrue(),
 				() => toggle.Tags.ShouldContain("one")
 			);
 		}
@@ -116,7 +119,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive("user-1").ShouldBe(true),
+				() => loaded.IsActive(_membership, "user-1").ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -137,7 +140,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive("user-1").ShouldBe(true),
+				() => loaded.IsActive(_membership, "user-1").ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}

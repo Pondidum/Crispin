@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Crispin.Events;
 using Crispin.Infrastructure;
@@ -36,6 +37,7 @@ namespace Crispin
 		private readonly HashSet<string> _tags;
 		private readonly Func<string> _getCurrentUserID;
 		private readonly Dictionary<string, bool> _users;
+		private readonly Dictionary<string, bool> _groups;
 
 		private Toggle(Func<string> getCurrentUserID)
 		{
@@ -43,6 +45,7 @@ namespace Crispin
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			_users = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+			_groups = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
 			Register<ToggleCreated>(Apply);
 			Register<ToggleSwitchedOn>(Apply);
@@ -52,11 +55,23 @@ namespace Crispin
 		}
 
 		//public methods which do domainy things
-		public bool IsActive(string userID)
+		public bool IsActive(IGroupMembership membership, string userID)
 		{
 			if (_users.ContainsKey(userID))
 			{
 				return _users[userID];
+			}
+
+			var userGroups = membership.GetGroupsFor(userID);
+
+			var setGroups = userGroups
+				.Where(g => _groups.ContainsKey(g))
+				.Select(g => _groups[g])
+				.ToArray();
+
+			if (setGroups.Any())
+			{
+				//?
 			}
 
 			return false;
@@ -108,9 +123,10 @@ namespace Crispin
 			LastToggled = e.TimeStamp;
 
 			if (string.IsNullOrWhiteSpace(e.User) == false)
-			{
 				_users[e.User] = false;
-			}
+
+			if (string.IsNullOrWhiteSpace(e.Group) == false)
+				_groups[e.Group] = false;
 		}
 
 		private void Apply(ToggleSwitchedOn e)
@@ -118,9 +134,10 @@ namespace Crispin
 			LastToggled = e.TimeStamp;
 
 			if (string.IsNullOrWhiteSpace(e.User) == false)
-			{
 				_users[e.User] = true;
-			}
+
+			if (string.IsNullOrWhiteSpace(e.Group) == false)
+				_groups[e.Group] = true;
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);

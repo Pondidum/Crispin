@@ -21,7 +21,7 @@ namespace Crispin.Tests.ToggleTests
 
 			Toggle.SwitchOn("user-1");
 
-			Toggle.IsActive("user-1").ShouldBe(true);
+			Toggle.IsActive(Membership, "user-1").ShouldBe(true);
 			Events.ShouldBe(new[]
 			{
 				typeof(ToggleSwitchedOn)
@@ -35,7 +35,7 @@ namespace Crispin.Tests.ToggleTests
 
 			Toggle.SwitchOff();
 
-			Toggle.IsActive("").ShouldBe(false);
+			Toggle.IsActive(Membership, "").ShouldBe(false);
 			Events.ShouldBe(new[]
 			{
 				typeof(ToggleSwitchedOff)
