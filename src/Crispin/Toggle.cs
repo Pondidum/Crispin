@@ -35,16 +35,14 @@ namespace Crispin
 
 		private readonly HashSet<string> _tags;
 		private readonly Func<string> _getCurrentUserID;
-		private readonly HashSet<string> _usersActive;
-		private readonly HashSet<string> _usersInActive;
+		private readonly Dictionary<string, bool> _users;
 
 		private Toggle(Func<string> getCurrentUserID)
 		{
 			_getCurrentUserID = getCurrentUserID;
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-			_usersActive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			_usersInActive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			_users = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
 			Register<ToggleCreated>(Apply);
 			Register<ToggleSwitchedOn>(Apply);
@@ -56,11 +54,10 @@ namespace Crispin
 		//public methods which do domainy things
 		public bool IsActive(string userID)
 		{
-			if (_usersInActive.Contains(userID))
-				return false;
-
-			if (_usersActive.Contains(userID))
-				return true;
+			if (_users.ContainsKey(userID))
+			{
+				return _users[userID];
+			}
 
 			return false;
 		}
@@ -112,8 +109,7 @@ namespace Crispin
 
 			if (string.IsNullOrWhiteSpace(e.User) == false)
 			{
-				_usersActive.Remove(e.User);
-				_usersInActive.Add(e.User);
+				_users[e.User] = false;
 			}
 		}
 
@@ -123,8 +119,7 @@ namespace Crispin
 
 			if (string.IsNullOrWhiteSpace(e.User) == false)
 			{
-				_usersActive.Add(e.User);
-				_usersInActive.Remove(e.User);
+				_users[e.User] = true;
 			}
 		}
 
