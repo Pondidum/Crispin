@@ -66,33 +66,33 @@ Restful Feature Toggle Service
 
 # Http Api
 
-* [x] GET /toggles/
-  * [x] `[ { id, name, description, active, links: { self: "/toggles/name/{name:string}", tags: "", state: "" } }, { ... }, { ... } ]`
-* [x] POST /toggles/
-  * [x] => `{ name: "my-first-toggle", description: "hi there" }`
-  * [x] 201 CREATED, url: "/toggles/name/{name:string}"
-* [ ] GET /toggles/id/{id:guid}
-  * [ ] `{ id, name, description, active }`
-* [ ] GET /toggles/name/{name:string}
-  * [ ] `{ id, name, description, active }`
-* [ ] POST /toggles/name/{name:string}
-  * [ ] => `{ active: false }`
-  * [ ] => `{ active: true }`
-  * [ ] => `{ tags: { add: [ "some", "tags" ], remove: [ "other", "tag" ] } }`
-  * [ ] => `{ tags: { add: [ "some", "tags" ], remove: [ "other", "tag" ] }, active: true }`
-* [ ] GET /toggles/name/{name:string}/active
-  * [ ] => `{ active: true, links: { self: "", toggle: "" } }`
-* [ ] POST /toggles/name/{name:string}/active
-  * [ ] => `{ active: false }`
-  * [ ] => `{ active: true }`
-* [ ] POST|PATCH|PUT /toggles/name/{name:string}/tags
-  * [ ] => `{ add: [ "some", "tags" ], remove: [ "other", "tag" ] }`
-  BAD:
-* [ ] POST /toggles/name/{name:string}/addTag
+* fetching toggles needs to be aware of who the user is querying, as a toggle could be on or off based on user/group
+* a header of some form would be enough I think, something like `X-CRISPIN-USER`
+* no header means anonymous, gets the "everyone" state of the toggle
+* views will need to be aware of multiple states of toggles
 
+## url schema
 
-
-* /stats/toggle/{id}
-* /stats/tag/{tag}
-* /stats/state/active
-* /stats/state/inactive
+* [ ] `/toggles`
+  * [x] GET =>`[ { toggleview }, { toggleview } ]`
+  * [x] POST => `{ name, description }` => 201 created, `/toggles/id/{id}`
+  * [ ] `/id/{id}`
+    * [ ] GET => `{ toggleview }`
+    * [ ] `/state`
+      * [ ] GET => `[ { type: user, id: xxx, state: active }, { type: group, id: yyy, state: inactive} ]`
+      * [ ] POST => `{ type: user, id: xxx }`
+      * [ ] DELETE => `{ type: user, id: xxx }`
+    * [ ] `tags`
+      * [ ] GET => `[ tag, tag, tag ]`
+      * [ ] PUT/POST => `[ tag, tag, tag ]`
+      * [ ] DELETE => `[ tag, tag, tag ]`
+  * [ ] `/name/{name}`
+    * [ ] `/state`
+      * see `id/state`
+    * [ ] `/tags`
+      * see `id/tags`
+* [ ] `/stats`
+  * ???
+* [ ] `/management`
+  * [ ] `/users`
+    * ???
