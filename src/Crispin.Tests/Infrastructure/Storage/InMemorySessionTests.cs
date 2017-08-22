@@ -194,8 +194,10 @@ namespace Crispin.Tests.Infrastructure.Storage
 				() => view.ID.ShouldBe(toggle.ID),
 				() => view.Name.ShouldBe(toggle.Name),
 				() => view.Description.ShouldBe(toggle.Description),
-				() => view.Active.ShouldBe(false),
-				() => view.Tags.ShouldBeEmpty()
+				() => view.Tags.ShouldBeEmpty(),
+				() => view.State.Anonymous.ShouldBeFalse(),
+				() => view.State.Users.ShouldBeEmpty(),
+				() => view.State.Groups.ShouldBeEmpty()
 			);
 		}
 

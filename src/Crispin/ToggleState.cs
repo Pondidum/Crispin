@@ -16,6 +16,10 @@ namespace Crispin
 			_groups = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 			_anonymousActive = false;
 		}
+
+		public bool AnonymousState => _anonymousActive;
+		public Dictionary<string, bool> UserState => new Dictionary<string, bool>(_users);
+		public Dictionary<string, bool> GroupState => new Dictionary<string, bool>(_groups);
 		
 		public void HandleSwitching(string user, string @group, bool active)
 		{

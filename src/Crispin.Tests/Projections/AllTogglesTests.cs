@@ -35,8 +35,10 @@ namespace Crispin.Tests.Projections
 				() => view.ID.ShouldBe(created.ID),
 				() => view.Name.ShouldBe(created.Name),
 				() => view.Description.ShouldBe(created.Description),
-				() => view.Active.ShouldBe(false),
-				() => view.Tags.ShouldBeEmpty()
+				() => view.Tags.ShouldBeEmpty(),
+				() => view.State.Anonymous.ShouldBeFalse(),
+				() => view.State.Users.ShouldBeEmpty(),
+				() => view.State.Groups.ShouldBeEmpty()
 			);
 		}
 
@@ -67,7 +69,7 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(created);
 			_projection.Consume(new ToggleSwitchedOn() { AggregateID = created.ID });
 
-			_projection.Toggles.Single().Active.ShouldBe(true);
+			_projection.Toggles.Single().State.Anonymous.ShouldBe(true);
 		}
 
 		[Fact]
@@ -79,7 +81,7 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(new ToggleSwitchedOn() { AggregateID = created.ID });
 			_projection.Consume(new ToggleSwitchedOff() { AggregateID = created.ID });
 
-			_projection.Toggles.Single().Active.ShouldBe(false);
+			_projection.Toggles.Single().State.Anonymous.ShouldBe(false);
 		}
 
 		[Fact]
