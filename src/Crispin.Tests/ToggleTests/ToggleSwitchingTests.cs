@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using NSubstitute;
@@ -80,75 +81,59 @@ namespace Crispin.Tests.ToggleTests
 		private const string Group1 = "group-1";
 		private const string Group2 = "group-2";
 
-		[Fact]
-		public void When_when_a_toggle_is_in_the_default_state()
+		public static IEnumerable<object[]> ToggleStateMatrix
 		{
-			CreateToggle();
+			get
+			{
+				var noSwitches = Array.Empty<object>();
+				var onFor3 = new object[] { new ToggleSwitchedOn(user: User3) };
+				var onForGroup2 = new object[] { new ToggleSwitchedOn(group: Group2) };
+				var overlappingGroups = new object[] {
+					new ToggleSwitchedOn(group: Group1),
+					new ToggleSwitchedOff(group: Group2)
+				};
 
-			var allUsers = new[] { AnonymousUser, User1InGroup1, User2InGroup2, User3, User4 };
+				var matrix = new object[][]
+				{
+					new object[] { noSwitches, AnonymousUser, false },
+					new object[] { noSwitches, User1InGroup1, false },
+					new object[] { noSwitches, User2InGroup2, false },
+					new object[] { noSwitches, User3, false },
+					new object[] { noSwitches, User4, false },
+					new object[] { noSwitches, User5InGroup1and2, false },
+					new object[] { onFor3, AnonymousUser, false },
+					new object[] { onFor3, User1InGroup1, false },
+					new object[] { onFor3, User2InGroup2, false },
+					new object[] { onFor3, User3, true },
+					new object[] { onFor3, User4, false },
+					new object[] { onFor3, User5InGroup1and2, false },
+					new object[] { onForGroup2, AnonymousUser, false },
+					new object[] { onForGroup2, User1InGroup1, false },
+					new object[] { onForGroup2, User2InGroup2, true },
+					new object[] { onForGroup2, User3, false },
+					new object[] { onForGroup2, User4, false },
+					new object[] { onForGroup2, User5InGroup1and2, false },
+					new object[] { overlappingGroups, AnonymousUser, false },
+					new object[] { overlappingGroups, User1InGroup1, true },
+					new object[] { overlappingGroups, User2InGroup2, false },
+					new object[] { overlappingGroups, User3, false },
+					new object[] { overlappingGroups, User4, false },
+					new object[] { overlappingGroups, User5InGroup1and2, false }
+				};
 
-			Toggle.IsActive(Membership, AnonymousUser).ShouldBeFalse();
-			Toggle.IsActive(Membership, User1InGroup1).ShouldBeFalse();
-			Toggle.IsActive(Membership, User2InGroup2).ShouldBeFalse();
-			Toggle.IsActive(Membership, User3).ShouldBeFalse();
-			Toggle.IsActive(Membership, User4).ShouldBeFalse();
+				return matrix.AsEnumerable();
+			}
 		}
 
-		[Fact]
-		public void When_a_toggle_is_active_for_everyone()
+		[Theory]
+		[MemberData(nameof(ToggleStateMatrix))]
+		public void When_testing_all_toggly_things(object[] events, string user, bool expected)
 		{
-			CreateToggle(new ToggleSwitchedOn());
-
-			Toggle.IsActive(Membership, AnonymousUser).ShouldBeTrue();
-			Toggle.IsActive(Membership, User1InGroup1).ShouldBeTrue();
-			Toggle.IsActive(Membership, User2InGroup2).ShouldBeTrue();
-			Toggle.IsActive(Membership, User3).ShouldBeTrue();
-			Toggle.IsActive(Membership, User4).ShouldBeTrue();
-		}
-
-		[Fact]
-		public void When_a_toggle_is_active_for_a_user()
-		{
-			CreateToggle(new ToggleSwitchedOn(user: User3));
-
-			Toggle.IsActive(Membership, AnonymousUser).ShouldBeFalse();
-			Toggle.IsActive(Membership, User1InGroup1).ShouldBeFalse();
-			Toggle.IsActive(Membership, User2InGroup2).ShouldBeFalse();
-			Toggle.IsActive(Membership, User3).ShouldBe(true);
-			Toggle.IsActive(Membership, User4).ShouldBeFalse();
-		}
-
-		[Fact]
-		public void When_a_toggle_is_active_for_a_group()
-		{
-			CreateToggle(new ToggleSwitchedOn(group: Group2));
-
+			CreateToggle(events);
 			Membership.GetGroupsFor(User1InGroup1).Returns(new[] { Group1 });
 			Membership.GetGroupsFor(User2InGroup2).Returns(new[] { Group2 });
 
-			Toggle.IsActive(Membership, AnonymousUser).ShouldBeFalse();
-			Toggle.IsActive(Membership, User1InGroup1).ShouldBeFalse();
-			Toggle.IsActive(Membership, User2InGroup2).ShouldBe(true);
-			Toggle.IsActive(Membership, User3).ShouldBeFalse();
-			Toggle.IsActive(Membership, User4).ShouldBeFalse();
-		}
-
-		[Fact]
-		public void When_a_toggle_is_active_for_one_group_and_inactive_for_another()
-		{
-			CreateToggle(
-				new ToggleSwitchedOn(group: Group1),
-				new ToggleSwitchedOff(group: Group2));
-
-			Membership.GetGroupsFor(User1InGroup1).Returns(new[] { Group1 });
-			Membership.GetGroupsFor(User2InGroup2).Returns(new[] { Group2 });
-
-			Toggle.IsActive(Membership, AnonymousUser).ShouldBeFalse();
-			Toggle.IsActive(Membership, User1InGroup1).ShouldBe(true);
-			Toggle.IsActive(Membership, User2InGroup2).ShouldBe(false);
-			Toggle.IsActive(Membership, User3).ShouldBeFalse();
-			Toggle.IsActive(Membership, User4).ShouldBeFalse();
-			Toggle.IsActive(Membership, User5InGroup1and2).ShouldBe(false);
+			Toggle.IsActive(Membership, user).ShouldBe(expected);
 		}
 	}
 }
