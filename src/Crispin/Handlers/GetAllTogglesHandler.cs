@@ -16,16 +16,16 @@ namespace Crispin.Handlers
 			_storage = storage;
 		}
 
-		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
+		public Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
 		{
 			using (var session = _storage.BeginSession())
 			{
 				var projection = session.LoadProjection<AllToggles>();
 
-				return new GetAllTogglesResponse
+				return Task.FromResult(new GetAllTogglesResponse
 				{
 					Toggles = projection.Toggles
-				};
+				});
 			}
 		}
 	}

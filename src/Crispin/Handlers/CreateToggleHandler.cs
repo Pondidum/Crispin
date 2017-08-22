@@ -12,8 +12,8 @@ namespace Crispin.Handlers
 		{
 			_storage = storage;
 		}
-		
-		public async Task<CreateTogglesResponse> Handle(CreateToggleRequest message)
+
+		public Task<CreateTogglesResponse> Handle(CreateToggleRequest message)
 		{
 			using (var session = _storage.BeginSession())
 			{
@@ -23,11 +23,11 @@ namespace Crispin.Handlers
 					message.Description);
 
 				session.Save(newToggle);
-				
-				return new CreateTogglesResponse
+
+				return Task.FromResult(new CreateTogglesResponse
 				{
 					ToggleID = newToggle.ID
-				};
+				});
 			}
 		}
 	}
