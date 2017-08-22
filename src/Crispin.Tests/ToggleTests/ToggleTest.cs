@@ -12,7 +12,7 @@ namespace Crispin.Tests.ToggleTests
 		protected Toggle Toggle { get; set; }
 		protected IGroupMembership Membership { get; }
 
-		public ToggleTest()
+		protected ToggleTest()
 		{
 			Membership = Substitute.For<IGroupMembership>();
 		}
