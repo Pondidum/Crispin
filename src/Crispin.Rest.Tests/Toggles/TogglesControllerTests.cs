@@ -82,5 +82,18 @@ namespace Crispin.Rest.Tests.Toggles
 				request => request.Name == model.Name && request.Description == model.Description
 			));
 		}
+
+		[Fact]
+		public async Task When_fetching_a_single_toggle()
+		{
+			var view = new ToggleView();
+			_mediator
+				.Send(Arg.Any<GetToggleRequest>())
+				.Returns(new GetToggleResponse { Toggle = view });
+
+			var response = (JsonResult)await _controller.Get(Guid.NewGuid());
+
+			response.Value.ShouldBe(view);
+		}
 	}
 }

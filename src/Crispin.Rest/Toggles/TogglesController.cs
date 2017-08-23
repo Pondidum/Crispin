@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Crispin.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -24,6 +25,16 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggles);
+		}
+
+		[Route("id/{id}")]
+		[HttpGet]
+		public async Task<IActionResult> Get(Guid id)
+		{
+			var request = new GetToggleRequest(id);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Toggle);
 		}
 
 		[Route("")]
