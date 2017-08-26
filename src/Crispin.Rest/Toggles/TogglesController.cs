@@ -4,6 +4,7 @@ using Crispin.Handlers;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Handlers.GetSingle;
+using Crispin.Handlers.UpdateState;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,22 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.State);
+		}
+
+		[Route("id/{id}/state")]
+		[HttpPost]
+		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
+		{
+			var request = new UpdateToggleStateRequest(
+				id,
+				model.Anonymous,
+				model.Groups,
+				model.Users
+			);
+
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.State);
 		}
 
 		[Route("name/{name}/state")]
