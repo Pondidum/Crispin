@@ -13,7 +13,7 @@ namespace Crispin
 				throw new ArgumentNullException(nameof(name), "Toggles must have a non-whitespace name.");
 
 			var toggle = new Toggle(getCurrentUserID);
-			toggle.ApplyEvent(new ToggleCreated(Guid.NewGuid(), name.Trim(), description));
+			toggle.ApplyEvent(new ToggleCreated(ToggleID.CreateNew(), name.Trim(), description));
 
 			return toggle;
 		}

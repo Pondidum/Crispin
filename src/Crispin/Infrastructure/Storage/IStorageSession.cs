@@ -9,7 +9,7 @@ namespace Crispin.Infrastructure.Storage
 		TProjection LoadProjection<TProjection>()
 			where TProjection : Projection;
 
-		TAggregate LoadAggregate<TAggregate>(Guid aggregateID)
+		TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot;
 
 		void Save<TAggregate>(TAggregate aggregate)

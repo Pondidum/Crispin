@@ -16,7 +16,7 @@ namespace Crispin.Tests.Handlers
 		private readonly UpdateToggleStateHandler _handler;
 		private readonly IStorageSession _session;
 		private readonly List<object> _events;
-		private readonly Guid _toggleID;
+		private readonly ToggleID _toggleID;
 
 		public UpdateToggleStateHandlerTests()
 		{
@@ -31,7 +31,7 @@ namespace Crispin.Tests.Handlers
 
 			storage.BeginSession().Returns(_session);
 
-			_toggleID = Guid.NewGuid();
+			_toggleID = ToggleID.CreateNew();
 			var toggle = Toggle.LoadFrom(() => "", new[]
 			{
 				new ToggleCreated(_toggleID, "name", "desc"),
@@ -43,7 +43,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_the_toggle_doesnt_exist()
 		{
-			var response = await _handler.Handle(new UpdateToggleStateRequest(Guid.NewGuid(), null, null, null));
+			var response = await _handler.Handle(new UpdateToggleStateRequest(ToggleID.CreateNew(), null, null, null));
 
 			_events.ShouldBeEmpty();
 		}

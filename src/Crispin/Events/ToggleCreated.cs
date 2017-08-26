@@ -5,11 +5,11 @@ namespace Crispin.Events
 {
 	public class ToggleCreated : Event
 	{
-		public Guid ID { get; }
+		public ToggleID ID { get; }
 		public string Name { get; }
 		public string Description { get; }
 
-		public ToggleCreated(Guid id, string name, string description)
+		public ToggleCreated(ToggleID id, string name, string description)
 		{
 			ID = id;
 			Name = name;

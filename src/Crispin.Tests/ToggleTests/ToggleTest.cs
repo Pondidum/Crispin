@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using Microsoft.VisualBasic.CompilerServices;
 using NSubstitute;
 
 namespace Crispin.Tests.ToggleTests
@@ -19,7 +20,7 @@ namespace Crispin.Tests.ToggleTests
 
 		protected void CreateToggle(params object[] events)
 		{
-			var create = new ToggleCreated(Guid.NewGuid(), "Test Toggle", "");
+			var create = new ToggleCreated(ToggleID.CreateNew(), "Test Toggle", "");
 
 			Toggle = Toggle.LoadFrom(
 				() => string.Empty,

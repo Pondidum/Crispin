@@ -16,7 +16,7 @@ namespace Crispin.Tests.ToggleTests
 				name: "first-toggle");
 
 			Toggle.ShouldSatisfyAllConditions(
-				() => Toggle.ID.ShouldNotBe(Guid.Empty),
+				() => Toggle.ID.ShouldNotBe(ToggleID.Empty),
 				() => Toggle.Name.ShouldBe("first-toggle"),
 				() => Toggle.Description.ShouldBe(string.Empty)
 			);
@@ -39,7 +39,7 @@ namespace Crispin.Tests.ToggleTests
 				description: "my cool description");
 
 			Toggle.ShouldSatisfyAllConditions(
-				() => Toggle.ID.ShouldNotBe(Guid.Empty),
+				() => Toggle.ID.ShouldNotBe(ToggleID.Empty),
 				() => Toggle.Name.ShouldBe("first-toggle"),
 				() => Toggle.Description.ShouldBe("my cool description")
 			);

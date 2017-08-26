@@ -15,7 +15,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_creating_a_toggle_the_response_location_is_set()
 		{
-			var response = new CreateTogglesResponse { ToggleID = Guid.NewGuid() };
+			var response = new CreateTogglesResponse { ToggleID = ToggleID.CreateNew() };
 			Mediator
 				.Send(Arg.Any<CreateToggleRequest>())
 				.Returns(response);

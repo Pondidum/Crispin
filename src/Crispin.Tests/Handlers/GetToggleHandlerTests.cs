@@ -31,7 +31,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_the_requested_toggle_doesnt_exist_by_id()
 		{
-			var toggleID = Guid.NewGuid();
+			var toggleID = ToggleID.CreateNew();
 
 			var result = await _handler.Handle(new GetToggleRequest(toggleID));
 
@@ -41,7 +41,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_the_requested_toggle_exists_by_id()
 		{
-			var toggleID = Guid.NewGuid();
+			var toggleID = ToggleID.CreateNew();
 			_view.Consume(new ToggleCreated(toggleID, "name", "desc"));
 
 			var result = await _handler.Handle(new GetToggleRequest(toggleID));
@@ -52,7 +52,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_the_requested_toggle_doesnt_exist_by_name()
 		{
-			var toggleName = Guid.NewGuid().ToString();
+			var toggleName = ToggleID.CreateNew().ToString();
 
 			var result = await _handler.Handle(new GetToggleByNameRequest(toggleName));
 
@@ -63,7 +63,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_name()
 		{
 			var toggleName = "name";
-			_view.Consume(new ToggleCreated(Guid.NewGuid(), toggleName, "desc"));
+			_view.Consume(new ToggleCreated(ToggleID.CreateNew(), toggleName, "desc"));
 
 			var result = await _handler.Handle(new GetToggleByNameRequest(toggleName));
 

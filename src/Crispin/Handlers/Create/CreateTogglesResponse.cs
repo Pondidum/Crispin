@@ -4,6 +4,6 @@ namespace Crispin.Handlers.Create
 {
 	public class CreateTogglesResponse
 	{
-		public Guid ToggleID { get; set; }
+		public ToggleID ToggleID { get; set; }
 	}
 }

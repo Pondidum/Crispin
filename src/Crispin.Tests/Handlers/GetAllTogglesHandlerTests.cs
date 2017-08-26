@@ -53,7 +53,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_there_are_toggles_in_the_projection()
 		{
 			var projection = new AllToggles();
-			projection.Consume(new ToggleCreated(Guid.NewGuid(), "Test", "desc"));
+			projection.Consume(new ToggleCreated(ToggleID.CreateNew(), "Test", "desc"));
 			_session.LoadProjection<AllToggles>().Returns(projection);
 
 			var response = await _handler.Handle(new GetAllTogglesRequest());

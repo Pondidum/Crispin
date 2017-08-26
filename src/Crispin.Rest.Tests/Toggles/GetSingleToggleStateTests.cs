@@ -13,12 +13,14 @@ namespace Crispin.Rest.Tests.Toggles
 	public class GetSingleToggleStateTests : TogglesControllerTests
 	{
 		private readonly ToggleView _toggleView;
+		private readonly Guid _toggleID;
 
 		public GetSingleToggleStateTests()
 		{
+			_toggleID = Guid.NewGuid();
 			_toggleView = new ToggleView
 			{
-				ID = Guid.NewGuid(),
+				ID = ToggleID.Parse(_toggleID),
 				Name = "toggle-1",
 				Description = "the first toggle",
 				State =
@@ -53,7 +55,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_fetching_state_by_id()
 		{
-			var response = (JsonResult)await Controller.GetState(_toggleView.ID);
+			var response = (JsonResult)await Controller.GetState(_toggleID);
 
 			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == _toggleView.ID));
 			response.Value.ShouldBeOfType<StateView>();
@@ -65,7 +67,7 @@ namespace Crispin.Rest.Tests.Toggles
 			var toggleId = Guid.NewGuid();
 			var response = (JsonResult)await Controller.GetState(toggleId);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == toggleId));
+			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == ToggleID.Parse(toggleId)));
 			response.Value.ShouldBeNull();
 		}
 

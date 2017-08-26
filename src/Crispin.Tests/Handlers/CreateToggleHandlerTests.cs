@@ -28,7 +28,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var response = await _handler.Handle(new CreateToggleRequest("???", "Test", "desc"));
 
-			response.ToggleID.ShouldNotBe(Guid.Empty);
+			response.ToggleID.ShouldNotBe(ToggleID.Empty);
 
 			_session.Received().Save(Arg.Is<Toggle>(t => t.ID == response.ToggleID));
 		}

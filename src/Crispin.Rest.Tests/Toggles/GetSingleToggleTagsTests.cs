@@ -14,12 +14,14 @@ namespace Crispin.Rest.Tests.Toggles
 	public class GetSingleToggleTagsTests : TogglesControllerTests
 	{
 		private readonly ToggleView _toggleView;
+		private readonly Guid _toggleID;
 
 		public GetSingleToggleTagsTests()
 		{
+			_toggleID = Guid.NewGuid();
 			_toggleView = new ToggleView
 			{
-				ID = Guid.NewGuid(),
+				ID = ToggleID.Parse(_toggleID),
 				Name = "toggle-1",
 				Description = "the first toggle",
 				State =
@@ -54,7 +56,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_fetching_tags_by_id()
 		{
-			var response = (JsonResult)await Controller.GetTags(_toggleView.ID);
+			var response = (JsonResult)await Controller.GetTags(_toggleID);
 
 			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == _toggleView.ID));
 			response.Value.ShouldBeOfType<HashSet<string>>();
@@ -66,7 +68,7 @@ namespace Crispin.Rest.Tests.Toggles
 			var toggleId = Guid.NewGuid();
 			var response = (JsonResult)await Controller.GetTags(toggleId);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == toggleId));
+			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == ToggleID.Parse(toggleId)));
 			response.Value.ShouldBeNull();
 		}
 

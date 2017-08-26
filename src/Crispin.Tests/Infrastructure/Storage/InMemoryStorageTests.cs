@@ -35,7 +35,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			using (var session = _storage.BeginSession())
 			{
-				Should.Throw<NotSupportedException>(() => session.LoadAggregate<Toggle>(Guid.NewGuid()));
+				Should.Throw<NotSupportedException>(() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 			}
 		}
 
@@ -46,7 +46,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			using (var session = _storage.BeginSession())
 			{
-				Should.Throw<KeyNotFoundException>(() => session.LoadAggregate<Toggle>(Guid.NewGuid()));
+				Should.Throw<KeyNotFoundException>(() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 			}
 		}
 	}

@@ -5,9 +5,9 @@ namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleRequest : IRequest<GetToggleResponse>
 	{
-		public Guid ToggleID { get; }
+		public ToggleID ToggleID { get; }
 
-		public GetToggleRequest(Guid toggleID)
+		public GetToggleRequest(ToggleID toggleID)
 		{
 			ToggleID = toggleID;
 		}

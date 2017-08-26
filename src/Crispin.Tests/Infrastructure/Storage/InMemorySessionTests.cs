@@ -15,20 +15,20 @@ namespace Crispin.Tests.Infrastructure.Storage
 	{
 		private readonly InMemorySession _session;
 		private readonly Dictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
-		private readonly Dictionary<Guid, List<Event>> _eventStore;
+		private readonly Dictionary<ToggleID, List<Event>> _eventStore;
 		private readonly List<Projection> _projections;
-		private readonly Guid _aggregateID;
+		private readonly ToggleID _aggregateID;
 		private readonly IGroupMembership _membership;
 
 		public InMemorySessionTests()
 		{
-			_aggregateID = Guid.NewGuid();
+			_aggregateID = ToggleID.CreateNew();
 			_builders = new Dictionary<Type, Func<List<Event>, AggregateRoot>>
 			{
 				{ typeof(Toggle), e => Toggle.LoadFrom(() => "", e) }
 			};
 
-			_eventStore = new Dictionary<Guid, List<Event>>();
+			_eventStore = new Dictionary<ToggleID, List<Event>>();
 			_projections = new List<Projection>();
 
 			_session = new InMemorySession(_builders, _projections, _eventStore);

@@ -8,6 +8,7 @@ namespace Crispin
 	{
 		public static ToggleID CreateNew() => new ToggleID(Guid.NewGuid());
 		public static ToggleID Parse(Guid id) => new ToggleID(id);
+		public static ToggleID Empty => new ToggleID(Guid.Empty);
 
 		private readonly Guid _toggleID;
 
@@ -33,6 +34,22 @@ namespace Crispin
 
 		public override int GetHashCode() => _toggleID.GetHashCode();
 		public override string ToString() => _toggleID.ToString();
+
+		public static bool operator ==(ToggleID x, ToggleID y)
+		{
+			if (object.ReferenceEquals(x, y))
+				return true;
+
+			if (((object)x == null) || ((object)y == null))
+				return false;
+
+			return x.Equals(y);
+		}
+
+		public static bool operator !=(ToggleID x, ToggleID y)
+		{
+			return !(x == y);
+		}
 	}
 
 	public class ToggleIDConverter : JsonConverter
@@ -51,6 +68,5 @@ namespace Crispin
 				? ToggleID.Parse(guid)
 				: null;
 		}
-
 	}
 }

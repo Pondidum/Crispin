@@ -14,7 +14,7 @@ namespace Crispin.Infrastructure
 			_pendingEvents = new List<object>();
 		}
 
-		public Guid ID { get; protected set; }
+		public ToggleID ID { get; protected set; }
 
 		protected void Register<TEvent>(Action<TEvent> handler) 
 			where TEvent : Event

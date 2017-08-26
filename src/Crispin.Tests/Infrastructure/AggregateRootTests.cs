@@ -99,7 +99,7 @@ namespace Crispin.Tests.Infrastructure
 		[Fact]
 		public void When_applying_an_event()
 		{
-			var id = Guid.NewGuid();
+			var id = ToggleID.CreateNew();
 			_aggregate.Raise(new TestAggregateCreated(id));
 			_aggregate.Raise(new TestEventOne());
 
@@ -167,9 +167,9 @@ namespace Crispin.Tests.Infrastructure
 
 		private class TestAggregateCreated : Event
 		{
-			public Guid ID { get; }
+			public ToggleID ID { get; }
 
-			public TestAggregateCreated(Guid id)
+			public TestAggregateCreated(ToggleID id)
 			{
 				ID = id;
 			}

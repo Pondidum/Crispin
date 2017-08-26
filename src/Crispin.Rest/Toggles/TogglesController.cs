@@ -34,7 +34,7 @@ namespace Crispin.Rest.Toggles
 		[HttpGet]
 		public async Task<IActionResult> Get(Guid id)
 		{
-			var request = new GetToggleRequest(id);
+			var request = new GetToggleRequest(ToggleID.Parse(id));
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle);
@@ -54,7 +54,7 @@ namespace Crispin.Rest.Toggles
 		[HttpGet]
 		public async Task<IActionResult> GetState(Guid id)
 		{
-			var request = new GetToggleRequest(id);
+			var request = new GetToggleRequest(ToggleID.Parse(id));
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.State);
@@ -65,7 +65,7 @@ namespace Crispin.Rest.Toggles
 		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
 		{
 			var request = new UpdateToggleStateRequest(
-				id,
+				ToggleID.Parse(id),
 				model.Anonymous,
 				model.Groups,
 				model.Users
@@ -90,7 +90,7 @@ namespace Crispin.Rest.Toggles
 		[HttpGet]
 		public async Task<IActionResult> GetTags(Guid id)
 		{
-			var request = new GetToggleRequest(id);
+			var request = new GetToggleRequest(ToggleID.Parse(id));
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.Tags);

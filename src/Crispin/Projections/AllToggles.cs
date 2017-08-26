@@ -9,11 +9,11 @@ namespace Crispin.Projections
 	{
 		public IEnumerable<ToggleView> Toggles => _toggles.Values;
 
-		private readonly Dictionary<Guid, ToggleView> _toggles;
+		private readonly Dictionary<ToggleID, ToggleView> _toggles;
 
 		public AllToggles()
 		{
-			_toggles = new Dictionary<Guid, ToggleView>();
+			_toggles = new Dictionary<ToggleID, ToggleView>();
 
 			Register<ToggleCreated>(Apply);
 			Register<ToggleSwitchedOn>(e => _toggles[e.AggregateID].SwitchOn(e.User, e.Group));

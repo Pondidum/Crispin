@@ -9,18 +9,18 @@ namespace Crispin.Infrastructure.Storage
 	{
 		private readonly IDictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
 		private readonly List<Projection> _projections;
-		private readonly IDictionary<Guid, List<Event>> _storeEvents;
-		private readonly Dictionary<Guid, List<Event>> _pendingEvents;
+		private readonly IDictionary<ToggleID, List<Event>> _storeEvents;
+		private readonly Dictionary<ToggleID, List<Event>> _pendingEvents;
 
 		public InMemorySession(
 			IDictionary<Type, Func<List<Event>, AggregateRoot>> builders,
 			List<Projection> projections,
-			IDictionary<Guid, List<Event>> storeEvents)
+			IDictionary<ToggleID, List<Event>> storeEvents)
 		{
 			_builders = builders;
 			_projections = projections;
 			_storeEvents = storeEvents;
-			_pendingEvents = new Dictionary<Guid, List<Event>>();
+			_pendingEvents = new Dictionary<ToggleID, List<Event>>();
 		}
 
 		public void Open()
@@ -41,7 +41,7 @@ namespace Crispin.Infrastructure.Storage
 			throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
 		}
 
-		public TAggregate LoadAggregate<TAggregate>(Guid aggregateID)
+		public TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot
 		{
 			Func<List<Event>, AggregateRoot> builder;

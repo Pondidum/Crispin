@@ -6,7 +6,7 @@ namespace Crispin.Projections
 {
 	public class ToggleView
 	{
-		public Guid ID { get; set; }
+		public ToggleID ID { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public HashSet<string> Tags { get; }

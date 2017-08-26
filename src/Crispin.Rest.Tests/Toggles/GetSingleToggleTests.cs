@@ -29,7 +29,7 @@ namespace Crispin.Rest.Tests.Toggles
 			var toggleId = Guid.NewGuid();
 			var response = (JsonResult)await Controller.Get(toggleId);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == toggleId));
+			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == ToggleID.Parse(toggleId)));
 			response.Value.ShouldBeOfType<ToggleView>();
 		}
 
