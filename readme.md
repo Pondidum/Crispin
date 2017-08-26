@@ -83,7 +83,7 @@ Restful Feature Toggle Service
       * [ ] POST => `{ type: user, id: xxx }`
       * [ ] DELETE => `{ type: user, id: xxx }`
     * [ ] `tags`
-      * [ ] GET => `[ tag, tag, tag ]`
+      * [x] GET => `[ tag, tag, tag ]`
       * [ ] PUT/POST => `[ tag, tag, tag ]`
       * [ ] DELETE => `[ tag, tag, tag ]`
   * [ ] `/name/{name}`
