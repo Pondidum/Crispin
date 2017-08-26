@@ -5,7 +5,7 @@ using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleHandler : IAsyncRequestHandler<GetToggleRequest, GetToggleResponse>, IAsyncRequestHandler<GetToggleByNameRequest, GetToggleResponse>
 	{

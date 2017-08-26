@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.Create
 {
 	public class CreateToggleRequest : IRequest<CreateTogglesResponse>
 	{

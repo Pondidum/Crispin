@@ -1,7 +1,7 @@
 ﻿using System;
 using MediatR;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleRequest : IRequest<GetToggleResponse>
 	{

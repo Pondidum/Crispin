@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Handlers;
+using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using NSubstitute;

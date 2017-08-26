@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Crispin.Handlers;
+using Crispin.Handlers.Create;
+using Crispin.Handlers.GetAll;
+using Crispin.Handlers.GetSingle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

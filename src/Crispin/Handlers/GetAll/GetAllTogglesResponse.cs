@@ -2,7 +2,7 @@
 using System.Linq;
 using Crispin.Projections;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.GetAll
 {
 	public class GetAllTogglesResponse
 	{

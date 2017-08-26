@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.Create
 {
 	public class CreateTogglesResponse
 	{

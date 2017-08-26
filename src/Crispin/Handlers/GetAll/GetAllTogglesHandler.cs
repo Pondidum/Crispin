@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.GetAll
 {
 	public class GetAllTogglesHandler : IAsyncRequestHandler<GetAllTogglesRequest, GetAllTogglesResponse>
 	{

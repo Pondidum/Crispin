@@ -1,6 +1,6 @@
 using Crispin.Projections;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleResponse
 	{

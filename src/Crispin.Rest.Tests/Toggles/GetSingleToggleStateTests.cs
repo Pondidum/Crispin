@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Crispin.Handlers;
+using Crispin.Handlers.GetSingle;
 using Crispin.Projections;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;

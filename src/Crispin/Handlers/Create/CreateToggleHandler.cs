@@ -2,7 +2,7 @@
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
-namespace Crispin.Handlers
+namespace Crispin.Handlers.Create
 {
 	public class CreateToggleHandler : IAsyncRequestHandler<CreateToggleRequest, CreateTogglesResponse>
 	{
