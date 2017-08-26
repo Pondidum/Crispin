@@ -73,7 +73,7 @@ namespace Crispin.Rest.Toggles
 
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.State);
+			return new JsonResult(response); //??
 		}
 
 		[Route("name/{name}/state")]
