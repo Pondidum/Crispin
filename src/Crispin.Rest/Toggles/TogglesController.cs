@@ -2,12 +2,11 @@
 using System.Threading.Tasks;
 using Crispin.Handlers;
 using MediatR;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Crispin.Rest.Toggles
 {
-	[Route("Toggles")]
+	[Route("[controller]")]
 	public class TogglesController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -37,9 +36,19 @@ namespace Crispin.Rest.Toggles
 			return new JsonResult(response.Toggle);
 		}
 
+		[Route("name/{name}")]
+		[HttpGet]
+		public async Task<IActionResult> Get(string name)
+		{
+			var request = new GetToggleByNameRequest(name);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Toggle);
+		}
+
 		[Route("")]
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody]TogglePostRequest model)
+		public async Task<IActionResult> Post([FromBody] TogglePostRequest model)
 		{
 			var request = new CreateToggleRequest("???", model.Name, model.Description);
 			var response = await _mediator.Send(request);
