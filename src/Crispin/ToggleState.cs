@@ -6,24 +6,24 @@ namespace Crispin
 {
 	public class ToggleState
 	{
-		private readonly Dictionary<string, bool> _users;
+		private readonly Dictionary<UserID, bool> _users;
 		private readonly Dictionary<string, bool> _groups;
 		private bool _anonymousActive;
 
 		public ToggleState()
 		{
-			_users = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+			_users = new Dictionary<UserID, bool>();
 			_groups = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 			_anonymousActive = false;
 		}
 
 		public bool AnonymousState => _anonymousActive;
-		public Dictionary<string, bool> UserState => new Dictionary<string, bool>(_users);
+		public Dictionary<UserID, bool> UserState => new Dictionary<UserID, bool>(_users);
 		public Dictionary<string, bool> GroupState => new Dictionary<string, bool>(_groups);
 		
-		public void HandleSwitching(string user, string @group, bool active)
+		public void HandleSwitching(UserID user, string @group, bool active)
 		{
-			var hasUser = string.IsNullOrWhiteSpace(user) == false;
+			var hasUser = user != UserID.Empty;
 			var hasGroup = string.IsNullOrWhiteSpace(group) == false;
 
 			if (hasUser)
@@ -36,9 +36,9 @@ namespace Crispin
 				_anonymousActive = active;
 		}
 
-		public bool IsActive(IGroupMembership membership, string userID)
+		public bool IsActive(IGroupMembership membership, UserID userID)
 		{
-			if (string.IsNullOrWhiteSpace(userID))
+			if (userID == UserID.Empty)
 				return _anonymousActive;
 
 			if (_users.ContainsKey(userID))

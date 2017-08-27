@@ -61,7 +61,7 @@ namespace Crispin.Tests.Handlers
 			var switchEvent = (ToggleSwitchedOn)_events.ShouldHaveSingleItem();
 
 			switchEvent.ShouldSatisfyAllConditions(
-				() => switchEvent.User.ShouldBeNullOrWhiteSpace(),
+				() => switchEvent.User.ShouldBe(UserID.Empty),
 				() => switchEvent.Group.ShouldBeNullOrWhiteSpace()
 			);
 		}

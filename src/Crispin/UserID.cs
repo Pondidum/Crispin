@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Crispin
 {
 	[JsonConverter(typeof(UserIDConverter))]
-	public class UserID : IEquatable<UserID>
+	public struct UserID : IEquatable<UserID>
 	{
 		public static UserID Parse(string user) => new UserID(user);
 		public static UserID Empty => new UserID(string.Empty);
@@ -18,30 +18,23 @@ namespace Crispin
 
 		public bool Equals(UserID other)
 		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
 			return string.Equals(_user, other._user, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((UserID)obj);
+			return obj is UserID && Equals((UserID)obj);
 		}
 
-		public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(_user);
+		public override int GetHashCode() => _user != null
+			? StringComparer.OrdinalIgnoreCase.GetHashCode(_user)
+			: 0;
+
 		public override string ToString() => _user;
 
 		public static bool operator ==(UserID x, UserID y)
 		{
-			if (object.ReferenceEquals(x, y))
-				return true;
-
-			if (((object)x == null) || ((object)y == null))
-				return false;
-
 			return x.Equals(y);
 		}
 
@@ -49,6 +42,7 @@ namespace Crispin
 		{
 			return !(x == y);
 		}
+
 	}
 
 	public class UserIDConverter : JsonConverter

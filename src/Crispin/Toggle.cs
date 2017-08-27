@@ -51,15 +51,15 @@ namespace Crispin
 		}
 
 		//public methods which do domainy things
-		public bool IsActive(IGroupMembership membership, string userID)
+		public bool IsActive(IGroupMembership membership, UserID userID)
 			=> _state.IsActive(membership, userID);
 
-		public void SwitchOn(string user = null, string group = null)
+		public void SwitchOn(UserID user, string group = null)
 		{
 			ApplyEvent(new ToggleSwitchedOn(user, group));
 		}
 
-		public void SwitchOff(string user = null, string group = null)
+		public void SwitchOff(UserID user, string group = null)
 		{
 			ApplyEvent(new ToggleSwitchedOff(user, group));
 		}

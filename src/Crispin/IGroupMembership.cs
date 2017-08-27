@@ -4,6 +4,6 @@ namespace Crispin
 {
 	public interface IGroupMembership
 	{
-		IEnumerable<string> GetGroupsFor(string userID);
+		IEnumerable<string> GetGroupsFor(UserID userID);
 	}
 }

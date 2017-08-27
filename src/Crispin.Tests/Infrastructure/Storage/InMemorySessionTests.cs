@@ -64,14 +64,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 			{
 				new ToggleCreated(_aggregateID, "First", "hi"),
 				new TagAdded("one"),
-				new ToggleSwitchedOn("user-1")
+				new ToggleSwitchedOn(UserID.Parse("user-1"))
 			};
 
 			var toggle = _session.LoadAggregate<Toggle>(_aggregateID);
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(_aggregateID),
-				() => toggle.IsActive(_membership, "user-1").ShouldBeTrue(),
+				() => toggle.IsActive(_membership, UserID.Parse("user-1")).ShouldBeTrue(),
 				() => toggle.Tags.ShouldContain("one")
 			);
 		}
@@ -81,7 +81,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.SwitchOn();
+			toggle.SwitchOn(UserID.Empty);
 
 			_session.Save(toggle);
 
@@ -93,7 +93,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.SwitchOn();
+			toggle.SwitchOn(UserID.Empty);
 
 			_session.Save(toggle);
 			_session.Commit();
@@ -111,7 +111,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.SwitchOn("user-1");
+			toggle.SwitchOn(UserID.Parse("user-1"));
 
 			_session.Save(toggle);
 
@@ -119,7 +119,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(_membership, "user-1").ShouldBe(true),
+				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -133,14 +133,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_session.Save(toggle);
 			_session.Commit();
 
-			toggle.SwitchOn("user-1");
+			toggle.SwitchOn(UserID.Parse("user-1"));
 			_session.Save(toggle);
 
 			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(_membership, "user-1").ShouldBe(true),
+				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}

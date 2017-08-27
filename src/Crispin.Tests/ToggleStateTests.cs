@@ -10,12 +10,12 @@ namespace Crispin.Tests
 {
 	public class ToggleStateTests
 	{
-		private const string AnonymousUser = null;
-		private const string User1InGroup1 = "user-1 => group-1";
-		private const string User2InGroup2 = "user-2 => group-2";
-		private const string User3 = "user-3";
-		private const string User4 = "user-4";
-		private const string User5InGroup1and2 = "user-5 => group-1, group-2";
+		private static readonly UserID AnonymousUser = UserID.Empty;
+		private static readonly UserID User1InGroup1 = UserID.Parse("user-1 => group-1");
+		private static readonly UserID User2InGroup2 = UserID.Parse("user-2 => group-2");
+		private static readonly UserID User3 = UserID.Parse("user-3");
+		private static readonly UserID User4 = UserID.Parse("user-4");
+		private static readonly UserID User5InGroup1And2 = UserID.Parse("user-5 => group-1, group-2");
 
 		private const string Group1 = "group-1";
 		private const string Group2 = "group-2";
@@ -40,25 +40,25 @@ namespace Crispin.Tests
 					new object[] { noSwitches, User2InGroup2, false },
 					new object[] { noSwitches, User3, false },
 					new object[] { noSwitches, User4, false },
-					new object[] { noSwitches, User5InGroup1and2, false },
+					new object[] { noSwitches, User5InGroup1And2, false },
 					new object[] { onFor3, AnonymousUser, false },
 					new object[] { onFor3, User1InGroup1, false },
 					new object[] { onFor3, User2InGroup2, false },
 					new object[] { onFor3, User3, true },
 					new object[] { onFor3, User4, false },
-					new object[] { onFor3, User5InGroup1and2, false },
+					new object[] { onFor3, User5InGroup1And2, false },
 					new object[] { onForGroup2, AnonymousUser, false },
 					new object[] { onForGroup2, User1InGroup1, false },
 					new object[] { onForGroup2, User2InGroup2, true },
 					new object[] { onForGroup2, User3, false },
 					new object[] { onForGroup2, User4, false },
-					new object[] { onForGroup2, User5InGroup1and2, false },
+					new object[] { onForGroup2, User5InGroup1And2, false },
 					new object[] { overlappingGroups, AnonymousUser, false },
 					new object[] { overlappingGroups, User1InGroup1, true },
 					new object[] { overlappingGroups, User2InGroup2, false },
 					new object[] { overlappingGroups, User3, false },
 					new object[] { overlappingGroups, User4, false },
-					new object[] { overlappingGroups, User5InGroup1and2, false }
+					new object[] { overlappingGroups, User5InGroup1And2, false }
 				};
 
 				return matrix.AsEnumerable();
@@ -67,7 +67,7 @@ namespace Crispin.Tests
 
 		[Theory]
 		[MemberData(nameof(ToggleStateMatrix))]
-		public void When_testing_all_toggly_things(State[] events, string user, bool expected)
+		public void When_testing_all_toggly_things(State[] events, UserID user, bool expected)
 		{
 			var state = new ToggleState();
 			foreach (var e in events)
@@ -82,7 +82,7 @@ namespace Crispin.Tests
 
 		public class State
 		{
-			public string User { get; set; }
+			public UserID User { get; set; }
 			public string Group { get; set; }
 			public bool Active { get; set; }
 		}
