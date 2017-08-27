@@ -13,7 +13,9 @@ namespace Crispin
 
 		private UserID(string user)
 		{
-			_user = user;
+			_user = string.IsNullOrWhiteSpace(user)
+				? null
+				: user;
 		}
 
 		public bool Equals(UserID other)

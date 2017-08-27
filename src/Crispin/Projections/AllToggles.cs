@@ -16,8 +16,14 @@ namespace Crispin.Projections
 			_toggles = new Dictionary<ToggleID, ToggleView>();
 
 			Register<ToggleCreated>(Apply);
-			Register<ToggleSwitchedOn>(e => _toggles[e.AggregateID].SwitchOn(e.User, e.Group));
-			Register<ToggleSwitchedOff>(e => _toggles[e.AggregateID].SwitchOff(e.User, e.Group));
+
+			Register<ToggleSwitchedOnForAnonymous>(e => _toggles[e.AggregateID].SwitchOnByDefault());
+			Register<ToggleSwitchedOffForAnonymous>(e => _toggles[e.AggregateID].SwitchOffByDefault());
+			Register<ToggleSwitchedOnForUser>(e => _toggles[e.AggregateID].SwitchOn(e.User));
+			Register<ToggleSwitchedOffForUser>(e => _toggles[e.AggregateID].SwitchOff(e.User));
+			Register<ToggleSwitchedOnForGroup>(e => _toggles[e.AggregateID].SwitchOn(e.Group));
+			Register<ToggleSwitchedOffForGroup>(e => _toggles[e.AggregateID].SwitchOff(e.Group));
+
 			Register<TagAdded>(e => _toggles[e.AggregateID].Tags.Add(e.Name));
 			Register<TagRemoved>(e => _toggles[e.AggregateID].Tags.Remove(e.Name));
 		}

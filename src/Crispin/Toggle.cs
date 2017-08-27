@@ -45,8 +45,14 @@ namespace Crispin
 			_state = new ToggleState();
 
 			Register<ToggleCreated>(Apply);
-			Register<ToggleSwitchedOn>(Apply);
-			Register<ToggleSwitchedOff>(Apply);
+
+			Register<ToggleSwitchedOnForAnonymous>(Apply);
+			Register<ToggleSwitchedOffForAnonymous>(Apply);
+			Register<ToggleSwitchedOnForUser>(Apply);
+			Register<ToggleSwitchedOffForUser>(Apply);
+			Register<ToggleSwitchedOnForGroup>(Apply);
+			Register<ToggleSwitchedOffForGroup>(Apply);
+
 			Register<TagAdded>(Apply);
 			Register<TagRemoved>(Apply);
 		}
@@ -55,15 +61,14 @@ namespace Crispin
 		public bool IsActive(IGroupMembership membership, UserID userID)
 			=> _state.IsActive(membership, userID);
 
-		public void SwitchOn(UserID user, GroupID group)
-		{
-			ApplyEvent(new ToggleSwitchedOn(user, group));
-		}
+		public void SwitchOn(UserID user) => ApplyEvent(new ToggleSwitchedOnForUser(user));
+		public void SwitchOff(UserID user) => ApplyEvent(new ToggleSwitchedOffForUser(user));
 
-		public void SwitchOff(UserID user, GroupID group)
-		{
-			ApplyEvent(new ToggleSwitchedOff(user, group));
-		}
+		public void SwitchOn(GroupID group) => ApplyEvent(new ToggleSwitchedOnForGroup(group));
+		public void SwitchOff(GroupID group) => ApplyEvent(new ToggleSwitchedOffForGroup(group));
+
+		public void SwitchOnByDefault() => ApplyEvent(new ToggleSwitchedOnForAnonymous());
+		public void SwitchOffByDefault() => ApplyEvent(new ToggleSwitchedOffForAnonymous());
 
 		public void AddTag(string tag)
 		{
@@ -95,19 +100,40 @@ namespace Crispin
 			Description = e.Description;
 		}
 
-		private void Apply(ToggleSwitchedOff e)
+		private void Apply(ToggleSwitchedOffForAnonymous e)
 		{
-			//_isActive = false;
 			LastToggled = e.TimeStamp;
-
-			_state.HandleSwitching(e.User, e.Group, active: false);
+			_state.HandleSwitching(active: false);
 		}
 
-		private void Apply(ToggleSwitchedOn e)
+		private void Apply(ToggleSwitchedOnForAnonymous e)
 		{
 			LastToggled = e.TimeStamp;
+			_state.HandleSwitching(active: true);
+		}
 
-			_state.HandleSwitching(e.User, e.Group, active: true);
+		private void Apply(ToggleSwitchedOffForUser e)
+		{
+			LastToggled = e.TimeStamp;
+			_state.HandleSwitching(e.User, active: false);
+		}
+
+		private void Apply(ToggleSwitchedOnForUser e)
+		{
+			LastToggled = e.TimeStamp;
+			_state.HandleSwitching(e.User, active: true);
+		}
+
+		private void Apply(ToggleSwitchedOffForGroup e)
+		{
+			LastToggled = e.TimeStamp;
+			_state.HandleSwitching(e.Group, active: false);
+		}
+
+		private void Apply(ToggleSwitchedOnForGroup e)
+		{
+			LastToggled = e.TimeStamp;
+			_state.HandleSwitching(e.Group, active: true);
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);

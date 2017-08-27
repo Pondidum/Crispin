@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Crispin.Projections
 {
@@ -10,6 +11,7 @@ namespace Crispin.Projections
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public HashSet<string> Tags { get; }
+
 		public StateView State => new StateView
 		{
 			Anonymous = _states.AnonymousState,
@@ -18,13 +20,20 @@ namespace Crispin.Projections
 		};
 
 		private readonly ToggleState _states;
+
 		public ToggleView()
 		{
 			Tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			_states = new ToggleState();
 		}
 
-		public void SwitchOn(UserID user, GroupID group) => _states.HandleSwitching(user, group, true);
-		public void SwitchOff(UserID user, GroupID group) => _states.HandleSwitching(user, group, false);
+		public void SwitchOnByDefault() => _states.HandleSwitching(true);
+		public void SwitchOffByDefault() => _states.HandleSwitching(false);
+
+		public void SwitchOn(UserID user) => _states.HandleSwitching(user, true);
+		public void SwitchOff(UserID user) => _states.HandleSwitching(user, false);
+
+		public void SwitchOn(GroupID group) => _states.HandleSwitching(group, true);
+		public void SwitchOff(GroupID group) => _states.HandleSwitching(group, false);
 	}
 }

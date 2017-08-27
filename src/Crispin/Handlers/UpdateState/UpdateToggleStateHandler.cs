@@ -28,9 +28,9 @@ namespace Crispin.Handlers.UpdateState
 				if (message.Anonymous.HasValue)
 				{
 					if (message.Anonymous.Value)
-						toggle.SwitchOn(UserID.Empty, GroupID.Empty);
+						toggle.SwitchOnByDefault();
 					else
-						toggle.SwitchOff(UserID.Empty, GroupID.Empty);
+						toggle.SwitchOffByDefault();
 				}
 
 				session.Save(toggle);

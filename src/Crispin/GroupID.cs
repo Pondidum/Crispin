@@ -9,16 +9,18 @@ namespace Crispin
 		public static GroupID Parse(string user) => new GroupID(user);
 		public static GroupID Empty => new GroupID(string.Empty);
 
-		private readonly string _user;
+		private readonly string _group;
 
-		private GroupID(string user)
+		private GroupID(string group)
 		{
-			_user = user;
+			_group = string.IsNullOrWhiteSpace(group)
+				? null
+				: group;
 		}
 
 		public bool Equals(GroupID other)
 		{
-			return string.Equals(_user, other._user, StringComparison.OrdinalIgnoreCase);
+			return string.Equals(_group, other._group, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override bool Equals(object obj)
@@ -27,11 +29,11 @@ namespace Crispin
 			return obj is GroupID && Equals((GroupID)obj);
 		}
 
-		public override int GetHashCode() => _user != null
-			? StringComparer.OrdinalIgnoreCase.GetHashCode(_user)
+		public override int GetHashCode() => _group != null
+			? StringComparer.OrdinalIgnoreCase.GetHashCode(_group)
 			: 0;
 
-		public override string ToString() => _user;
+		public override string ToString() => _group;
 
 		public static bool operator ==(GroupID x, GroupID y)
 		{

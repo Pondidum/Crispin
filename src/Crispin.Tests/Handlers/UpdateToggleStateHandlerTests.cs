@@ -58,12 +58,7 @@ namespace Crispin.Tests.Handlers
 				users: null
 			));
 
-			var switchEvent = (ToggleSwitchedOn)_events.ShouldHaveSingleItem();
-
-			switchEvent.ShouldSatisfyAllConditions(
-				() => switchEvent.User.ShouldBe(UserID.Empty),
-				() => switchEvent.Group.ShouldBe(GroupID.Empty)
-			);
+			_events.ShouldHaveSingleItem().ShouldBeOfType<ToggleSwitchedOnForAnonymous>();
 		}
 	}
 }

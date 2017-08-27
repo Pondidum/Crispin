@@ -25,8 +25,8 @@ namespace Crispin.Tests
 			get
 			{
 				var noSwitches = Array.Empty<State>();
-				var onFor3 = new State[] { new State { User = User3, Active = true }};
-				var onForGroup2 = new State[] { new State { Group = Group2, Active = true}};
+				var onFor3 = new State[] { new State { User = User3, Active = true } };
+				var onForGroup2 = new State[] { new State { Group = Group2, Active = true } };
 				var overlappingGroups = new[]
 				{
 					new State { Group = Group1, Active = true },
@@ -71,7 +71,15 @@ namespace Crispin.Tests
 		{
 			var state = new ToggleState();
 			foreach (var e in events)
-				state.HandleSwitching(e.User, e.Group, e.Active);
+			{
+				if (e.User != UserID.Empty)
+					state.HandleSwitching(e.User, e.Active);
+				else if (e.Group != GroupID.Empty)
+					state.HandleSwitching(e.Group, e.Active);
+				else
+					state.HandleSwitching(e.Active);
+			}
+
 
 			var membership = Substitute.For<IGroupMembership>();
 			membership.GetGroupsFor(User1InGroup1).Returns(new[] { Group1 });
