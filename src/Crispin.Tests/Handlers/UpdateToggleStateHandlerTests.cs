@@ -62,7 +62,7 @@ namespace Crispin.Tests.Handlers
 
 			switchEvent.ShouldSatisfyAllConditions(
 				() => switchEvent.User.ShouldBe(UserID.Empty),
-				() => switchEvent.Group.ShouldBeNullOrWhiteSpace()
+				() => switchEvent.Group.ShouldBe(GroupID.Empty)
 			);
 		}
 	}

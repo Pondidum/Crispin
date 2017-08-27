@@ -5,9 +5,9 @@ namespace Crispin.Events
 	public class ToggleSwitchedOff : Event
 	{
 		public UserID User { get; }
-		public string Group { get; }
+		public GroupID Group { get; }
 
-		public ToggleSwitchedOff(UserID user, string group = null)
+		public ToggleSwitchedOff(UserID user, GroupID group)
 		{
 			User = user;
 			Group = group;

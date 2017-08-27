@@ -3,20 +3,20 @@ using Newtonsoft.Json;
 
 namespace Crispin
 {
-	[JsonConverter(typeof(UserIDConverter))]
-	public struct UserID : IEquatable<UserID>
+	[JsonConverter(typeof(GroupIDConverter))]
+	public struct GroupID : IEquatable<GroupID>
 	{
-		public static UserID Parse(string user) => new UserID(user);
-		public static UserID Empty => new UserID(string.Empty);
+		public static GroupID Parse(string user) => new GroupID(user);
+		public static GroupID Empty => new GroupID(string.Empty);
 
 		private readonly string _user;
 
-		private UserID(string user)
+		private GroupID(string user)
 		{
 			_user = user;
 		}
 
-		public bool Equals(UserID other)
+		public bool Equals(GroupID other)
 		{
 			return string.Equals(_user, other._user, StringComparison.OrdinalIgnoreCase);
 		}
@@ -24,7 +24,7 @@ namespace Crispin
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			return obj is UserID && Equals((UserID)obj);
+			return obj is GroupID && Equals((GroupID)obj);
 		}
 
 		public override int GetHashCode() => _user != null
@@ -33,18 +33,18 @@ namespace Crispin
 
 		public override string ToString() => _user;
 
-		public static bool operator ==(UserID x, UserID y)
+		public static bool operator ==(GroupID x, GroupID y)
 		{
 			return x.Equals(y);
 		}
 
-		public static bool operator !=(UserID x, UserID y)
+		public static bool operator !=(GroupID x, GroupID y)
 		{
 			return !(x == y);
 		}
 	}
 
-	public class UserIDConverter : JsonConverter
+	public class GroupIDConverter : JsonConverter
 	{
 		public override bool CanConvert(Type objectType) => objectType == typeof(ToggleID);
 
@@ -55,7 +55,7 @@ namespace Crispin
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
-			return UserID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
+			return GroupID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
 		}
 	}
 }

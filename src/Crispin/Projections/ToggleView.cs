@@ -24,7 +24,7 @@ namespace Crispin.Projections
 			_states = new ToggleState();
 		}
 
-		public void SwitchOn(UserID user, string group) => _states.HandleSwitching(user, group, true);
-		public void SwitchOff(UserID user, string group) => _states.HandleSwitching(user, group, false);
+		public void SwitchOn(UserID user, GroupID group) => _states.HandleSwitching(user, group, true);
+		public void SwitchOff(UserID user, GroupID group) => _states.HandleSwitching(user, group, false);
 	}
 }

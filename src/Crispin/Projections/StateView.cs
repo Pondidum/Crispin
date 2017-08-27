@@ -6,6 +6,6 @@ namespace Crispin.Projections
 	{
 		public bool Anonymous { get; set; }
 		public Dictionary<UserID, bool> Users { get; set; }
-		public Dictionary<string, bool> Groups { get; set; }
+		public Dictionary<GroupID, bool> Groups { get; set; }
 	}
 }

@@ -17,8 +17,8 @@ namespace Crispin.Tests
 		private static readonly UserID User4 = UserID.Parse("user-4");
 		private static readonly UserID User5InGroup1And2 = UserID.Parse("user-5 => group-1, group-2");
 
-		private const string Group1 = "group-1";
-		private const string Group2 = "group-2";
+		private static readonly GroupID Group1 = GroupID.Parse("group-1");
+		private static readonly GroupID Group2 = GroupID.Parse("group-2");
 
 		public static IEnumerable<object[]> ToggleStateMatrix
 		{
@@ -83,7 +83,7 @@ namespace Crispin.Tests
 		public class State
 		{
 			public UserID User { get; set; }
-			public string Group { get; set; }
+			public GroupID Group { get; set; }
 			public bool Active { get; set; }
 		}
 	}

@@ -7,24 +7,24 @@ namespace Crispin
 	public class ToggleState
 	{
 		private readonly Dictionary<UserID, bool> _users;
-		private readonly Dictionary<string, bool> _groups;
+		private readonly Dictionary<GroupID, bool> _groups;
 		private bool _anonymousActive;
 
 		public ToggleState()
 		{
 			_users = new Dictionary<UserID, bool>();
-			_groups = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+			_groups = new Dictionary<GroupID, bool>();
 			_anonymousActive = false;
 		}
 
 		public bool AnonymousState => _anonymousActive;
 		public Dictionary<UserID, bool> UserState => new Dictionary<UserID, bool>(_users);
-		public Dictionary<string, bool> GroupState => new Dictionary<string, bool>(_groups);
+		public Dictionary<GroupID, bool> GroupState => new Dictionary<GroupID, bool>(_groups);
 		
-		public void HandleSwitching(UserID user, string @group, bool active)
+		public void HandleSwitching(UserID user, GroupID group, bool active)
 		{
 			var hasUser = user != UserID.Empty;
-			var hasGroup = string.IsNullOrWhiteSpace(group) == false;
+			var hasGroup = group != GroupID.Empty;
 
 			if (hasUser)
 				_users[user] = active;

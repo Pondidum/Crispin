@@ -27,7 +27,7 @@ namespace Crispin.Rest.Tests.Toggles
 				State =
 				{
 					Anonymous = false,
-					Groups = { { "group-1", true } },
+					Groups = { { GroupID.Parse("group-1"), true } },
 					Users = { }
 				},
 				Tags = { "first", "dev" }

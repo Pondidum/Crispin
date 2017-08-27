@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -54,12 +55,12 @@ namespace Crispin
 		public bool IsActive(IGroupMembership membership, UserID userID)
 			=> _state.IsActive(membership, userID);
 
-		public void SwitchOn(UserID user, string group = null)
+		public void SwitchOn(UserID user, GroupID group)
 		{
 			ApplyEvent(new ToggleSwitchedOn(user, group));
 		}
 
-		public void SwitchOff(UserID user, string group = null)
+		public void SwitchOff(UserID user, GroupID group)
 		{
 			ApplyEvent(new ToggleSwitchedOff(user, group));
 		}
