@@ -1,6 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using Crispin.Handlers;
 using Crispin.Handlers.Create;
 using Crispin.Rest.Toggles;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +18,7 @@ namespace Crispin.Rest.Tests.Toggles
 				.Send(Arg.Any<CreateToggleRequest>())
 				.Returns(response);
 
-			var result = await Controller.Post(new TogglePostRequest()) as CreatedResult;
+			var result = (CreatedResult) await Controller.Post(new TogglePostRequest());
 
 			result.Location.ShouldBe("/toggles/id/" + response.ToggleID);
 		}
