@@ -12,40 +12,51 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using StructureMap;
 
 namespace Crispin.Rest
 {
-    public class Startup
-    {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-            services.AddMediatR(typeof(Toggle).Assembly);
+	public class Startup
+	{
+		// This method gets called by the runtime. Use this method to add services to the container.
+		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+		public IServiceProvider ConfigureServices(IServiceCollection services)
+		{
+			services.AddMvc();
+			services.AddMediatR(typeof(Toggle).Assembly);
 
-            var store = new InMemoryStorage();
-            store.RegisterProjection(new AllToggles());
-            store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			var store = new InMemoryStorage();
+			store.RegisterProjection(new AllToggles());
+			store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
 
-            services.AddSingleton<IStorage>(store);
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TimingBehavior<,>));
-        }
+			var container = new Container(_ =>
+			{
+				_.Populate(services);
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+				_.Scan(a =>
+				{
+					a.AssemblyContainingType<Toggle>();
+					a.WithDefaultConventions();
+				});
 
-            app.UseMvc();
+				_.For<IStorage>().Use(store);
+				_.For(typeof(IPipelineBehavior<,>)).Use(typeof(TimingBehavior<,>));
+			});
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
-        }
-    }
+			return container.GetInstance<IServiceProvider>();
+		}
+
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
+
+			app.UseMvc();
+
+			app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
+		}
+	}
 }
