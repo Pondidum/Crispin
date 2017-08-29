@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Crispin.Rest.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +39,7 @@ namespace Crispin.Rest
 				app.UseDeveloperExceptionPage();
 			}
 
+			app.UseMiddleware<ValidationMiddleware>();
 			app.UseMvc();
 
 			app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
