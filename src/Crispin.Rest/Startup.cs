@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Crispin.Infrastructure;
-using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,22 +22,10 @@ namespace Crispin.Rest
 			services.AddMvc();
 			services.AddMediatR(typeof(Toggle).Assembly);
 
-			var store = new InMemoryStorage();
-			store.RegisterProjection(new AllToggles());
-			store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
-
 			var container = new Container(_ =>
 			{
 				_.Populate(services);
-
-				_.Scan(a =>
-				{
-					a.AssemblyContainingType<Toggle>();
-					a.WithDefaultConventions();
-				});
-
-				_.For<IStorage>().Use(store);
-				_.For(typeof(IPipelineBehavior<,>)).Use(typeof(TimingBehavior<,>));
+				_.AddRegistry<CrispinRestRegistry>();
 			});
 
 			return container.GetInstance<IServiceProvider>();
