@@ -7,7 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="3.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />

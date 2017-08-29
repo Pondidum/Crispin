@@ -20,12 +20,12 @@ namespace Crispin.Rest
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc();
-			services.AddMediatR(typeof(Toggle).Assembly);
 
 			var container = new Container(_ =>
 			{
 				_.Populate(services);
 				_.AddRegistry<CrispinRestRegistry>();
+				_.AddRegistry<MediatrRegistry>();
 			});
 
 			return container.GetInstance<IServiceProvider>();
