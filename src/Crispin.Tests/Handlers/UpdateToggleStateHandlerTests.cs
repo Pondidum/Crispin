@@ -102,5 +102,41 @@ namespace Crispin.Tests.Handlers
 
 			Event<ToggleSwitchedOffForUser>().User.ShouldBe(userID);
 		}
+		
+		[Fact]
+		public async Task When_switching_on_for_a_group()
+		{
+			var groupID = GroupID.Parse("group-1");
+			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			{
+				Groups = { { groupID, true } }
+			});
+
+			EventTypes().ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(ToggleSwitchedOnForGroup)
+			});
+
+			Event<ToggleSwitchedOnForGroup>().Group.ShouldBe(groupID);
+		}
+
+		[Fact]
+		public async Task When_switching_off_for_a_group()
+		{
+			var groupID = GroupID.Parse("group-1");
+			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			{
+				Groups = { { groupID, false } }
+			});
+
+			EventTypes().ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(ToggleSwitchedOffForGroup)
+			});
+
+			Event<ToggleSwitchedOffForGroup>().Group.ShouldBe(groupID);
+		}
 	}
 }
