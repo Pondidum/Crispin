@@ -80,7 +80,7 @@ Restful Feature Toggle Service
     * [x] GET => `{ toggleview }`
     * [ ] `/state`
       * [x] GET => `[ { type: user, id: xxx, state: active }, { type: group, id: yyy, state: inactive} ]`
-      * [ ] POST => `{ type: user, id: xxx }`
+      * [x] POST => `{ type: user, id: xxx }`
       * [ ] DELETE => `{ type: user, id: xxx }`
     * [ ] `tags`
       * [x] GET => `[ tag, tag, tag ]`
