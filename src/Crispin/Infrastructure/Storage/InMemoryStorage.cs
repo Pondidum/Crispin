@@ -9,10 +9,10 @@ namespace Crispin.Infrastructure.Storage
 		private readonly IDictionary<ToggleID, List<Event>> _events;
 		private readonly List<Projection> _projections;
 
-		public InMemoryStorage()
+		public InMemoryStorage(Dictionary<ToggleID, List<Event>> events = null)
 		{
 			_builders = new Dictionary<Type, Func<List<Event>, AggregateRoot>>();
-			_events = new Dictionary<ToggleID, List<Event>>();
+			_events = events ?? new Dictionary<ToggleID, List<Event>>();
 			_projections = new List<Projection>();
 		}
 

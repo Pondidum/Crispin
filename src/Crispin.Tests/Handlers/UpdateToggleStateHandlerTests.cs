@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Handlers.UpdateState;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
+using Crispin.Projections;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -14,38 +16,36 @@ namespace Crispin.Tests.Handlers
 	public class UpdateToggleStateHandlerTests
 	{
 		private readonly UpdateToggleStateHandler _handler;
-		private readonly IStorageSession _session;
-		private readonly List<object> _events;
 		private readonly ToggleID _toggleID;
+		private readonly Dictionary<ToggleID, List<Event>> _events;
 
 		public UpdateToggleStateHandlerTests()
 		{
-			_events = new List<object>();
-			var storage = Substitute.For<IStorage>();
+			_events = new Dictionary<ToggleID, List<Event>>();
 
-			_session = Substitute.For<IStorageSession>();
-			_session
-				.When(x => x.Save(Arg.Any<AggregateRoot>()))
-				.Do(ci => _events.AddRange(((IEvented)ci.Arg<AggregateRoot>()).GetPendingEvents()));
+			var storage = new InMemoryStorage(_events);
+			storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			storage.RegisterProjection(new AllToggles());
+
 			_handler = new UpdateToggleStateHandler(storage);
+			var toggle = Toggle.CreateNew(() => "", "name", "desc");
 
-			storage.BeginSession().Returns(_session);
+			using (var session = storage.BeginSession())
+				session.Save(toggle);
 
-			_toggleID = ToggleID.CreateNew();
-			var toggle = Toggle.LoadFrom(() => "", new[]
-			{
-				new ToggleCreated(_toggleID, "name", "desc"),
-			});
-
-			_session.LoadAggregate<Toggle>(toggle.ID).Returns(toggle);
+			_toggleID = toggle.ID;
 		}
 
 		[Fact]
-		public async Task When_the_toggle_doesnt_exist()
+		public void When_the_toggle_doesnt_exist()
 		{
-			var response = await _handler.Handle(new UpdateToggleStateRequest(ToggleID.CreateNew(), null, null, null));
+			var toggleID = ToggleID.CreateNew();
 
-			_events.ShouldBeEmpty();
+			Should.Throw<KeyNotFoundException>(
+				() => _handler.Handle(new UpdateToggleStateRequest(toggleID, null, null, null))
+			);
+
+			_events.ShouldNotContainKey(toggleID);
 		}
 
 		[Fact]
@@ -58,7 +58,11 @@ namespace Crispin.Tests.Handlers
 				users: null
 			));
 
-			_events.ShouldHaveSingleItem().ShouldBeOfType<ToggleSwitchedOnForAnonymous>();
+			_events[_toggleID].Select(e => e.GetType()).ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(ToggleSwitchedOnForAnonymous)
+			});
 		}
 	}
 }
