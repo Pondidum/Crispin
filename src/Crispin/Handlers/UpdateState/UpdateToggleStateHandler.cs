@@ -33,6 +33,14 @@ namespace Crispin.Handlers.UpdateState
 						toggle.SwitchOffByDefault();
 				}
 
+				foreach (var userState in message.Users)
+				{
+					if (userState.Value)
+						toggle.SwitchOn(userState.Key);
+					else
+						toggle.SwitchOff(userState.Key);
+				}
+
 				session.Save(toggle);
 				session.Commit();
 

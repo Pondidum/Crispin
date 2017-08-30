@@ -36,33 +36,71 @@ namespace Crispin.Tests.Handlers
 			_toggleID = toggle.ID;
 		}
 
+		private IEnumerable<Type> EventTypes() => _events[_toggleID].Select(e => e.GetType());
+		private TEvent Event<TEvent>() => _events[_toggleID].OfType<TEvent>().Single();
+
 		[Fact]
 		public void When_the_toggle_doesnt_exist()
 		{
 			var toggleID = ToggleID.CreateNew();
 
 			Should.Throw<KeyNotFoundException>(
-				() => _handler.Handle(new UpdateToggleStateRequest(toggleID, null, null, null))
+				() => _handler.Handle(new UpdateToggleStateRequest(toggleID))
 			);
 
 			_events.ShouldNotContainKey(toggleID);
 		}
 
 		[Fact]
-		public async Task When_updating_a_toggle_with_no_current_state()
+		public async Task When_updating_a_toggle_with_no_current_state_for_anonymous()
 		{
-			var response = await _handler.Handle(new UpdateToggleStateRequest(
-				_toggleID,
-				anonymous: true,
-				groups: null,
-				users: null
-			));
+			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			{
+				Anonymous = true
+			});
 
-			_events[_toggleID].Select(e => e.GetType()).ShouldBe(new[]
+			EventTypes().ShouldBe(new[]
 			{
 				typeof(ToggleCreated),
 				typeof(ToggleSwitchedOnForAnonymous)
 			});
+		}
+
+
+		[Fact]
+		public async Task When_switching_on_for_a_user()
+		{
+			var userID = UserID.Parse("user-1");
+			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			{
+				Users = { { userID, true } }
+			});
+
+			EventTypes().ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(ToggleSwitchedOnForUser)
+			});
+
+			Event<ToggleSwitchedOnForUser>().User.ShouldBe(userID);
+		}
+
+		[Fact]
+		public async Task When_switching_off_for_a_user()
+		{
+			var userID = UserID.Parse("user-1");
+			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			{
+				Users = { { userID, false } }
+			});
+
+			EventTypes().ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(ToggleSwitchedOffForUser)
+			});
+
+			Event<ToggleSwitchedOffForUser>().User.ShouldBe(userID);
 		}
 	}
 }

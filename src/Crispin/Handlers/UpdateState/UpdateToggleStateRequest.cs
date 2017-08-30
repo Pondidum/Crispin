@@ -6,16 +6,15 @@ namespace Crispin.Handlers.UpdateState
 	public class UpdateToggleStateRequest : IRequest<UpdateToggleStateResponse>
 	{
 		public ToggleID ToggleID { get; }
-		public bool? Anonymous { get; }
-		public Dictionary<string, bool> Groups { get; }
-		public Dictionary<string, bool> Users { get; }
+		public bool? Anonymous { get; set; }
+		public Dictionary<GroupID, bool> Groups { get; set; }
+		public Dictionary<UserID, bool> Users { get; set; }
 
-		public UpdateToggleStateRequest(ToggleID toggleID, bool? anonymous, Dictionary<string, bool> groups, Dictionary<string, bool> users)
+		public UpdateToggleStateRequest(ToggleID toggleID)
 		{
 			ToggleID = toggleID;
-			Anonymous = anonymous;
-			Groups = groups;
-			Users = users;
+			Groups = new Dictionary<GroupID, bool>();
+			Users = new Dictionary<UserID, bool>();
 		}
 	}
 }
