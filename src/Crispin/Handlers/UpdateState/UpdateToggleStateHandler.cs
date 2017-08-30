@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
@@ -36,29 +36,14 @@ namespace Crispin.Handlers.UpdateState
 				session.Save(toggle);
 				session.Commit();
 
-				return Task.FromResult(new UpdateToggleStateResponse());
+				var projection = session.LoadProjection<AllToggles>();
+				var view = projection.Toggles.Single(tv => tv.ID == toggle.ID);
+
+				return Task.FromResult(new UpdateToggleStateResponse
+				{
+					State = view.State
+				});
 			}
 		}
-	}
-
-	public class UpdateToggleStateRequest : IRequest<UpdateToggleStateResponse>
-	{
-		public ToggleID ToggleID { get; }
-		public bool? Anonymous { get; }
-		public Dictionary<string, bool> Groups { get; }
-		public Dictionary<string, bool> Users { get; }
-
-		public UpdateToggleStateRequest(ToggleID toggleID, bool? anonymous, Dictionary<string, bool> groups, Dictionary<string, bool> users)
-		{
-			ToggleID = toggleID;
-			Anonymous = anonymous;
-			Groups = groups;
-			Users = users;
-		}
-	}
-
-	public class UpdateToggleStateResponse
-	{
-		//public StateView State { get; set; }
 	}
 }
