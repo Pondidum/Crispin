@@ -7,5 +7,11 @@ namespace Crispin.Rest.Toggles
 		public bool? Anonymous { get; set; }
 		public Dictionary<string, bool> Users { get; set; }
 		public Dictionary<string, bool> Groups { get; set; }
+
+		public UpdateStateModel()
+		{
+			Users = new Dictionary<string, bool>();
+			Groups = new Dictionary<string, bool>();
+		}
 	}
 }

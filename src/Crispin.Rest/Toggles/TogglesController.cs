@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Handlers;
 using Crispin.Handlers.Create;
@@ -7,6 +8,7 @@ using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Crispin.Rest.Toggles
 {
@@ -64,16 +66,15 @@ namespace Crispin.Rest.Toggles
 		[HttpPost]
 		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
 		{
-			var request = new UpdateToggleStateRequest(
-				ToggleID.Parse(id),
-				model.Anonymous,
-				model.Groups,
-				model.Users
-			);
+			var request = new UpdateToggleStateRequest(ToggleID.Parse(id)) {
+				Anonymous = model.Anonymous,
+				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => p.Value),
+				Users = model.Users.ToDictionary(p => UserID.Parse(p.Key), p => p.Value)
+			};
 
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response); //??
+			return new JsonResult(response.State); //??
 		}
 
 		[Route("name/{name}/state")]
