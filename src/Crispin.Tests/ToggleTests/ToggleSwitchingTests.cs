@@ -22,7 +22,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle();
 
-			Toggle.SwitchOn(UserID.Parse("user-1"));
+			Toggle.ChangeState(UserID.Parse("user-1"), true);
 
 			Toggle.IsActive(Membership, UserID.Parse("user-1")).ShouldBe(true);
 			Events.ShouldBe(new[]
@@ -36,7 +36,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(new ToggleSwitchedOnForAnonymous());
 
-			Toggle.SwitchOffByDefault();
+			Toggle.ChangeDefaultState(newState: false);
 
 			Toggle.IsActive(Membership, UserID.Empty).ShouldBe(false);
 			Events.ShouldBe(new[]

@@ -26,22 +26,13 @@ namespace Crispin.Handlers.UpdateState
 					return Task.FromResult(new UpdateToggleStateResponse());
 
 				if (message.Anonymous.HasValue)
-					if (message.Anonymous.Value)
-						toggle.SwitchOnByDefault();
-					else
-						toggle.SwitchOffByDefault();
+					toggle.ChangeDefaultState(message.Anonymous.Value);
 
 				foreach (var userState in message.Users)
-					if (userState.Value)
-						toggle.SwitchOn(userState.Key);
-					else
-						toggle.SwitchOff(userState.Key);
+					toggle.ChangeState(userState.Key, userState.Value);
 
 				foreach (var groupState in message.Groups)
-					if (groupState.Value)
-						toggle.SwitchOn(groupState.Key);
-					else
-						toggle.SwitchOff(groupState.Key);
+					toggle.ChangeState(groupState.Key, groupState.Value);
 
 				session.Save(toggle);
 				session.Commit();
