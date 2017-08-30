@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -7,24 +8,16 @@ namespace Crispin.Infrastructure.Validation
 {
 	public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	{
-		private readonly Func<IRequestValidator<TRequest>> _validator;
+		private readonly IEnumerable<IRequestValidator<TRequest>> _validators;
 
-		public ValidationBehavior(Func<IRequestValidator<TRequest>> validator)
+		public ValidationBehavior(IEnumerable<IRequestValidator<TRequest>> validators)
 		{
-			_validator = validator;
+			_validators = validators;
 		}
 
 		public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next)
 		{
-			IRequestValidator<TRequest> validator = null;
-			try
-			{
-				validator = _validator();
-			}
-			catch (Exception e)
-			{
-				// lolol on error resume next
-			}
+			var validator = _validators.FirstOrDefault();
 
 			if (validator != null)
 			{
