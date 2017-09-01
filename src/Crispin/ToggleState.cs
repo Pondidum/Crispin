@@ -1,54 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace Crispin
 {
 	public class ToggleState
 	{
-		private readonly Dictionary<UserID, bool> _users;
-		private readonly Dictionary<GroupID, bool> _groups;
-		private bool _anonymousActive;
+		private readonly Dictionary<UserID, State> _users;
+		private readonly Dictionary<GroupID, State> _groups;
+		private State _anonymousActive;
 
 		public ToggleState()
 		{
-			_users = new Dictionary<UserID, bool>();
-			_groups = new Dictionary<GroupID, bool>();
-			_anonymousActive = false;
+			_users = new Dictionary<UserID, State>();
+			_groups = new Dictionary<GroupID, State>();
+			_anonymousActive = State.Off;
 		}
 
-		public bool AnonymousState => _anonymousActive;
-		public Dictionary<UserID, bool> UserState => new Dictionary<UserID, bool>(_users);
-		public Dictionary<GroupID, bool> GroupState => new Dictionary<GroupID, bool>(_groups);
+		public State? AnonymousState => _anonymousActive;
+		public Dictionary<UserID, State> UserState => new Dictionary<UserID, State>(_users);
+		public Dictionary<GroupID, State> GroupState => new Dictionary<GroupID, State>(_groups);
 
-		public void HandleSwitching(UserID user, bool active)
+		public void HandleSwitching(UserID user, State? newState)
 		{
 			var hasUser = user != UserID.Empty;
-			if (hasUser)
-				_users[user] = active;
+			if (hasUser && newState.HasValue)
+				_users[user] = newState.Value;
 		}
 
-		public void HandleSwitching(GroupID group, bool active)
+		public void HandleSwitching(GroupID group, State? newState)
 		{
 			var hasGroup = group != GroupID.Empty;
-			if (hasGroup)
-				_groups[group] = active;
+			if (hasGroup && newState.HasValue)
+				_groups[group] = newState.Value;
 		}
 
-		public void HandleSwitching(bool active)
+		public void HandleSwitching(State newState)
 		{
-			_anonymousActive = active;
+			_anonymousActive = newState;
 		}
 
 		public bool IsActive(IGroupMembership membership, UserID userID)
 		{
 			if (userID == UserID.Empty)
-				return _anonymousActive;
+				return _anonymousActive == State.On;
 
 			if (_users.ContainsKey(userID))
-				return _users[userID];
+				return _users[userID]  == State.On;
 
 			var userGroups = membership.GetGroupsFor(userID);
 
@@ -57,12 +54,12 @@ namespace Crispin
 				.Select(g => _groups[g])
 				.ToArray();
 
-			if (setGroups.Any() && setGroups.All(x => x))
+			if (setGroups.Any() && setGroups.All(x => x == State.On))
 			{
 				return true;
 			}
 
-			return _anonymousActive;
+			return _anonymousActive == State.On;
 		}
 	}
 }
