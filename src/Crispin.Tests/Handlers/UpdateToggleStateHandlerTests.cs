@@ -56,7 +56,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
 			{
-				Anonymous = true
+				Anonymous = States.On
 			});
 
 			EventTypes().ShouldBe(new[]
@@ -73,7 +73,7 @@ namespace Crispin.Tests.Handlers
 			var userID = UserID.Parse("user-1");
 			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
 			{
-				Users = { { userID, true } }
+				Users = { { userID, States.On } }
 			});
 
 			EventTypes().ShouldBe(new[]
@@ -91,7 +91,7 @@ namespace Crispin.Tests.Handlers
 			var userID = UserID.Parse("user-1");
 			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
 			{
-				Users = { { userID, false } }
+				Users = { { userID, States.Off } }
 			});
 
 			EventTypes().ShouldBe(new[]
@@ -109,7 +109,7 @@ namespace Crispin.Tests.Handlers
 			var groupID = GroupID.Parse("group-1");
 			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
 			{
-				Groups = { { groupID, true } }
+				Groups = { { groupID, States.On } }
 			});
 
 			EventTypes().ShouldBe(new[]
@@ -127,7 +127,7 @@ namespace Crispin.Tests.Handlers
 			var groupID = GroupID.Parse("group-1");
 			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
 			{
-				Groups = { { groupID, false } }
+				Groups = { { groupID, States.Off } }
 			});
 
 			EventTypes().ShouldBe(new[]

@@ -67,9 +67,9 @@ namespace Crispin.Rest.Toggles
 		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
 		{
 			var request = new UpdateToggleStateRequest(ToggleID.Parse(id)) {
-				Anonymous = model.Anonymous,
-				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => p.Value),
-				Users = model.Users.ToDictionary(p => UserID.Parse(p.Key), p => p.Value)
+				Anonymous = model.Anonymous.AsState(),
+				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => p.Value.AsState()),
+				Users = model.Users.ToDictionary(p => UserID.Parse(p.Key), p => p.Value.AsState())
 			};
 
 			var response = await _mediator.Send(request);

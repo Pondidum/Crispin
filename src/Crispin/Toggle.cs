@@ -61,23 +61,27 @@ namespace Crispin
 		public bool IsActive(IGroupMembership membership, UserID userID)
 			=> _state.IsActive(membership, userID);
 
-		public void ChangeState(UserID user, bool newState)
+		public void ChangeState(UserID user, States? newState)
 		{
-			if (newState)
+			if (newState.HasValue == false)
+				ApplyEvent(new ToggleUnsetForUser(user));
+			else if (newState.Value == States.On)
 				ApplyEvent(new ToggleSwitchedOnForUser(user));
 			else
 				ApplyEvent(new ToggleSwitchedOffForUser(user));
 		}
 
-		public void ChangeState(GroupID group, bool newState)
+		public void ChangeState(GroupID group, States? newState)
 		{
-			if (newState)
+			if (newState.HasValue == false)
+				ApplyEvent(new ToggleUnsetForGroup(group));
+			else if (newState.Value == States.On)
 				ApplyEvent(new ToggleSwitchedOnForGroup(group));
 			else
 				ApplyEvent(new ToggleSwitchedOffForGroup(group));
 		}
 
-		public void ChangeDefaultState(bool newState) => ApplyEvent(newState
+		public void ChangeDefaultState(States newState) => ApplyEvent(newState == States.On
 			? new ToggleSwitchedOnForAnonymous() as Event
 			: new ToggleSwitchedOffForAnonymous() as Event);
 

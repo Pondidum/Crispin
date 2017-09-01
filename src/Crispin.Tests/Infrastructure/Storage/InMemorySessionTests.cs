@@ -81,7 +81,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.ChangeDefaultState(newState: true);
+			toggle.ChangeDefaultState(newState: States.On);
 
 			_session.Save(toggle);
 
@@ -93,7 +93,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.ChangeDefaultState(newState: true);
+			toggle.ChangeDefaultState(newState: States.On);
 
 			_session.Save(toggle);
 			_session.Commit();
@@ -111,7 +111,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(() => "", "First", "hi");
 			toggle.AddTag("one");
-			toggle.ChangeState(UserID.Parse("user-1"), true);
+			toggle.ChangeState(UserID.Parse("user-1"), States.On);
 
 			_session.Save(toggle);
 
@@ -133,7 +133,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_session.Save(toggle);
 			_session.Commit();
 
-			toggle.ChangeState(UserID.Parse("user-1"), true);
+			toggle.ChangeState(UserID.Parse("user-1"), States.On);
 			_session.Save(toggle);
 
 			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
