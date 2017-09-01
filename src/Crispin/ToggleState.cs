@@ -23,8 +23,15 @@ namespace Crispin
 		public void HandleSwitching(UserID user, States? newState)
 		{
 			var hasUser = user != UserID.Empty;
-			if (hasUser && newState.HasValue)
+			var hasValue = newState.HasValue;
+
+			if (!hasUser)
+				return;
+
+			if (hasValue)
 				_users[user] = newState.Value;
+			else
+				_users.Remove(user);
 		}
 
 		public void HandleSwitching(GroupID group, States? newState)

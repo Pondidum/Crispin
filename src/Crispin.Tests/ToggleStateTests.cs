@@ -88,6 +88,31 @@ namespace Crispin.Tests
 			state.IsActive(membership, user).ShouldBe(expected);
 		}
 
+		[Theory]
+		[InlineData(States.On, null, false, false)]
+		[InlineData(States.Off, null, false, false)]
+		[InlineData(States.On, States.On, true, true)]
+		[InlineData(States.Off, States.On, true, true)]
+		[InlineData(States.On, States.Off, true, false)]
+		[InlineData(States.Off, States.Off, true, false)]
+		public void When_passing_null_to_a_set_user(States initialState, States? newState, bool shouldContain, bool expectedActive)
+		{
+			var state = new ToggleState();
+			state.HandleSwitching(User3, initialState);
+
+			state.HandleSwitching(User3, newState);
+
+			if (shouldContain)
+				state.UserState.ShouldContainKey(User3);
+			else
+				state.UserState.ShouldNotContainKey(User3);
+
+			var membership = Substitute.For<IGroupMembership>();
+			membership.GetGroupsFor(Arg.Any<UserID>()).Returns(Enumerable.Empty<GroupID>());
+
+			state.IsActive(membership, User3).ShouldBe(expectedActive);
+		}
+
 		public class State
 		{
 			public UserID User { get; set; }
