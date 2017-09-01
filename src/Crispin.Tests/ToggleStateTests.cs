@@ -95,7 +95,7 @@ namespace Crispin.Tests
 		[InlineData(States.Off, States.On, true, true)]
 		[InlineData(States.On, States.Off, true, false)]
 		[InlineData(States.Off, States.Off, true, false)]
-		public void When_passing_null_to_a_set_user(States initialState, States? newState, bool shouldContain, bool expectedActive)
+		public void When_passing_state_to_a_user(States initialState, States? newState, bool shouldContain, bool expectedActive)
 		{
 			var state = new ToggleState();
 			state.HandleSwitching(User3, initialState);
@@ -111,6 +111,31 @@ namespace Crispin.Tests
 			membership.GetGroupsFor(Arg.Any<UserID>()).Returns(Enumerable.Empty<GroupID>());
 
 			state.IsActive(membership, User3).ShouldBe(expectedActive);
+		}
+		
+		[Theory]
+		[InlineData(States.On, null, false, false)]
+		[InlineData(States.Off, null, false, false)]
+		[InlineData(States.On, States.On, true, true)]
+		[InlineData(States.Off, States.On, true, true)]
+		[InlineData(States.On, States.Off, true, false)]
+		[InlineData(States.Off, States.Off, true, false)]
+		public void When_passing_state_to_a_group(States initialState, States? newState, bool shouldContain, bool expectedActive)
+		{
+			var state = new ToggleState();
+			state.HandleSwitching(Group1, initialState);
+
+			state.HandleSwitching(Group1, newState);
+
+			if (shouldContain)
+				state.GroupState.ShouldContainKey(Group1);
+			else
+				state.GroupState.ShouldNotContainKey(Group1);
+
+			var membership = Substitute.For<IGroupMembership>();
+			membership.GetGroupsFor(Arg.Any<UserID>()).Returns(new[] { Group1 });
+
+			state.IsActive(membership, User1InGroup1).ShouldBe(expectedActive);
 		}
 
 		public class State

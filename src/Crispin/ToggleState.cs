@@ -25,7 +25,7 @@ namespace Crispin
 			var hasUser = user != UserID.Empty;
 			var hasValue = newState.HasValue;
 
-			if (!hasUser)
+			if (hasUser == false)
 				return;
 
 			if (hasValue)
@@ -37,8 +37,15 @@ namespace Crispin
 		public void HandleSwitching(GroupID group, States? newState)
 		{
 			var hasGroup = group != GroupID.Empty;
-			if (hasGroup && newState.HasValue)
+			var hasValue = newState.HasValue;
+
+			if (hasGroup == false)
+				return;
+
+			if (hasValue)
 				_groups[group] = newState.Value;
+			else
+				_groups.Remove(group);
 		}
 
 		public void HandleSwitching(States newState)
