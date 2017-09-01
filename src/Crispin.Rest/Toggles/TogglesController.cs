@@ -66,10 +66,26 @@ namespace Crispin.Rest.Toggles
 		[HttpPost]
 		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
 		{
-			var request = new UpdateToggleStateRequest(ToggleID.Parse(id)) {
+			var request = new UpdateToggleStateRequest(ToggleID.Parse(id))
+			{
 				Anonymous = model.Anonymous.AsState(),
 				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => p.Value.AsState()),
 				Users = model.Users.ToDictionary(p => UserID.Parse(p.Key), p => p.Value.AsState())
+			};
+
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.State);
+		}
+
+		[Route("id/{id}/state")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteState(Guid id, [FromBody] DeleteStateModel model)
+		{
+			var request = new UpdateToggleStateRequest(ToggleID.Parse(id))
+			{
+				Groups = model.Groups.ToDictionary(GroupID.Parse, p => (States?)null),
+				Users = model.Users.ToDictionary(UserID.Parse, p => (States?)null)
 			};
 
 			var response = await _mediator.Send(request);

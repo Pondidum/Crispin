@@ -7,14 +7,14 @@ namespace Crispin.Handlers.UpdateState
 	{
 		public ToggleID ToggleID { get; }
 		public States? Anonymous { get; set; }
-		public Dictionary<GroupID, States> Groups { get; set; }
-		public Dictionary<UserID, States> Users { get; set; }
+		public Dictionary<GroupID, States?> Groups { get; set; }
+		public Dictionary<UserID, States?> Users { get; set; }
 
 		public UpdateToggleStateRequest(ToggleID toggleID)
 		{
 			ToggleID = toggleID;
-			Groups = new Dictionary<GroupID, States>();
-			Users = new Dictionary<UserID, States>();
+			Groups = new Dictionary<GroupID, States?>();
+			Users = new Dictionary<UserID, States?>();
 		}
 	}
 }
