@@ -4,8 +4,8 @@ namespace Crispin.Projections
 {
 	public class StateView
 	{
-		public bool Anonymous { get; set; }
-		public Dictionary<UserID, bool> Users { get; set; }
-		public Dictionary<GroupID, bool> Groups { get; set; }
+		public States Anonymous { get; set; }
+		public Dictionary<UserID, States> Users { get; set; }
+		public Dictionary<GroupID, States> Groups { get; set; }
 	}
 }

@@ -38,7 +38,7 @@ namespace Crispin.Rest.Tests.Toggles
 
 			await Controller.Post(model);
 
-			Mediator.Received().Send(Arg.Is<CreateToggleRequest>(
+			await Mediator.Received().Send(Arg.Is<CreateToggleRequest>(
 				request => request.Name == model.Name && request.Description == model.Description
 			));
 		}

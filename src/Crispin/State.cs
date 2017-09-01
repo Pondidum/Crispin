@@ -1,6 +1,6 @@
 ﻿namespace Crispin
 {
-	public enum State
+	public enum States
 	{
 		Off,
 		On

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Crispin.Projections
 {
@@ -27,13 +25,13 @@ namespace Crispin.Projections
 			_states = new ToggleState();
 		}
 
-		public void SwitchOnByDefault() => _states.HandleSwitching(true);
-		public void SwitchOffByDefault() => _states.HandleSwitching(false);
+		public void SwitchOnByDefault() => _states.HandleSwitching(States.On);
+		public void SwitchOffByDefault() => _states.HandleSwitching(States.Off);
 
-		public void SwitchOn(UserID user) => _states.HandleSwitching(user, true);
-		public void SwitchOff(UserID user) => _states.HandleSwitching(user, false);
+		public void SwitchOn(UserID user) => _states.HandleSwitching(user, States.On);
+		public void SwitchOff(UserID user) => _states.HandleSwitching(user, States.Off);
 
-		public void SwitchOn(GroupID group) => _states.HandleSwitching(group, true);
-		public void SwitchOff(GroupID group) => _states.HandleSwitching(group, false);
+		public void SwitchOn(GroupID group) => _states.HandleSwitching(group, States.On);
+		public void SwitchOff(GroupID group) => _states.HandleSwitching(group, States.Off);
 	}
 }

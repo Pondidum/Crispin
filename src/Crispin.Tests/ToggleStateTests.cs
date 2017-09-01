@@ -25,12 +25,12 @@ namespace Crispin.Tests
 			get
 			{
 				var noSwitches = Array.Empty<State>();
-				var onFor3 = new State[] { new State { User = User3, Active = true } };
-				var onForGroup2 = new State[] { new State { Group = Group2, Active = true } };
+				var onFor3 = new State[] { new State { User = User3, Active = States.On } };
+				var onForGroup2 = new State[] { new State { Group = Group2, Active = States.On } };
 				var overlappingGroups = new[]
 				{
-					new State { Group = Group1, Active = true },
-					new State { Group = Group2, Active = false }
+					new State { Group = Group1, Active = States.On },
+					new State { Group = Group2, Active = States.Off }
 				};
 
 				var matrix = new object[][]
@@ -92,7 +92,7 @@ namespace Crispin.Tests
 		{
 			public UserID User { get; set; }
 			public GroupID Group { get; set; }
-			public bool Active { get; set; }
+			public States Active { get; set; }
 		}
 	}
 }

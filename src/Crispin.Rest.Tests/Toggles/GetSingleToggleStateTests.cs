@@ -25,8 +25,8 @@ namespace Crispin.Rest.Tests.Toggles
 				Description = "the first toggle",
 				State =
 				{
-					Anonymous = false,
-					Groups = { { GroupID.Parse("group-1"), true } },
+					Anonymous = States.Off,
+					Groups = { { GroupID.Parse("group-1"), States.On } },
 					Users = { }
 				},
 				Tags = { "first", "dev" }

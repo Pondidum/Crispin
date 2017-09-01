@@ -114,37 +114,37 @@ namespace Crispin
 		private void Apply(ToggleSwitchedOffForAnonymous e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(active: false);
+			_state.HandleSwitching(newState: States.Off);
 		}
 
 		private void Apply(ToggleSwitchedOnForAnonymous e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(active: true);
+			_state.HandleSwitching(newState: States.On);
 		}
 
 		private void Apply(ToggleSwitchedOffForUser e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.User, active: false);
+			_state.HandleSwitching(e.User, newState: States.Off);
 		}
 
 		private void Apply(ToggleSwitchedOnForUser e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.User, active: true);
+			_state.HandleSwitching(e.User, newState: States.On);
 		}
 
 		private void Apply(ToggleSwitchedOffForGroup e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.Group, active: false);
+			_state.HandleSwitching(e.Group, newState: States.Off);
 		}
 
 		private void Apply(ToggleSwitchedOnForGroup e)
 		{
 			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.Group, active: true);
+			_state.HandleSwitching(e.Group, newState: States.On);
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
