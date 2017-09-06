@@ -6,6 +6,7 @@ using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
+using Crispin.Handlers.UpdateTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -63,7 +64,7 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}/state")]
-		[HttpPost]
+		[HttpPut]
 		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
 		{
 			var request = new UpdateToggleStateRequest(ToggleID.Parse(id))
@@ -111,6 +112,19 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.Tags);
+		}
+
+		[Route("id/{id}/tags")]
+		[HttpPut]
+		public async Task<IActionResult> PutTags(Guid id, [FromBody] string[] tags)
+		{
+			var request = new UpdateToggleTagsRequest(ToggleID.Parse(id))
+			{
+				Tags = tags
+			};
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Tags);
 		}
 
 		[Route("name/{name}/tags")]

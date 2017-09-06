@@ -19,6 +19,7 @@ Restful Feature Toggle Service
   * [ ] Client use cases
 * [ ] design statistics logging
   * [ ] stats include querying
+* [ ] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
 
 ## Ideas
 
