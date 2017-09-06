@@ -13,31 +13,12 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers
 {
-	public class UpdateToggleStateHandlerTests
+	public class UpdateToggleStateHandlerTests : HandlerTest<UpdateToggleStateHandler>
 	{
-		private readonly UpdateToggleStateHandler _handler;
-		private readonly ToggleID _toggleID;
-		private readonly Dictionary<ToggleID, List<Event>> _events;
-
-		public UpdateToggleStateHandlerTests()
+		protected override UpdateToggleStateHandler CreateHandler(IStorage storage)
 		{
-			_events = new Dictionary<ToggleID, List<Event>>();
-
-			var storage = new InMemoryStorage(_events);
-			storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
-			storage.RegisterProjection(new AllToggles());
-
-			_handler = new UpdateToggleStateHandler(storage);
-			var toggle = Toggle.CreateNew(() => "", "name", "desc");
-
-			using (var session = storage.BeginSession())
-				session.Save(toggle);
-
-			_toggleID = toggle.ID;
+			return new UpdateToggleStateHandler(storage);
 		}
-
-		private IEnumerable<Type> EventTypes() => _events[_toggleID].Select(e => e.GetType());
-		private TEvent Event<TEvent>() => _events[_toggleID].OfType<TEvent>().Single();
 
 		[Fact]
 		public void When_the_toggle_doesnt_exist()
@@ -45,16 +26,16 @@ namespace Crispin.Tests.Handlers
 			var toggleID = ToggleID.CreateNew();
 
 			Should.Throw<KeyNotFoundException>(
-				() => _handler.Handle(new UpdateToggleStateRequest(toggleID))
+				() => Handler.Handle(new UpdateToggleStateRequest(toggleID))
 			);
 
-			_events.ShouldNotContainKey(toggleID);
+			Events.ShouldNotContainKey(toggleID);
 		}
 
 		[Fact]
 		public async Task When_updating_a_toggle_with_no_current_state_for_anonymous()
 		{
-			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
 			{
 				Anonymous = States.On
 			});
@@ -66,12 +47,11 @@ namespace Crispin.Tests.Handlers
 			});
 		}
 
-
 		[Fact]
 		public async Task When_switching_on_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
 			{
 				Users = { { userID, States.On } }
 			});
@@ -89,7 +69,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
 			{
 				Users = { { userID, States.Off } }
 			});
@@ -107,7 +87,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_on_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
 			{
 				Groups = { { groupID, States.On } }
 			});
@@ -125,7 +105,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await _handler.Handle(new UpdateToggleStateRequest(_toggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
 			{
 				Groups = { { groupID, States.Off } }
 			});
