@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Handlers.UpdateTags;
 using Crispin.Infrastructure.Storage;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -22,63 +22,31 @@ namespace Crispin.Tests.Handlers
 		}
 
 		[Fact]
-		public void When_the_toggle_doesnt_exist()
+		public void When_adding_tags_and_the_toggle_doesnt_exist()
 		{
 			Should.Throw<KeyNotFoundException>(
 				async () => await Handler.Handle(new UpdateToggleTagsRequest(ToggleID.CreateNew()))
 			);
 		}
 
-		[Fact]
-		public async Task When_there_are_no_tags_provided()
+		public static IEnumerable<object[]> Tags => new[]
 		{
-			var response = await Handler.Handle(new UpdateToggleTagsRequest(ToggleID));
+			new[] { "existing" },
+			new string [0],
+			new[] { "existing", "other" },
+			new[] { "what" }
+		}.Select(x => new object[] { x });
 
-			EventTypes().ShouldBe(new[]
-			{
-				typeof(ToggleCreated),
-				typeof(TagAdded)
-			});
-
-			response.Tags.ShouldBe(new[] { "existing" });
-		}
-
-		[Fact]
-		public async Task When_adding_a_tag()
+		[Theory]
+		[MemberData(nameof(Tags))]
+		public async Task When_changing_tags_around_randomly(string[] tags)
 		{
 			var response = await Handler.Handle(new UpdateToggleTagsRequest(ToggleID)
 			{
-				Tags = new[] { "First" }
+				Tags = tags
 			});
 
-			EventTypes().ShouldBe(new[]
-			{
-				typeof(ToggleCreated),
-				typeof(TagAdded),
-				typeof(TagAdded)
-			});
-
-			response.Tags.ShouldBe(new[] { "existing", "First" }, ignoreOrder: true);
-		}
-
-		[Fact]
-		public async Task When_adding_multiple_tags()
-		{
-			var response = await Handler.Handle(new UpdateToggleTagsRequest(ToggleID)
-			{
-				Tags = new[] { "First", "Second", "Third" }
-			});
-
-			EventTypes().ShouldBe(new[]
-			{
-				typeof(ToggleCreated),
-				typeof(TagAdded),
-				typeof(TagAdded),
-				typeof(TagAdded),
-				typeof(TagAdded)
-			});
-
-			response.Tags.ShouldBe(new[] { "existing", "First", "Second", "Third" }, ignoreOrder: true);
+			response.Tags.ShouldBe(tags, ignoreOrder: true);
 		}
 	}
 }

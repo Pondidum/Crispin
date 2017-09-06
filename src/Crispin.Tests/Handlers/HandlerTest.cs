@@ -9,6 +9,8 @@ namespace Crispin.Tests.Handlers
 {
 	public abstract class HandlerTest<THandler>
 	{
+		public InMemoryStorage Storage { get; }
+		protected Toggle Toggle { get; }
 		protected ToggleID ToggleID { get; }
 		protected THandler Handler { get; }
 		protected Dictionary<ToggleID, List<Event>> Events { get; }
@@ -17,18 +19,19 @@ namespace Crispin.Tests.Handlers
 		{
 			Events = new Dictionary<ToggleID, List<Event>>();
 
-			var storage = new InMemoryStorage(Events);
-			storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
-			storage.RegisterProjection(new AllToggles());
+			Storage = new InMemoryStorage(Events);
+			Storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			Storage.RegisterProjection(new AllToggles());
 
-			Handler = CreateHandler(storage);
+			Handler = CreateHandler(Storage);
 
 			var toggle = Toggle.CreateNew(() => "", "name", "desc");
 			InitialiseToggle(toggle);
 
-			using (var session = storage.BeginSession())
+			using (var session = Storage.BeginSession())
 				session.Save(toggle);
 
+			Toggle = toggle;
 			ToggleID = toggle.ID;
 		}
 
