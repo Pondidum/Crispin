@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Crispin.Events;
 using Crispin.Handlers.UpdateTags;
 using Crispin.Infrastructure.Storage;
 using Shouldly;
@@ -24,29 +23,41 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public void When_adding_tags_and_the_toggle_doesnt_exist()
 		{
-			Should.Throw<KeyNotFoundException>(
-				async () => await Handler.Handle(new UpdateToggleTagsRequest(ToggleID.CreateNew()))
+			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
+				new AddToggleTagRequest(ToggleID.CreateNew(), "wat"))
 			);
 		}
 
-		public static IEnumerable<object[]> Tags => new[]
+		[Fact]
+		public void When_removing_tags_and_the_toggle_doesnt_exist()
 		{
-			new[] { "existing" },
-			new string [0],
-			new[] { "existing", "other" },
-			new[] { "what" }
-		}.Select(x => new object[] { x });
+			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
+				new RemoveToggleTagRequest(ToggleID.CreateNew(), "wat"))
+			);
+		}
 
 		[Theory]
-		[MemberData(nameof(Tags))]
-		public async Task When_changing_tags_around_randomly(string[] tags)
+		[InlineData(TagAction.Add, "existing", "existing")]
+		[InlineData(TagAction.Add, "new", "existing,new")]
+		[InlineData(TagAction.Remove, "existing", "")]
+		[InlineData(TagAction.Remove, "nonexisting", "existing")]
+		public async Task When_changing_tags_around_randomly(TagAction action, string tagName, string expected)
 		{
-			var response = await Handler.Handle(new UpdateToggleTagsRequest(ToggleID)
-			{
-				Tags = tags
-			});
+			var response = action == TagAction.Add
+				? await Handler.Handle(new AddToggleTagRequest(ToggleID, tagName))
+				: await Handler.Handle(new RemoveToggleTagRequest(ToggleID, tagName));
 
-			response.Tags.ShouldBe(tags, ignoreOrder: true);
+			var expectedTags = string.IsNullOrWhiteSpace(expected)
+				? Array.Empty<string>()
+				: expected.Split(",");
+
+			response.Tags.ShouldBe(expectedTags, ignoreOrder: true);
+		}
+
+		public enum TagAction
+		{
+			Add,
+			Remove
 		}
 	}
 }

@@ -114,14 +114,22 @@ namespace Crispin.Rest.Toggles
 			return new JsonResult(response.Toggle?.Tags);
 		}
 
-		[Route("id/{id}/tags")]
+
+		[Route("id/{id}/tags/{tagName}")]
 		[HttpPut]
-		public async Task<IActionResult> PutTags(Guid id, [FromBody] string[] tags)
+		public async Task<IActionResult> PutTag(Guid id, [FromBody] string tagName)
 		{
-			var request = new UpdateToggleTagsRequest(ToggleID.Parse(id))
-			{
-				Tags = tags
-			};
+			var request = new AddToggleTagRequest(ToggleID.Parse(id), tagName);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Tags);
+		}
+
+		[Route("id/{id}/tags/{tagName}")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteTag(Guid id, [FromBody] string tagName)
+		{
+			var request = new RemoveToggleTagRequest(ToggleID.Parse(id), tagName);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Tags);
