@@ -117,7 +117,7 @@ namespace Crispin.Rest.Toggles
 
 		[Route("id/{id}/tags/{tagName}")]
 		[HttpPut]
-		public async Task<IActionResult> PutTag(Guid id, [FromBody] string tagName)
+		public async Task<IActionResult> PutTag(Guid id, string tagName)
 		{
 			var request = new AddToggleTagRequest(ToggleID.Parse(id), tagName);
 			var response = await _mediator.Send(request);
@@ -127,7 +127,7 @@ namespace Crispin.Rest.Toggles
 
 		[Route("id/{id}/tags/{tagName}")]
 		[HttpDelete]
-		public async Task<IActionResult> DeleteTag(Guid id, [FromBody] string tagName)
+		public async Task<IActionResult> DeleteTag(Guid id, string tagName)
 		{
 			var request = new RemoveToggleTagRequest(ToggleID.Parse(id), tagName);
 			var response = await _mediator.Send(request);
