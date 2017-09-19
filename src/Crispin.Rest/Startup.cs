@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Crispin.Rest.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -45,7 +47,11 @@ namespace Crispin.Rest
 
 			app.UseMvc();
 
-			app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
+			app.Run(context =>
+			{
+				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+				return Task.CompletedTask;
+			});
 		}
 	}
 }

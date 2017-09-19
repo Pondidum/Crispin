@@ -26,6 +26,8 @@ Restful Feature Toggle Service
 * [ ] refactor `/state` endpoint, something like
   * `PUT /state/user/{userid} : { active: true }` to activate or deactivate
   * `DELETE /state/user/{userid}` to clear state setting
+* [ ] toggle: implement validation of tag names
+* [x] replace default handler with 404
 
 ## Ideas
 
@@ -91,7 +93,9 @@ Restful Feature Toggle Service
       * [x] DELETE => `{ type: user, id: xxx }`
     * [x] `tags`
       * [x] GET => `[ tag, tag, tag ]`
-      * [x] PUT => `[ tag, tag, tag ]`
+      * `/{tagName}`
+        * [x] PUT => `[ tag, tag, tag ]`
+        * [x] DELETE => `[ tag, tag, tag ]`
   * [ ] `/name/{name}`
     * [ ] `/state`
       * see `id/state`
