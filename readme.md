@@ -20,6 +20,12 @@ Restful Feature Toggle Service
 * [ ] design statistics logging
   * [ ] stats include querying
 * [ ] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
+* [ ] replace `ValidationMiddleware` with a `ValidationActionFilter` instead
+* [ ] refactor `/tags` endpoint
+  * something like `PUT /tags/some-tag-name` and `DELETE /tags/some-tag-name`
+* [ ] refactor `/state` endpoint, something like
+  * `PUT /state/user/{userid} : { active: true }` to activate or deactivate
+  * `DELETE /state/user/{userid}` to clear state setting
 
 ## Ideas
 
@@ -83,10 +89,9 @@ Restful Feature Toggle Service
       * [x] GET => `[ { type: user, id: xxx, state: active }, { type: group, id: yyy, state: inactive} ]`
       * [x] POST => `{ type: user, id: xxx }`
       * [x] DELETE => `{ type: user, id: xxx }`
-    * [ ] `tags`
+    * [x] `tags`
       * [x] GET => `[ tag, tag, tag ]`
-      * [ ] PUT/POST => `[ tag, tag, tag ]`
-      * [ ] DELETE => `[ tag, tag, tag ]`
+      * [x] PUT => `[ tag, tag, tag ]`
   * [ ] `/name/{name}`
     * [ ] `/state`
       * see `id/state`
