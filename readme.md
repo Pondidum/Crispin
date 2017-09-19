@@ -20,7 +20,7 @@ Restful Feature Toggle Service
 * [ ] design statistics logging
   * [ ] stats include querying
 * [ ] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
-* [ ] replace `ValidationMiddleware` with a `ValidationActionFilter` instead
+* [x] replace `ValidationMiddleware` with a `ValidationActionFilter` instead
 * [ ] refactor `/tags` endpoint
   * something like `PUT /tags/some-tag-name` and `DELETE /tags/some-tag-name`
 * [ ] refactor `/state` endpoint, something like

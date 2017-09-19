@@ -22,6 +22,7 @@ namespace Crispin.Rest
 			services.AddMvc(options =>
 			{
 				options.Filters.Add<JsonNotFoundActionFilter>();
+				options.Filters.Add<ValidationExceptionFilter>();
 			});
 
 			var container = new Container(_ =>
@@ -42,7 +43,6 @@ namespace Crispin.Rest
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseMiddleware<ValidationMiddleware>();
 			app.UseMvc();
 
 			app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
