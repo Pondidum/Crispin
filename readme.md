@@ -14,9 +14,35 @@ Restful Feature Toggle Service
 * [x] ensure all events have a userID
 * [x] design storage api
   * [x] in memory implementation
-* [ ] design http api
-  * [ ] UI use cases
-  * [ ] Client use cases
+* [ ] http api
+  * fetching toggles needs to be aware of who the user is querying, as a toggle could be on or off based on user/group
+    * a header of some form would be enough I think, something like `X-CRISPIN-USER`
+    * no header means anonymous, gets the "everyone" state of the toggle
+    * views will need to be aware of multiple states of toggles
+  * [ ] `/toggles`
+    * [x] GET =>`[ { toggleview }, { toggleview } ]`
+    * [x] POST => `{ name, description }` => 201 created, `/toggles/id/{id}`
+    * [ ] `/id/{id}`
+      * [x] GET => `{ toggleview }`
+      * [x] `/state`
+        * [x] GET => `[ { type: user, id: xxx, state: active }, { type: group, id: yyy, state: inactive} ]`
+        * [x] POST => `{ type: user, id: xxx }`
+        * [x] DELETE => `{ type: user, id: xxx }`
+      * [x] `tags`
+        * [x] GET => `[ tag, tag, tag ]`
+        * `/{tagName}`
+          * [x] PUT => `[ tag, tag, tag ]`
+          * [x] DELETE => `[ tag, tag, tag ]`
+    * [ ] `/name/{name}`
+      * [ ] `/state`
+        * see `id/state`
+      * [ ] `/tags`
+        * see `id/tags`
+  * [ ] `/stats`
+    * ???
+  * [ ] `/management`
+    * [ ] `/users`
+      * ???
 * [ ] design statistics logging
   * [ ] stats include querying
 * [ ] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
@@ -70,39 +96,3 @@ Restful Feature Toggle Service
 * implementation
   * elixir hype? or Go perhaps? could then distribute an .exe. hhmm.
   * eventsourced filestorage perhaps
-
-
-
-# Http Api
-
-* fetching toggles needs to be aware of who the user is querying, as a toggle could be on or off based on user/group
-* a header of some form would be enough I think, something like `X-CRISPIN-USER`
-* no header means anonymous, gets the "everyone" state of the toggle
-* views will need to be aware of multiple states of toggles
-
-## url schema
-
-* [ ] `/toggles`
-  * [x] GET =>`[ { toggleview }, { toggleview } ]`
-  * [x] POST => `{ name, description }` => 201 created, `/toggles/id/{id}`
-  * [ ] `/id/{id}`
-    * [x] GET => `{ toggleview }`
-    * [x] `/state`
-      * [x] GET => `[ { type: user, id: xxx, state: active }, { type: group, id: yyy, state: inactive} ]`
-      * [x] POST => `{ type: user, id: xxx }`
-      * [x] DELETE => `{ type: user, id: xxx }`
-    * [x] `tags`
-      * [x] GET => `[ tag, tag, tag ]`
-      * `/{tagName}`
-        * [x] PUT => `[ tag, tag, tag ]`
-        * [x] DELETE => `[ tag, tag, tag ]`
-  * [ ] `/name/{name}`
-    * [ ] `/state`
-      * see `id/state`
-    * [ ] `/tags`
-      * see `id/tags`
-* [ ] `/stats`
-  * ???
-* [ ] `/management`
-  * [ ] `/users`
-    * ???
