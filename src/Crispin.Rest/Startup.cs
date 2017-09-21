@@ -25,6 +25,8 @@ namespace Crispin.Rest
 			{
 				options.Filters.Add<JsonNotFoundActionFilter>();
 				options.Filters.Add<ValidationExceptionFilter>();
+
+				options.ModelBinderProviders.Insert(0, new ToggleLocatorBinder());
 			});
 
 			var container = new Container(_ =>
