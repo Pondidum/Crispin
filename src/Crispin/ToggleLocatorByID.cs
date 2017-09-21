@@ -1,4 +1,6 @@
-﻿using Crispin.Infrastructure.Storage;
+﻿using System.Linq;
+using Crispin.Infrastructure.Storage;
+using Crispin.Projections;
 
 namespace Crispin
 {
@@ -11,7 +13,15 @@ namespace Crispin
 			_toggleID = toggleID;
 		}
 
-		internal override Toggle Locate(IStorageSession session)
+		internal override ToggleView LocateView(IStorageSession session)
+		{
+			return session
+				.LoadProjection<AllToggles>()
+				.Toggles
+				.SingleOrDefault(view => view.ID == _toggleID);
+		}
+
+		internal override Toggle LocateAggregate(IStorageSession session)
 		{
 			return session.LoadAggregate<Toggle>(_toggleID);
 		}
