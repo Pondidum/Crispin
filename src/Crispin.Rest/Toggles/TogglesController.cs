@@ -6,14 +6,13 @@ using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
-using Crispin.Handlers.UpdateTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Crispin.Rest.Toggles
 {
-	[Route("[controller]")]
+	[Route("Toggles")]
 	public class TogglesController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -102,47 +101,6 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.State);
-		}
-
-		[Route("id/{id}/tags")]
-		[HttpGet]
-		public async Task<IActionResult> GetTags(Guid id)
-		{
-			var request = new GetToggleRequest(ToggleID.Parse(id));
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Toggle?.Tags);
-		}
-
-
-		[Route("id/{id}/tags/{tagName}")]
-		[HttpPut]
-		public async Task<IActionResult> PutTag(Guid id, string tagName)
-		{
-			var request = new AddToggleTagRequest(ToggleID.Parse(id), tagName);
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Tags);
-		}
-
-		[Route("id/{id}/tags/{tagName}")]
-		[HttpDelete]
-		public async Task<IActionResult> DeleteTag(Guid id, string tagName)
-		{
-			var request = new RemoveToggleTagRequest(ToggleID.Parse(id), tagName);
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Tags);
-		}
-
-		[Route("name/{name}/tags")]
-		[HttpGet]
-		public async Task<IActionResult> GetTags(string name)
-		{
-			var request = new GetToggleByNameRequest(name);
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Toggle?.Tags);
 		}
 
 		[Route("")]
