@@ -4,12 +4,12 @@ namespace Crispin.Handlers.UpdateTags
 {
 	public class RemoveToggleTagRequest : IRequest<UpdateToggleTagsResponse>
 	{
-		public ToggleID ToggleID { get; }
+		public ToggleLocator Locator { get; }
 		public string TagName { get; }
 
-		public RemoveToggleTagRequest(ToggleID toggleID, string tagName)
+		public RemoveToggleTagRequest(ToggleLocator locator, string tagName)
 		{
-			ToggleID = toggleID;
+			Locator = locator;
 			TagName = tagName;
 		}
 	}

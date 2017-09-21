@@ -32,7 +32,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutTag(Guid id, string tagName)
 		{
-			var request = new AddToggleTagRequest(ToggleID.Parse(id), tagName);
+			var request = new AddToggleTagRequest(ToggleLocator.Create(ToggleID.Parse(id)), tagName);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Tags);
@@ -42,7 +42,27 @@ namespace Crispin.Rest.Toggles
 		[HttpDelete]
 		public async Task<IActionResult> DeleteTag(Guid id, string tagName)
 		{
-			var request = new RemoveToggleTagRequest(ToggleID.Parse(id), tagName);
+			var request = new RemoveToggleTagRequest(ToggleLocator.Create(ToggleID.Parse(id)), tagName);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Tags);
+		}
+
+		[Route("name/{toggleName}/tags/{tagName}")]
+		[HttpPut]
+		public async Task<IActionResult> PutTag(string toggleName, string tagName)
+		{
+			var request = new AddToggleTagRequest(ToggleLocator.Create(toggleName), tagName);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Tags);
+		}
+
+		[Route("name/{toggleName}/tags/{tagName}")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteTag(string toggleName, string tagName)
+		{
+			var request = new RemoveToggleTagRequest(ToggleLocator.Create(toggleName), tagName);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Tags);

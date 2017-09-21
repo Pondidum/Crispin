@@ -20,7 +20,7 @@ namespace Crispin.Handlers.UpdateTags
 		public Task<UpdateToggleTagsResponse> Handle(AddToggleTagRequest message)
 		{
 			return ModifyTags(
-				message.ToggleID,
+				message.Locator,
 				toggle => toggle.AddTag(message.TagName)
 			);
 		}
@@ -28,16 +28,16 @@ namespace Crispin.Handlers.UpdateTags
 		public Task<UpdateToggleTagsResponse> Handle(RemoveToggleTagRequest message)
 		{
 			return ModifyTags(
-				message.ToggleID,
+				message.Locator,
 				toggle => toggle.RemoveTag(message.TagName)
 			);
 		}
 
-		private Task<UpdateToggleTagsResponse> ModifyTags(ToggleID toggleID, Action<Toggle> modify)
+		private Task<UpdateToggleTagsResponse> ModifyTags(ToggleLocator locator, Action<Toggle> modify)
 		{
 			using (var session = _storage.BeginSession())
 			{
-				var toggle = session.LoadAggregate<Toggle>(toggleID);
+				var toggle = locator.Locate(session);
 
 				modify(toggle);
 				session.Save(toggle);
