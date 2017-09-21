@@ -15,4 +15,16 @@ namespace Crispin.Rest.Tests.Toggles
 			Controller = new TogglesController(Mediator);
 		}
 	}
+
+	public abstract class ToggleStateControllerTests
+	{
+		protected IMediator Mediator { get; }
+		protected ToggleStateController Controller { get; }
+
+		protected ToggleStateControllerTests()
+		{
+			Mediator = Substitute.For<IMediator>();
+			Controller = new ToggleStateController(Mediator);
+		}
+	}
 }

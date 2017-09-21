@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Toggles
 {
-	public class GetSingleToggleStateTests : TogglesControllerTests
+	public class GetSingleToggleStateTests : ToggleStateControllerTests
 	{
 		private readonly ToggleView _toggleView;
 		private readonly Guid _toggleID;
