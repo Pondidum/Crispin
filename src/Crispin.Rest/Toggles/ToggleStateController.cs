@@ -43,14 +43,11 @@ namespace Crispin.Rest.Toggles
 		[Route("id/{id}/state/users/{userid}")]
 		[Route("name/{id}/state/users/{userid}")]
 		[HttpPut]
-		public async Task<IActionResult> PutStateUser(ToggleLocator id, string userID, [FromBody] StatePutRequest model)
+		public async Task<IActionResult> PutStateUser(ToggleLocator id, UserID userID, [FromBody] StatePutRequest model)
 		{
 			var request = new UpdateToggleStateRequest(id)
 			{
-				Users =
-				{
-					{ UserID.Parse(userID), model.State }
-				}
+				Users = { { userID, model.State } }
 			};
 			var response = await _mediator.Send(request);
 
@@ -60,14 +57,11 @@ namespace Crispin.Rest.Toggles
 		[Route("id/{id}/state/groups/{groupid}")]
 		[Route("name/{id}/state/groups/{groupid}")]
 		[HttpPut]
-		public async Task<IActionResult> PutStateGroup(ToggleLocator id, string groupid, [FromBody] StatePutRequest model)
+		public async Task<IActionResult> PutStateGroup(ToggleLocator id, GroupID groupid, [FromBody] StatePutRequest model)
 		{
 			var request = new UpdateToggleStateRequest(id)
 			{
-				Groups =
-				{
-					{ GroupID.Parse(groupid), model.State }
-				}
+				Groups = { { groupid, model.State } }
 			};
 			var response = await _mediator.Send(request);
 
@@ -77,14 +71,11 @@ namespace Crispin.Rest.Toggles
 		[Route("id/{id}/state/users/{userid}")]
 		[Route("name/{id}/state/users/{userid}")]
 		[HttpDelete]
-		public async Task<IActionResult> DeleteStateUser(ToggleLocator id, string userID)
+		public async Task<IActionResult> DeleteStateUser(ToggleLocator id, UserID userID)
 		{
 			var request = new UpdateToggleStateRequest(id)
 			{
-				Users =
-				{
-					{ UserID.Parse(userID), null }
-				}
+				Users = { { userID, null } }
 			};
 			var response = await _mediator.Send(request);
 
@@ -94,14 +85,11 @@ namespace Crispin.Rest.Toggles
 		[Route("id/{id}/state/groups/{groupid}")]
 		[Route("name/{id}/state/groups/{groupid}")]
 		[HttpDelete]
-		public async Task<IActionResult> DeleteStateGroup(ToggleLocator id, string groupid)
+		public async Task<IActionResult> DeleteStateGroup(ToggleLocator id, GroupID groupid)
 		{
 			var request = new UpdateToggleStateRequest(id)
 			{
-				Groups =
-				{
-					{ GroupID.Parse(groupid), null }
-				}
+				Groups = { { groupid, null } }
 			};
 			var response = await _mediator.Send(request);
 

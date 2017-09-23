@@ -98,7 +98,7 @@ namespace Crispin.Rest.Tests.Toggles
 		{
 			var response = (JsonResult)await _controller.PutStateUser(
 				_invalidLocator,
-				"wat",
+				UserID.Parse("wat"), 
 				new StatePutRequest { State = States.On });
 
 			response.Value.ShouldBeNull();
@@ -107,7 +107,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_putting_user_state()
 		{
-			var userid = "wat";
+			var userid = UserID.Parse("wat");
 			var response = (JsonResult)await _controller.PutStateUser(
 				_locator,
 				userid,
@@ -115,7 +115,7 @@ namespace Crispin.Rest.Tests.Toggles
 
 			_request.ShouldSatisfyAllConditions(
 				() => _request.Anonymous.ShouldBeNull(),
-				() => _request.Users.ShouldContainKeyAndValue(UserID.Parse(userid), States.On),
+				() => _request.Users.ShouldContainKeyAndValue(userid, States.On),
 				() => _request.Users.ShouldHaveSingleItem(),
 				() => _request.Groups.ShouldBeEmpty(),
 				() => response.Value.ShouldBeOfType<StateView>()
@@ -127,7 +127,7 @@ namespace Crispin.Rest.Tests.Toggles
 		{
 			var response = (JsonResult)await _controller.PutStateGroup(
 				_invalidLocator,
-				"wat",
+				GroupID.Parse("wat"),
 				new StatePutRequest { State = States.On });
 
 			response.Value.ShouldBeNull();
@@ -136,7 +136,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_putting_group_state()
 		{
-			var groupid = "wat";
+			var groupid = GroupID.Parse("wat");
 			var response = (JsonResult)await _controller.PutStateGroup(
 				_locator,
 				groupid,
@@ -145,7 +145,7 @@ namespace Crispin.Rest.Tests.Toggles
 			_request.ShouldSatisfyAllConditions(
 				() => _request.Anonymous.ShouldBeNull(),
 				() => _request.Users.ShouldBeEmpty(),
-				() => _request.Groups.ShouldContainKeyAndValue(GroupID.Parse(groupid), States.On),
+				() => _request.Groups.ShouldContainKeyAndValue(groupid, States.On),
 				() => _request.Groups.ShouldHaveSingleItem(),
 				() => response.Value.ShouldBeOfType<StateView>()
 			);
@@ -154,14 +154,14 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_removing_user_state()
 		{
-			var userid = "wat";
+			var userid = UserID.Parse("wat");
 			var response = (JsonResult)await _controller.DeleteStateUser(
 				_locator,
 				userid);
 
 			_request.ShouldSatisfyAllConditions(
 				() => _request.Anonymous.ShouldBeNull(),
-				() => _request.Users.ShouldContainKeyAndValue(UserID.Parse(userid), null),
+				() => _request.Users.ShouldContainKeyAndValue(userid, null),
 				() => _request.Users.ShouldHaveSingleItem(),
 				() => _request.Groups.ShouldBeEmpty(),
 				() => response.Value.ShouldBeOfType<StateView>()
@@ -171,7 +171,7 @@ namespace Crispin.Rest.Tests.Toggles
 		[Fact]
 		public async Task When_removing_group_state()
 		{
-			var groupid = "wat";
+			var groupid = GroupID.Parse("wat");
 			var response = (JsonResult)await _controller.DeleteStateGroup(
 				_locator,
 				groupid);
@@ -179,7 +179,7 @@ namespace Crispin.Rest.Tests.Toggles
 			_request.ShouldSatisfyAllConditions(
 				() => _request.Anonymous.ShouldBeNull(),
 				() => _request.Users.ShouldBeEmpty(),
-				() => _request.Groups.ShouldContainKeyAndValue(GroupID.Parse(groupid), null),
+				() => _request.Groups.ShouldContainKeyAndValue(groupid, null),
 				() => _request.Groups.ShouldHaveSingleItem(),
 				() => response.Value.ShouldBeOfType<StateView>()
 			);
