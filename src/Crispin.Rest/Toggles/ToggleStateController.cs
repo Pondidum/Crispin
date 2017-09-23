@@ -30,13 +30,14 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}/state")]
+		[Route("name/{id}/state")]
 		[HttpPut]
-		public async Task<IActionResult> PostState(Guid id, [FromBody] UpdateStateModel model)
+		public async Task<IActionResult> PostState(ToggleLocator id, [FromBody] UpdateStateModel model)
 		{
-			var request = new UpdateToggleStateRequest(ToggleID.Parse(id))
+			var request = new UpdateToggleStateRequest(id)
 			{
 				Anonymous = model.Anonymous.AsState(),
-				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => StatesExtensions.AsState((bool)p.Value)),
+				Groups = model.Groups.ToDictionary(p => GroupID.Parse(p.Key), p => p.Value.AsState()),
 				Users = model.Users.ToDictionary(p => UserID.Parse(p.Key), p => p.Value.AsState())
 			};
 
@@ -46,10 +47,11 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}/state")]
+		[Route("name/{id}/state")]
 		[HttpDelete]
-		public async Task<IActionResult> DeleteState(Guid id, [FromBody] DeleteStateModel model)
+		public async Task<IActionResult> DeleteState(ToggleLocator id, [FromBody] DeleteStateModel model)
 		{
-			var request = new UpdateToggleStateRequest(ToggleID.Parse(id))
+			var request = new UpdateToggleStateRequest(id)
 			{
 				Groups = model.Groups.ToDictionary(GroupID.Parse, p => (States?)null),
 				Users = model.Users.ToDictionary(UserID.Parse, p => (States?)null)
@@ -57,7 +59,7 @@ namespace Crispin.Rest.Toggles
 
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.State); //??
+			return new JsonResult(response.State);
 		}
 	}
 }

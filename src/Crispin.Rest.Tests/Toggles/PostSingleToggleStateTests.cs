@@ -13,12 +13,12 @@ namespace Crispin.Rest.Tests.Toggles
 {
 	public class PostSingleToggleStateTests : ToggleStateControllerTests
 	{
-		private readonly Guid _toggleID;
+		private readonly ToggleLocator _toggleLocator;
 		private UpdateToggleStateRequest _request;
 
 		public PostSingleToggleStateTests()
 		{
-			_toggleID = Guid.NewGuid();
+			_toggleLocator = ToggleLocator.Create(ToggleID.CreateNew());
 
 			Mediator
 				.When(m => m.Send(Arg.Any<UpdateToggleStateRequest>()))
@@ -32,7 +32,7 @@ namespace Crispin.Rest.Tests.Toggles
 				.Send(Arg.Any<UpdateToggleStateRequest>())
 				.Returns(new UpdateToggleStateResponse());
 
-			var response = (JsonResult) await Controller.PostState(_toggleID, new UpdateStateModel());
+			var response = (JsonResult) await Controller.PostState(_toggleLocator, new UpdateStateModel());
 
 			response.Value.ShouldBe(null);
 		}
@@ -51,10 +51,10 @@ namespace Crispin.Rest.Tests.Toggles
 				Users = { { "user-1", false } }
 			};
 
-			var response = (JsonResult)await Controller.PostState(_toggleID, model);
+			var response = (JsonResult)await Controller.PostState(_toggleLocator, model);
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.ToggleID.ShouldBe(ToggleID.Parse(_toggleID)),
+				() => _request.Locator.ShouldBe(_toggleLocator),
 				() => _request.Anonymous.ShouldBe(States.On),
 				() => _request.Users.Single().Key.ShouldBe(UserID.Parse("user-1")),
 				() => _request.Users.Single().Value.ShouldBe(States.Off),

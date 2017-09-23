@@ -13,12 +13,12 @@ namespace Crispin.Rest.Tests.Toggles
 {
 	public class DeleteSingleToggleStateTests : ToggleStateControllerTests
 	{
-		private readonly Guid _toggleID;
+		private readonly ToggleLocator _toggleLocator;
 		private UpdateToggleStateRequest _request;
 
 		public DeleteSingleToggleStateTests()
 		{
-			_toggleID = Guid.NewGuid();
+			_toggleLocator = ToggleLocator.Create(ToggleID.CreateNew());
 
 			Mediator
 				.When(m => m.Send(Arg.Any<UpdateToggleStateRequest>()))
@@ -32,7 +32,7 @@ namespace Crispin.Rest.Tests.Toggles
 				.Send(Arg.Any<UpdateToggleStateRequest>())
 				.Returns(new UpdateToggleStateResponse());
 
-			var response = (JsonResult)await Controller.DeleteState(_toggleID, new DeleteStateModel());
+			var response = (JsonResult)await Controller.DeleteState(_toggleLocator, new DeleteStateModel());
 
 			response.Value.ShouldBe(null);
 		}
@@ -44,14 +44,14 @@ namespace Crispin.Rest.Tests.Toggles
 				.Send(Arg.Any<UpdateToggleStateRequest>())
 				.Returns(new UpdateToggleStateResponse { State = new StateView() });
 
-			var response = (JsonResult)await Controller.DeleteState(_toggleID, new DeleteStateModel
+			var response = (JsonResult)await Controller.DeleteState(_toggleLocator, new DeleteStateModel
 			{
 				Groups = new[] { "group-1" },
 				Users = new[] { "user-1" }
 			});
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.ToggleID.ShouldBe(ToggleID.Parse(_toggleID)),
+				() => _request.Locator.ShouldBe(_toggleLocator),
 				() => _request.Anonymous.ShouldBe(null),
 				() => _request.Users.Single().Key.ShouldBe(UserID.Parse("user-1")),
 				() => _request.Users.Single().Value.ShouldBe(null),

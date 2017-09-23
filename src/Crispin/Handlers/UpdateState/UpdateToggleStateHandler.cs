@@ -20,7 +20,7 @@ namespace Crispin.Handlers.UpdateState
 		{
 			using (var session = _storage.BeginSession())
 			{
-				var toggle = session.LoadAggregate<Toggle>(message.ToggleID);
+				var toggle = message.Locator.LocateAggregate(session);
 
 				if (toggle == null)
 					return Task.FromResult(new UpdateToggleStateResponse());

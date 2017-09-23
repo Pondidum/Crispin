@@ -44,8 +44,8 @@ namespace Crispin.Tests.Handlers
 		public async Task When_changing_tags_around_randomly(TagAction action, string tagName, string expected)
 		{
 			var response = action == TagAction.Add
-				? await Handler.Handle(new AddToggleTagRequest(ToggleLocator.Create(ToggleID), tagName))
-				: await Handler.Handle(new RemoveToggleTagRequest(ToggleLocator.Create(ToggleID), tagName));
+				? await Handler.Handle(new AddToggleTagRequest(Locator, tagName))
+				: await Handler.Handle(new RemoveToggleTagRequest(Locator, tagName));
 
 			var expectedTags = string.IsNullOrWhiteSpace(expected)
 				? Array.Empty<string>()

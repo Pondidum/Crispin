@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Handlers.UpdateState;
-using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -23,19 +18,17 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public void When_the_toggle_doesnt_exist()
 		{
-			var toggleID = ToggleID.CreateNew();
+			var invalidLocator = ToggleLocator.Create(ToggleID.CreateNew());
 
 			Should.Throw<KeyNotFoundException>(
-				() => Handler.Handle(new UpdateToggleStateRequest(toggleID))
+				() => Handler.Handle(new UpdateToggleStateRequest(invalidLocator ))
 			);
-
-			Events.ShouldNotContainKey(toggleID);
 		}
 
 		[Fact]
 		public async Task When_updating_a_toggle_with_no_current_state_for_anonymous()
 		{
-			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
 			{
 				Anonymous = States.On
 			});
@@ -51,7 +44,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_on_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
 			{
 				Users = { { userID, States.On } }
 			});
@@ -69,7 +62,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
 			{
 				Users = { { userID, States.Off } }
 			});
@@ -87,7 +80,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_on_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
 			{
 				Groups = { { groupID, States.On } }
 			});
@@ -105,7 +98,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(ToggleID)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
 			{
 				Groups = { { groupID, States.Off } }
 			});
