@@ -19,10 +19,11 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}/state")]
+		[Route("name/{id}/state")]
 		[HttpGet]
-		public async Task<IActionResult> GetState(Guid id)
+		public async Task<IActionResult> GetState(ToggleLocator id)
 		{
-			var request = new GetToggleRequest(ToggleID.Parse(id));
+			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.State);
@@ -57,16 +58,6 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.State); //??
-		}
-
-		[Route("name/{name}/state")]
-		[HttpGet]
-		public async Task<IActionResult> GetState(string name)
-		{
-			var request = new GetToggleByNameRequest(name);
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Toggle?.State);
 		}
 	}
 }

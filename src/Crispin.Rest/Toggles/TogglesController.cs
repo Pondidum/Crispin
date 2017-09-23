@@ -31,20 +31,11 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}")]
+		[Route("name/{id}")]
 		[HttpGet]
-		public async Task<IActionResult> Get(Guid id)
+		public async Task<IActionResult> Get(ToggleLocator id)
 		{
-			var request = new GetToggleRequest(ToggleID.Parse(id));
-			var response = await _mediator.Send(request);
-
-			return new JsonResult(response.Toggle);
-		}
-
-		[Route("name/{name}")]
-		[HttpGet]
-		public async Task<IActionResult> Get(string name)
-		{
-			var request = new GetToggleByNameRequest(name);
+			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle);

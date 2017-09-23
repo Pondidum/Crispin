@@ -1,15 +1,14 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 
 namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleRequest : IRequest<GetToggleResponse>
 	{
-		public ToggleID ToggleID { get; }
+		public ToggleLocator Locator { get; }
 
-		public GetToggleRequest(ToggleID toggleID)
+		public GetToggleRequest(ToggleLocator locator)
 		{
-			ToggleID = toggleID;
+			Locator = locator;
 		}
 	}
 }

@@ -15,20 +15,22 @@ namespace Crispin.Rest.Tests.Toggles
 {
 	public class GetSingleToggleTagsTests
 	{
-		private readonly ToggleView _toggleView;
-		private readonly Guid _toggleID;
 		private readonly IMediator _mediator;
 		private readonly ToggleTagsController _controller;
+		private readonly ToggleLocator _validLocator;
+		private readonly ToggleLocator _invalidLocator;
 
 		public GetSingleToggleTagsTests()
 		{
 			_mediator = Substitute.For<IMediator>();
 			_controller = new ToggleTagsController(_mediator);
 
-			_toggleID = Guid.NewGuid();
-			_toggleView = new ToggleView
+			_validLocator = ToggleLocator.Create("i exist");
+			_invalidLocator = ToggleLocator.Create("i dont exist");
+
+			var toggleView = new ToggleView
 			{
-				ID = ToggleID.Parse(_toggleID),
+				ID = ToggleID.CreateNew(),
 				Name = "toggle-1",
 				Description = "the first toggle",
 				State =
@@ -42,40 +44,32 @@ namespace Crispin.Rest.Tests.Toggles
 
 			var response = new GetToggleResponse
 			{
-				Toggle = _toggleView
+				Toggle = toggleView
 			};
 
 			_mediator
 				.Send(Arg.Any<GetToggleRequest>())
 				.Returns(new GetToggleResponse());
 			_mediator
-				.Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == _toggleView.ID))
-				.Returns(response);
-
-			_mediator
-				.Send(Arg.Any<GetToggleByNameRequest>())
-				.Returns(new GetToggleResponse());
-			_mediator
-				.Send(Arg.Is<GetToggleByNameRequest>(req => req.Name == _toggleView.Name))
+				.Send(Arg.Is<GetToggleRequest>(req => req.Locator == _validLocator))
 				.Returns(response);
 		}
 
 		[Fact]
 		public async Task When_fetching_tags_by_id()
 		{
-			var response = (JsonResult)await _controller.GetTags(_toggleID);
+			var response = (JsonResult)await _controller.GetTags(_validLocator);
 
-			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == _toggleView.ID));
+			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == _validLocator));
 			response.Value.ShouldBeOfType<HashSet<string>>();
 		}
 
 		[Fact]
 		public async Task When_fetching_tags_by_id_which_doesnt_exist()
 		{
-			var toggleId = Guid.NewGuid();
-			var response = (JsonResult)await _controller.GetTags(toggleId);
+			var response = (JsonResult)await _controller.GetTags(_invalidLocator);
 
-			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == ToggleID.Parse(toggleId)));
+			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == _invalidLocator));
 			response.Value.ShouldBeNull();
 		}
 

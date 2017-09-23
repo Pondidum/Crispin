@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Events;
-using Crispin.Handlers;
 using Crispin.Handlers.GetSingle;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
@@ -33,7 +31,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var toggleID = ToggleID.CreateNew();
 
-			var result = await _handler.Handle(new GetToggleRequest(toggleID));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
 
 			result.Toggle.ShouldBeNull();
 		}
@@ -44,7 +42,7 @@ namespace Crispin.Tests.Handlers
 			var toggleID = ToggleID.CreateNew();
 			_view.Consume(new ToggleCreated(toggleID, "name", "desc"));
 
-			var result = await _handler.Handle(new GetToggleRequest(toggleID));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
 
 			result.Toggle.ID.ShouldBe(toggleID);
 		}
@@ -54,7 +52,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var toggleName = ToggleID.CreateNew().ToString();
 
-			var result = await _handler.Handle(new GetToggleByNameRequest(toggleName));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
 
 			result.Toggle.ShouldBeNull();
 		}
@@ -65,7 +63,7 @@ namespace Crispin.Tests.Handlers
 			var toggleName = "name";
 			_view.Consume(new ToggleCreated(ToggleID.CreateNew(), toggleName, "desc"));
 
-			var result = await _handler.Handle(new GetToggleByNameRequest(toggleName));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
 
 			result.Toggle.Name.ShouldBe(toggleName);
 		}

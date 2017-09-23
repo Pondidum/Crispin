@@ -18,10 +18,11 @@ namespace Crispin.Rest.Toggles
 		}
 
 		[Route("id/{id}/tags")]
+		[Route("name/{id}/tags")]
 		[HttpGet]
-		public async Task<IActionResult> GetTags(Guid id)
+		public async Task<IActionResult> GetTags(ToggleLocator id)
 		{
-			var request = new GetToggleRequest(ToggleID.Parse(id));
+			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.Tags);

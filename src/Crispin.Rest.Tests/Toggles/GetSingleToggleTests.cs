@@ -1,6 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using Crispin.Handlers;
 using Crispin.Handlers.GetSingle;
 using Crispin.Projections;
 using Microsoft.AspNetCore.Mvc;
@@ -17,29 +15,25 @@ namespace Crispin.Rest.Tests.Toggles
 			Mediator
 				.Send(Arg.Any<GetToggleRequest>())
 				.Returns(new GetToggleResponse { Toggle = new ToggleView() });
-
-			Mediator
-				.Send(Arg.Any<GetToggleByNameRequest>())
-				.Returns(new GetToggleResponse { Toggle = new ToggleView() });
 		}
 
 		[Fact]
 		public async Task When_fetching_a_single_toggle_by_id()
 		{
-			var toggleId = Guid.NewGuid();
-			var response = (JsonResult)await Controller.Get(toggleId);
+			var locator = ToggleLocator.Create(ToggleID.CreateNew());
+			var response = (JsonResult)await Controller.Get(locator);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.ToggleID == ToggleID.Parse(toggleId)));
+			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
 			response.Value.ShouldBeOfType<ToggleView>();
 		}
 
 		[Fact]
 		public async Task When_fetching_a_single_toggle_by_name()
 		{
-			var toggleName = "toggle-name";
-			var response = (JsonResult)await Controller.Get(toggleName);
+			var locator = ToggleLocator.Create("toggle-name");
+			var response = (JsonResult)await Controller.Get(locator);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleByNameRequest>(req => req.Name == toggleName));
+			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
 			response.Value.ShouldBeOfType<ToggleView>();
 		}
 	}
