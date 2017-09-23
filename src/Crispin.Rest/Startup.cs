@@ -27,6 +27,7 @@ namespace Crispin.Rest
 				options.Filters.Add<ValidationExceptionFilter>();
 
 				options.ModelBinderProviders.Insert(0, new ToggleLocatorBinder());
+				options.ModelBinderProviders.Insert(1, new DomainIDBinder());
 			});
 
 			var container = new Container(_ =>
