@@ -74,7 +74,38 @@ namespace Crispin.Rest.Toggles
 			return new JsonResult(response.State);
 		}
 
-		// DEL id/{id}/state/users/{userid}
-		// DEL id/{id}/state/groups/{groupid}
+		[Route("id/{id}/state/users/{userid}")]
+		[Route("name/{id}/state/users/{userid}")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteStateUser(ToggleLocator id, string userID)
+		{
+			var request = new UpdateToggleStateRequest(id)
+			{
+				Users =
+				{
+					{ UserID.Parse(userID), null }
+				}
+			};
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.State);
+		}
+
+		[Route("id/{id}/state/groups/{groupid}")]
+		[Route("name/{id}/state/groups/{groupid}")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteStateGroup(ToggleLocator id, string groupid)
+		{
+			var request = new UpdateToggleStateRequest(id)
+			{
+				Groups =
+				{
+					{ GroupID.Parse(groupid), null }
+				}
+			};
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.State);
+		}
 	}
 }

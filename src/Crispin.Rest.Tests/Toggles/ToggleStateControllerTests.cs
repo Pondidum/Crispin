@@ -150,5 +150,39 @@ namespace Crispin.Rest.Tests.Toggles
 				() => response.Value.ShouldBeOfType<StateView>()
 			);
 		}
+
+		[Fact]
+		public async Task When_removing_user_state()
+		{
+			var userid = "wat";
+			var response = (JsonResult)await _controller.DeleteStateUser(
+				_locator,
+				userid);
+
+			_request.ShouldSatisfyAllConditions(
+				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Users.ShouldContainKeyAndValue(UserID.Parse(userid), null),
+				() => _request.Users.ShouldHaveSingleItem(),
+				() => _request.Groups.ShouldBeEmpty(),
+				() => response.Value.ShouldBeOfType<StateView>()
+			);
+		}
+
+		[Fact]
+		public async Task When_removing_group_state()
+		{
+			var groupid = "wat";
+			var response = (JsonResult)await _controller.DeleteStateGroup(
+				_locator,
+				groupid);
+
+			_request.ShouldSatisfyAllConditions(
+				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Users.ShouldBeEmpty(),
+				() => _request.Groups.ShouldContainKeyAndValue(GroupID.Parse(groupid), null),
+				() => _request.Groups.ShouldHaveSingleItem(),
+				() => response.Value.ShouldBeOfType<StateView>()
+			);
+		}
 	}
 }
