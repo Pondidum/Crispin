@@ -13,6 +13,7 @@ namespace Crispin.Tests.Handlers
 	{
 		private readonly GetToggleHandler _handler;
 		private readonly AllToggles _view;
+		private readonly EditorID _creator;
 
 		public GetToggleHandlerTests()
 		{
@@ -24,6 +25,7 @@ namespace Crispin.Tests.Handlers
 			session.LoadProjection<AllToggles>().Returns(_view);
 
 			_handler = new GetToggleHandler(storage);
+			_creator = EditorID.Parse("test editor");
 		}
 
 		[Fact]
@@ -40,7 +42,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_id()
 		{
 			var toggleID = ToggleID.CreateNew();
-			_view.Consume(new ToggleCreated(EditorID.Empty, toggleID, "name", "desc"));
+			_view.Consume(new ToggleCreated(_creator, toggleID, "name", "desc"));
 
 			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
 
@@ -61,7 +63,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_name()
 		{
 			var toggleName = "name";
-			_view.Consume(new ToggleCreated(EditorID.Empty,ToggleID.CreateNew(), toggleName, "desc"));
+			_view.Consume(new ToggleCreated(_creator,ToggleID.CreateNew(), toggleName, "desc"));
 
 			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
 

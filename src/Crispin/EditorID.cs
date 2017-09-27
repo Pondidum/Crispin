@@ -7,15 +7,15 @@ namespace Crispin
 	public struct EditorID : IEquatable<EditorID>
 	{
 		public static EditorID Parse(string user) => new EditorID(user);
-		public static EditorID Empty => new EditorID(string.Empty);
 
 		private readonly string _user;
 
 		private EditorID(string user)
 		{
-			_user = string.IsNullOrWhiteSpace(user)
-				? null
-				: user;
+			if (string.IsNullOrWhiteSpace(user))
+				throw new ArgumentNullException(nameof(user));
+
+			_user = user;
 		}
 
 		public bool Equals(EditorID other)

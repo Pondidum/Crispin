@@ -25,7 +25,7 @@ namespace Crispin.Tests.Handlers
 
 			Handler = CreateHandler(Storage);
 
-			var toggle = Toggle.CreateNew(EditorID.Empty, "name", "desc");
+			var toggle = Toggle.CreateNew(EditorID.Parse("editor"), "name", "desc");
 			InitialiseToggle(toggle);
 
 			using (var session = Storage.BeginSession())

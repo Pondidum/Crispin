@@ -5,6 +5,7 @@ using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Handlers.GetSingle;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -45,7 +46,8 @@ namespace Crispin.Rest.Toggles
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] TogglePostRequest model)
 		{
-			var request = new CreateToggleRequest(EditorID.Empty, model.Name, model.Description);
+			var editor = EditorID.Parse("TestApiUser");		//User.Identity.Name
+			var request = new CreateToggleRequest(editor, model.Name, model.Description);
 			var response = await _mediator.Send(request);
 
 			return Created("/toggles/id/" + response.ToggleID, null);

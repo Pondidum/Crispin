@@ -11,10 +11,12 @@ namespace Crispin.Tests.Projections
 	public class AllTogglesTests
 	{
 		private readonly AllToggles _projection;
+		private readonly EditorID _editor;
 
 		public AllTogglesTests()
 		{
 			_projection = new AllToggles();
+			_editor = EditorID.Parse("test");
 		}
 
 		[Fact]
@@ -26,7 +28,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_single_toggle_has_been_created()
 		{
-			var created = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 			_projection.Consume(created);
 
 			var view = _projection.Toggles.Single();
@@ -45,9 +47,9 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_multiple_toggles_have_been_created()
 		{
-			var first = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
-			var second = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
-			var third = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var first = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
+			var second = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
+			var third = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(first);
 			_projection.Consume(second);
@@ -64,7 +66,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_is_switched_on()
 		{
-			var created = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
 			_projection.Consume(new ToggleSwitchedOnForAnonymous() { AggregateID = created.ID });
@@ -75,7 +77,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_is_switched_off()
 		{
-			var created = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
 			_projection.Consume(new ToggleSwitchedOnForAnonymous { AggregateID = created.ID });
@@ -87,7 +89,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_has_a_tag_added()
 		{
-			var created = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
 			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });
@@ -98,7 +100,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_has_a_tag_removed()
 		{
-			var created = new ToggleCreated(EditorID.Empty, ToggleID.CreateNew(), "toggle-1", "");
+			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
 			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });

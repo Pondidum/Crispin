@@ -25,7 +25,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_storage.RegisterProjection(projection);
 
 			using (var session = _storage.BeginSession())
-				session.Save(Toggle.CreateNew(EditorID.Empty, "Test", "no"));
+				session.Save(Toggle.CreateNew(EditorID.Parse("test"), "Test", "no"));
 
 			projection.Toggles.Count().ShouldBe(1);
 		}

@@ -11,7 +11,7 @@ namespace Crispin.Tests.ToggleTests
 		public void When_creating_feature_toggle_without_a_description()
 		{
 			Toggle = Toggle.CreateNew(
-				EditorID.Empty,
+				Editor,
 				name: "first-toggle");
 
 			Toggle.ShouldSatisfyAllConditions(
@@ -33,7 +33,7 @@ namespace Crispin.Tests.ToggleTests
 		public void When_create_a_feature_toggle_with_a_description()
 		{
 			Toggle = Toggle.CreateNew(
-				EditorID.Empty,
+				Editor,
 				name: "first-toggle",
 				description: "my cool description");
 
@@ -62,7 +62,7 @@ namespace Crispin.Tests.ToggleTests
 			Should
 				.Throw<ArgumentNullException>(() =>
 				{
-					Toggle.CreateNew(EditorID.Empty, name: name);
+					Toggle.CreateNew(Editor, name: name);
 				})
 				.Message.ShouldContain("name");
 		}
@@ -74,7 +74,7 @@ namespace Crispin.Tests.ToggleTests
 		public void When_creating_a_toggle_and_the_name_has_leading_or_trailing_whitespace(string name)
 		{
 			Toggle = Toggle.CreateNew(
-				EditorID.Empty,
+				Editor,
 				name: name);
 
 			Toggle.Name.ShouldBe(name.Trim());

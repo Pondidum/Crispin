@@ -1,5 +1,4 @@
-﻿using System;
-using Crispin.Events;
+﻿using Crispin.Events;
 using Shouldly;
 using Xunit;
 
@@ -10,8 +9,8 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_loading_from_an_event_stream()
 		{
-			var toggleCreated = new ToggleCreated
-			(EditorID.Empty,
+			var toggleCreated = new ToggleCreated(
+				Editor,
 				ToggleID.CreateNew(),
 				"toggle name",
 				"toggle desc");

@@ -12,16 +12,18 @@ namespace Crispin.Tests.ToggleTests
 	{
 		protected Toggle Toggle { get; set; }
 		protected IGroupMembership Membership { get; }
+		protected EditorID Editor { get; }
 
 		protected ToggleTest()
 		{
 			Membership = Substitute.For<IGroupMembership>();
+			Editor = EditorID.Parse("Testing");
 		}
 
 		protected void CreateToggle(params object[] events)
 		{
 			var create = new ToggleCreated(
-				EditorID.Empty,
+				Editor,
 				ToggleID.CreateNew(),
 				"Test Toggle",
 				"");
