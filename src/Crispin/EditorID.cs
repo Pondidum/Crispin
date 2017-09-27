@@ -3,22 +3,22 @@ using Newtonsoft.Json;
 
 namespace Crispin
 {
-	[JsonConverter(typeof(UserIDConverter))]
-	public struct UserID : IEquatable<UserID>
+	[JsonConverter(typeof(EditorIDConverter))]
+	public struct EditorID : IEquatable<EditorID>
 	{
-		public static UserID Parse(string user) => new UserID(user);
-		public static UserID Empty => new UserID(string.Empty);
+		public static EditorID Parse(string user) => new EditorID(user);
+		public static EditorID Empty => new EditorID(string.Empty);
 
 		private readonly string _user;
 
-		private UserID(string user)
+		private EditorID(string user)
 		{
 			_user = string.IsNullOrWhiteSpace(user)
 				? null
 				: user;
 		}
 
-		public bool Equals(UserID other)
+		public bool Equals(EditorID other)
 		{
 			return string.Equals(_user, other._user, StringComparison.OrdinalIgnoreCase);
 		}
@@ -26,7 +26,7 @@ namespace Crispin
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			return obj is UserID && Equals((UserID)obj);
+			return obj is EditorID && Equals((EditorID)obj);
 		}
 
 		public override int GetHashCode() => _user != null
@@ -35,20 +35,20 @@ namespace Crispin
 
 		public override string ToString() => _user;
 
-		public static bool operator ==(UserID x, UserID y)
+		public static bool operator ==(EditorID x, EditorID y)
 		{
 			return x.Equals(y);
 		}
 
-		public static bool operator !=(UserID x, UserID y)
+		public static bool operator !=(EditorID x, EditorID y)
 		{
 			return !(x == y);
 		}
 	}
 
-	public class UserIDConverter : JsonConverter
+	public class EditorIDConverter : JsonConverter
 	{
-		public override bool CanConvert(Type objectType) => objectType == typeof(UserID);
+		public override bool CanConvert(Type objectType) => objectType == typeof(EditorID);
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{
@@ -57,7 +57,7 @@ namespace Crispin
 
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
-			return UserID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
+			return EditorID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
 		}
 	}
 }

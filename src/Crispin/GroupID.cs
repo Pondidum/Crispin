@@ -48,7 +48,7 @@ namespace Crispin
 
 	public class GroupIDConverter : JsonConverter
 	{
-		public override bool CanConvert(Type objectType) => objectType == typeof(ToggleID);
+		public override bool CanConvert(Type objectType) => objectType == typeof(GroupID);
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{
