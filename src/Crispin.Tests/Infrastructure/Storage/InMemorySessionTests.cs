@@ -25,7 +25,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_aggregateID = ToggleID.CreateNew();
 			_builders = new Dictionary<Type, Func<List<Event>, AggregateRoot>>
 			{
-				{ typeof(Toggle), e => Toggle.LoadFrom(() => "", e) }
+				{ typeof(Toggle), e => Toggle.LoadFrom(e) }
 			};
 
 			_eventStore = new Dictionary<ToggleID, List<Event>>();
@@ -62,7 +62,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			_eventStore[_aggregateID] = new List<Event> 
 			{
-				new ToggleCreated(_aggregateID, "First", "hi"),
+				new ToggleCreated(EditorID.Empty, _aggregateID, "First", "hi"),
 				new TagAdded("one"),
 				new ToggleSwitchedOnForUser(UserID.Parse("user-1"))
 			};
@@ -79,7 +79,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_saving_an_aggregate_and_commit_is_not_called()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 			toggle.ChangeDefaultState(newState: States.On);
 
@@ -91,7 +91,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_saving_an_aggregate_and_commit_is_called()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 			toggle.ChangeDefaultState(newState: States.On);
 
@@ -109,7 +109,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_loading_an_aggregate_saved_in_the_current_session()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 			toggle.ChangeState(UserID.Parse("user-1"), States.On);
 
@@ -127,7 +127,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 
 			_session.Save(toggle);
@@ -148,7 +148,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_there_are_pending_events_and_dispose_is_called()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 
 			_session.Save(toggle);
@@ -164,7 +164,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_commit_is_called_twice()
 		{
-			var toggle = Toggle.CreateNew(() => "", "First", "hi");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "First", "hi");
 			toggle.AddTag("one");
 
 			_session.Save(toggle);
@@ -183,7 +183,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var projection = new AllToggles();
 			_projections.Add(projection);
 
-			var toggle = Toggle.CreateNew(() => "", "Projected", "yes");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "Projected", "yes");
 
 			_session.Save(toggle);
 			_session.Commit();
@@ -207,8 +207,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var projection = new AllToggles();
 			_projections.Add(projection);
 
-			var first = Toggle.CreateNew(() => "", "First", "yes");
-			var second = Toggle.CreateNew(() => "", "Second", "yes");
+			var first = Toggle.CreateNew(EditorID.Empty, "First", "yes");
+			var second = Toggle.CreateNew(EditorID.Empty, "Second", "yes");
 
 			_session.Save(first);
 			_session.Save(second);

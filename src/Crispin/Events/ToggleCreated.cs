@@ -9,8 +9,9 @@ namespace Crispin.Events
 		public string Name { get; }
 		public string Description { get; }
 
-		public ToggleCreated(ToggleID id, string name, string description)
+		public ToggleCreated(EditorID creator, ToggleID id, string name, string description)
 		{
+			Editor = creator;
 			ID = id;
 			Name = name;
 			Description = description;

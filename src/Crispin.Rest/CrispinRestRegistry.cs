@@ -26,7 +26,7 @@ namespace Crispin.Rest
 		{
 			var store = new InMemoryStorage();
 			store.RegisterProjection(new AllToggles());
-			store.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			store.RegisterBuilder(Toggle.LoadFrom);
 
 			return store;
 		}

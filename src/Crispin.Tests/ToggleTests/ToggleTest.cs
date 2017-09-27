@@ -20,10 +20,13 @@ namespace Crispin.Tests.ToggleTests
 
 		protected void CreateToggle(params object[] events)
 		{
-			var create = new ToggleCreated(ToggleID.CreateNew(), "Test Toggle", "");
+			var create = new ToggleCreated(
+				EditorID.Empty,
+				ToggleID.CreateNew(),
+				"Test Toggle",
+				"");
 
 			Toggle = Toggle.LoadFrom(
-				() => string.Empty,
 				new[] { create }.Concat(events));
 		}
 

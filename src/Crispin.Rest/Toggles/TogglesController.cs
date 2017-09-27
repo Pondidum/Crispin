@@ -45,7 +45,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] TogglePostRequest model)
 		{
-			var request = new CreateToggleRequest("???", model.Name, model.Description);
+			var request = new CreateToggleRequest(EditorID.Empty, model.Name, model.Description);
 			var response = await _mediator.Send(request);
 
 			return Created("/toggles/id/" + response.ToggleID, null);

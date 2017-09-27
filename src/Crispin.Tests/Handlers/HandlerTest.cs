@@ -20,12 +20,12 @@ namespace Crispin.Tests.Handlers
 			Events = new Dictionary<ToggleID, List<Event>>();
 
 			Storage = new InMemoryStorage(Events);
-			Storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			Storage.RegisterBuilder(Toggle.LoadFrom);
 			Storage.RegisterProjection(new AllToggles());
 
 			Handler = CreateHandler(Storage);
 
-			var toggle = Toggle.CreateNew(() => "", "name", "desc");
+			var toggle = Toggle.CreateNew(EditorID.Empty, "name", "desc");
 			InitialiseToggle(toggle);
 
 			using (var session = Storage.BeginSession())

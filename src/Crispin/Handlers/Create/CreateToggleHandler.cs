@@ -18,7 +18,7 @@ namespace Crispin.Handlers.Create
 			using (var session = _storage.BeginSession())
 			{
 				var newToggle = Toggle.CreateNew(
-					() => message.UserID,
+					message.Creator,
 					message.Name,
 					message.Description);
 

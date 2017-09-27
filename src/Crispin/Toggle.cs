@@ -8,20 +8,20 @@ namespace Crispin
 {
 	public class Toggle : AggregateRoot
 	{
-		public static Toggle CreateNew(Func<string> getCurrentUserID, string name, string description = "")
+		public static Toggle CreateNew(EditorID creator, string name, string description = "")
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentNullException(nameof(name), "Toggles must have a non-whitespace name.");
 
-			var toggle = new Toggle(getCurrentUserID);
-			toggle.ApplyEvent(new ToggleCreated(ToggleID.CreateNew(), name.Trim(), description));
+			var toggle = new Toggle();
+			toggle.ApplyEvent(new ToggleCreated(creator, ToggleID.CreateNew(), name.Trim(), description));
 
 			return toggle;
 		}
 
-		public static Toggle LoadFrom(Func<string> getCurrentUserID, IEnumerable<object> events)
+		public static Toggle LoadFrom(IEnumerable<object> events)
 		{
-			var toggle = new Toggle(getCurrentUserID);
+			var toggle = new Toggle();
 			((IEvented)toggle).LoadFromEvents(events);
 
 			return toggle;
@@ -34,12 +34,10 @@ namespace Crispin
 		public IEnumerable<string> Tags => _tags;
 
 		private readonly HashSet<string> _tags;
-		private readonly Func<string> _getCurrentUserID;
 		private readonly ToggleState _state;
 
-		private Toggle(Func<string> getCurrentUserID)
+		private Toggle()
 		{
-			_getCurrentUserID = getCurrentUserID;
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			_state = new ToggleState();
@@ -99,12 +97,6 @@ namespace Crispin
 				return;
 
 			ApplyEvent(new TagRemoved(tag));
-		}
-
-		protected override void PopulateExtraEventData(Event @event)
-		{
-			@event.Editor = EditorID.Parse(_getCurrentUserID());
-			base.PopulateExtraEventData(@event);
 		}
 
 		//handlers which apply the results of the domainy things

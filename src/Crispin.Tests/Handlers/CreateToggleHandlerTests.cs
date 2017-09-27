@@ -26,7 +26,10 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_a_toggle_is_created()
 		{
-			var response = await _handler.Handle(new CreateToggleRequest("???", "Test", "desc"));
+			var response = await _handler.Handle(new CreateToggleRequest(
+				creator: EditorID.Parse("?"),
+				name: "Test",
+				description: "desc"));
 
 			response.ToggleID.ShouldNotBe(ToggleID.Empty);
 

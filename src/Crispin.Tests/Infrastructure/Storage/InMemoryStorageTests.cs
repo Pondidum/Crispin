@@ -25,7 +25,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_storage.RegisterProjection(projection);
 
 			using (var session = _storage.BeginSession())
-				session.Save(Toggle.CreateNew(() => "", "Test", "no"));
+				session.Save(Toggle.CreateNew(EditorID.Empty, "Test", "no"));
 
 			projection.Toggles.Count().ShouldBe(1);
 		}
@@ -42,7 +42,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_an_aggregate_is_registered()
 		{
-			_storage.RegisterBuilder(events => Toggle.LoadFrom(() => "", events));
+			_storage.RegisterBuilder(Toggle.LoadFrom);
 
 			using (var session = _storage.BeginSession())
 			{
