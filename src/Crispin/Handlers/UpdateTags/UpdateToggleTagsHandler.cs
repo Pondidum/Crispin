@@ -21,7 +21,7 @@ namespace Crispin.Handlers.UpdateTags
 		{
 			return ModifyTags(
 				message.Locator,
-				toggle => toggle.AddTag(message.TagName)
+				toggle => toggle.AddTag(message.Editor, message.TagName)
 			);
 		}
 
@@ -29,7 +29,7 @@ namespace Crispin.Handlers.UpdateTags
 		{
 			return ModifyTags(
 				message.Locator,
-				toggle => toggle.RemoveTag(message.TagName)
+				toggle => toggle.RemoveTag(message.Editor, message.TagName)
 			);
 		}
 

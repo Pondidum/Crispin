@@ -22,7 +22,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle();
 
-			Toggle.ChangeState(UserID.Parse("user-1"), States.On);
+			Toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 
 			Toggle.IsActive(Membership, UserID.Parse("user-1")).ShouldBe(true);
 			Events.ShouldBe(new[]
@@ -34,9 +34,9 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_an_on_toggle_is_turned_off()
 		{
-			CreateToggle(new ToggleSwitchedOnForAnonymous());
+			CreateToggle(new ToggleSwitchedOnForAnonymous(Editor));
 
-			Toggle.ChangeDefaultState(newState: States.Off);
+			Toggle.ChangeDefaultState(Editor, newState: States.Off);
 
 			Toggle.IsActive(Membership, UserID.Empty).ShouldBe(false);
 			Events.ShouldBe(new[]
@@ -57,7 +57,7 @@ namespace Crispin.Tests.ToggleTests
 		public void When_switching_on()
 		{
 			var now = DateTime.Now.AddHours(-123);
-			CreateToggle(new ToggleSwitchedOnForAnonymous() { TimeStamp = now });
+			CreateToggle(new ToggleSwitchedOnForAnonymous(Editor) { TimeStamp = now });
 
 			Toggle.LastToggled.ShouldBe(now);
 		}
@@ -66,7 +66,7 @@ namespace Crispin.Tests.ToggleTests
 		public void When_switch_off()
 		{
 			var now = DateTime.Now.AddHours(-123);
-			CreateToggle(new ToggleSwitchedOffForAnonymous() { TimeStamp = now });
+			CreateToggle(new ToggleSwitchedOffForAnonymous(Editor) { TimeStamp = now });
 
 			Toggle.LastToggled.ShouldBe(now);
 		}

@@ -17,14 +17,14 @@ namespace Crispin.Tests.Handlers
 
 		protected override void InitialiseToggle(Toggle toggle)
 		{
-			toggle.AddTag("existing");
+			toggle.AddTag(Editor, "existing");
 		}
 
 		[Fact]
 		public void When_adding_tags_and_the_toggle_doesnt_exist()
 		{
 			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
-				new AddToggleTagRequest(ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
+				new AddToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
 			);
 		}
 
@@ -32,7 +32,7 @@ namespace Crispin.Tests.Handlers
 		public void When_removing_tags_and_the_toggle_doesnt_exist()
 		{
 			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
-				new RemoveToggleTagRequest(ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
+				new RemoveToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
 			);
 		}
 
@@ -44,8 +44,8 @@ namespace Crispin.Tests.Handlers
 		public async Task When_changing_tags_around_randomly(TagAction action, string tagName, string expected)
 		{
 			var response = action == TagAction.Add
-				? await Handler.Handle(new AddToggleTagRequest(Locator, tagName))
-				: await Handler.Handle(new RemoveToggleTagRequest(Locator, tagName));
+				? await Handler.Handle(new AddToggleTagRequest(Editor, Locator, tagName))
+				: await Handler.Handle(new RemoveToggleTagRequest(Editor, Locator, tagName));
 
 			var expectedTags = string.IsNullOrWhiteSpace(expected)
 				? Array.Empty<string>()

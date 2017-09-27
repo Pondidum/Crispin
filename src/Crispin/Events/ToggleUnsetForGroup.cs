@@ -4,10 +4,12 @@ namespace Crispin.Events
 {
 	public class ToggleUnsetForGroup : Event
 	{
+		public EditorID Editor { get; }
 		public GroupID Group { get; }
 
-		public ToggleUnsetForGroup(GroupID groupID)
+		public ToggleUnsetForGroup(EditorID editor, GroupID groupID)
 		{
+			Editor = editor;
 			Group = groupID;
 		}
 

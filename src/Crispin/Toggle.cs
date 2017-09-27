@@ -59,44 +59,44 @@ namespace Crispin
 		public bool IsActive(IGroupMembership membership, UserID userID)
 			=> _state.IsActive(membership, userID);
 
-		public void ChangeState(UserID user, States? newState)
+		public void ChangeState(EditorID editor, UserID user, States? newState)
 		{
 			if (newState.HasValue == false)
-				ApplyEvent(new ToggleUnsetForUser(user));
+				ApplyEvent(new ToggleUnsetForUser(editor, user));
 			else if (newState.Value == States.On)
-				ApplyEvent(new ToggleSwitchedOnForUser(user));
+				ApplyEvent(new ToggleSwitchedOnForUser(editor, user));
 			else
-				ApplyEvent(new ToggleSwitchedOffForUser(user));
+				ApplyEvent(new ToggleSwitchedOffForUser(editor, user));
 		}
 
-		public void ChangeState(GroupID group, States? newState)
+		public void ChangeState(EditorID editor, GroupID group, States? newState)
 		{
 			if (newState.HasValue == false)
-				ApplyEvent(new ToggleUnsetForGroup(group));
+				ApplyEvent(new ToggleUnsetForGroup(editor, group));
 			else if (newState.Value == States.On)
-				ApplyEvent(new ToggleSwitchedOnForGroup(group));
+				ApplyEvent(new ToggleSwitchedOnForGroup(editor, group));
 			else
-				ApplyEvent(new ToggleSwitchedOffForGroup(group));
+				ApplyEvent(new ToggleSwitchedOffForGroup(editor, group));
 		}
 
-		public void ChangeDefaultState(States newState) => ApplyEvent(newState == States.On
-			? new ToggleSwitchedOnForAnonymous() as Event
-			: new ToggleSwitchedOffForAnonymous() as Event);
+		public void ChangeDefaultState(EditorID editor, States newState) => ApplyEvent(newState == States.On
+			? new ToggleSwitchedOnForAnonymous(editor) as Event
+			: new ToggleSwitchedOffForAnonymous(editor) as Event);
 
-		public void AddTag(string tag)
+		public void AddTag(EditorID editor, string tag)
 		{
 			if (_tags.Contains(tag))
 				return;
 
-			ApplyEvent(new TagAdded(tag));
+			ApplyEvent(new TagAdded(editor, tag));
 		}
 
-		public void RemoveTag(string tag)
+		public void RemoveTag(EditorID editor, string tag)
 		{
 			if (_tags.Contains(tag) == false)
 				return;
 
-			ApplyEvent(new TagRemoved(tag));
+			ApplyEvent(new TagRemoved(editor, tag));
 		}
 
 		//handlers which apply the results of the domainy things

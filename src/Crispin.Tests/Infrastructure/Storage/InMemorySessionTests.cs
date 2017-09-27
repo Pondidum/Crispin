@@ -65,8 +65,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_eventStore[_aggregateID] = new List<Event> 
 			{
 				new ToggleCreated(_editor, _aggregateID, "First", "hi"),
-				new TagAdded("one"),
-				new ToggleSwitchedOnForUser(UserID.Parse("user-1"))
+				new TagAdded(_editor, "one"),
+				new ToggleSwitchedOnForUser(_editor, UserID.Parse("user-1"))
 			};
 
 			var toggle = _session.LoadAggregate<Toggle>(_aggregateID);
@@ -82,8 +82,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_saving_an_aggregate_and_commit_is_not_called()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
-			toggle.ChangeDefaultState(newState: States.On);
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeDefaultState(_editor, newState: States.On);
 
 			_session.Save(toggle);
 
@@ -94,8 +94,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_saving_an_aggregate_and_commit_is_called()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
-			toggle.ChangeDefaultState(newState: States.On);
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeDefaultState(_editor, newState: States.On);
 
 			_session.Save(toggle);
 			_session.Commit();
@@ -112,8 +112,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_loading_an_aggregate_saved_in_the_current_session()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
-			toggle.ChangeState(UserID.Parse("user-1"), States.On);
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
 
 			_session.Save(toggle);
 
@@ -130,12 +130,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
+			toggle.AddTag(_editor, "one");
 
 			_session.Save(toggle);
 			_session.Commit();
 
-			toggle.ChangeState(UserID.Parse("user-1"), States.On);
+			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
 			_session.Save(toggle);
 
 			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
@@ -151,7 +151,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_there_are_pending_events_and_dispose_is_called()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
+			toggle.AddTag(_editor, "one");
 
 			_session.Save(toggle);
 			_session.Dispose();
@@ -167,7 +167,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_commit_is_called_twice()
 		{
 			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag("one");
+			toggle.AddTag(_editor, "one");
 
 			_session.Save(toggle);
 			_session.Commit();

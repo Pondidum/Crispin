@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
 using MediatR;
@@ -18,6 +16,8 @@ namespace Crispin.Rest.Toggles
 			_mediator = mediator;
 		}
 
+		private EditorID GetEditor() => EditorID.Parse("TestApiUser");		//User.Identity.Name
+
 		[Route("id/{id}/state")]
 		[Route("name/{id}/state")]
 		[HttpGet]
@@ -34,7 +34,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutStateDefault(ToggleLocator id, [FromBody] StatePutRequest model)
 		{
-			var request = new UpdateToggleStateRequest(id) { Anonymous = model.State };
+			var request = new UpdateToggleStateRequest(GetEditor(), id) { Anonymous = model.State };
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.State);
@@ -45,7 +45,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutStateUser(ToggleLocator id, UserID userID, [FromBody] StatePutRequest model)
 		{
-			var request = new UpdateToggleStateRequest(id)
+			var request = new UpdateToggleStateRequest(GetEditor(), id)
 			{
 				Users = { { userID, model.State } }
 			};
@@ -59,7 +59,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutStateGroup(ToggleLocator id, GroupID groupid, [FromBody] StatePutRequest model)
 		{
-			var request = new UpdateToggleStateRequest(id)
+			var request = new UpdateToggleStateRequest(GetEditor(), id)
 			{
 				Groups = { { groupid, model.State } }
 			};
@@ -73,7 +73,7 @@ namespace Crispin.Rest.Toggles
 		[HttpDelete]
 		public async Task<IActionResult> DeleteStateUser(ToggleLocator id, UserID userID)
 		{
-			var request = new UpdateToggleStateRequest(id)
+			var request = new UpdateToggleStateRequest(GetEditor(), id)
 			{
 				Users = { { userID, null } }
 			};
@@ -87,7 +87,7 @@ namespace Crispin.Rest.Toggles
 		[HttpDelete]
 		public async Task<IActionResult> DeleteStateGroup(ToggleLocator id, GroupID groupid)
 		{
-			var request = new UpdateToggleStateRequest(id)
+			var request = new UpdateToggleStateRequest(GetEditor(), id)
 			{
 				Groups = { { groupid, null } }
 			};

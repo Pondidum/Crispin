@@ -69,7 +69,7 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
-			_projection.Consume(new ToggleSwitchedOnForAnonymous() { AggregateID = created.ID });
+			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = created.ID });
 
 			_projection.Toggles.Single().State.Anonymous.ShouldBe(States.On);
 		}
@@ -80,8 +80,8 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
-			_projection.Consume(new ToggleSwitchedOnForAnonymous { AggregateID = created.ID });
-			_projection.Consume(new ToggleSwitchedOffForAnonymous { AggregateID = created.ID });
+			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = created.ID });
+			_projection.Consume(new ToggleSwitchedOffForAnonymous(_editor) { AggregateID = created.ID });
 
 			_projection.Toggles.Single().State.Anonymous.ShouldBe(States.Off);
 		}
@@ -92,7 +92,7 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
-			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });
+			_projection.Consume(new TagAdded(_editor, "one") { AggregateID = created.ID });
 
 			_projection.Toggles.Single().Tags.ShouldBe(new[] { "one" });
 		}
@@ -103,9 +103,9 @@ namespace Crispin.Tests.Projections
 			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
 			_projection.Consume(created);
-			_projection.Consume(new TagAdded("one") { AggregateID = created.ID });
-			_projection.Consume(new TagAdded("two") { AggregateID = created.ID });
-			_projection.Consume(new TagRemoved("one") { AggregateID = created.ID });
+			_projection.Consume(new TagAdded(_editor, "one") { AggregateID = created.ID });
+			_projection.Consume(new TagAdded(_editor, "two") { AggregateID = created.ID });
+			_projection.Consume(new TagRemoved(_editor, "one") { AggregateID = created.ID });
 
 			_projection.Toggles.Single().Tags.ShouldBe(new[] { "two" });
 		}

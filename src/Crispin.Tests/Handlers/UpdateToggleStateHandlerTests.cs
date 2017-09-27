@@ -21,14 +21,14 @@ namespace Crispin.Tests.Handlers
 			var invalidLocator = ToggleLocator.Create(ToggleID.CreateNew());
 
 			Should.Throw<KeyNotFoundException>(
-				() => Handler.Handle(new UpdateToggleStateRequest(invalidLocator ))
+				() => Handler.Handle(new UpdateToggleStateRequest(Editor, invalidLocator ))
 			);
 		}
 
 		[Fact]
 		public async Task When_updating_a_toggle_with_no_current_state_for_anonymous()
 		{
-			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
 				Anonymous = States.On
 			});
@@ -44,7 +44,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_on_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
 				Users = { { userID, States.On } }
 			});
@@ -62,7 +62,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_user()
 		{
 			var userID = UserID.Parse("user-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
 				Users = { { userID, States.Off } }
 			});
@@ -80,7 +80,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_on_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
 				Groups = { { groupID, States.On } }
 			});
@@ -98,7 +98,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_switching_off_for_a_group()
 		{
 			var groupID = GroupID.Parse("group-1");
-			var response = await Handler.Handle(new UpdateToggleStateRequest(Locator)
+			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
 				Groups = { { groupID, States.Off } }
 			});

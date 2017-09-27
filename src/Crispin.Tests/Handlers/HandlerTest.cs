@@ -14,6 +14,7 @@ namespace Crispin.Tests.Handlers
 		protected ToggleLocator Locator { get; }
 		protected THandler Handler { get; }
 		protected Dictionary<ToggleID, List<Event>> Events { get; }
+		protected EditorID Editor { get; }
 
 		public HandlerTest()
 		{
@@ -33,8 +34,8 @@ namespace Crispin.Tests.Handlers
 
 			Toggle = toggle;
 			Locator = ToggleLocator.Create(toggle.ID);
+			Editor = EditorID.Parse("Editor:" + Guid.NewGuid());
 		}
-
 
 		protected IEnumerable<Type> EventTypes() => Events[Toggle.ID].Select(e => e.GetType());
 		protected TEvent Event<TEvent>() => Events[Toggle.ID].OfType<TEvent>().Single();

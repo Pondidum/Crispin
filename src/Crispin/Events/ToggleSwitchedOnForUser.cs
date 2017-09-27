@@ -4,10 +4,12 @@ namespace Crispin.Events
 {
 	public class ToggleSwitchedOnForUser : Event
 	{
+		public EditorID Editor { get; }
 		public UserID User { get; }
 
-		public ToggleSwitchedOnForUser(UserID user)
+		public ToggleSwitchedOnForUser(EditorID editor, UserID user)
 		{
+			Editor = editor;
 			User = user;
 		}
 

@@ -106,38 +106,6 @@ namespace Crispin.Tests.Infrastructure
 			_aggregate.SeenEvents.Last().AggregateID.ShouldBe(id);
 		}
 
-		[Fact]
-		public void When_populating_extra_event_data()
-		{
-			var userID =EditorID.Parse(Guid.NewGuid().ToString());
-			var aggregate = new CrossCuttingAggregate(() => userID);
-			aggregate.Raise(new TestEventOne());
-
-			aggregate.SeenEvents.Single().Editor.ShouldBe(userID);
-		}
-
-		private class CrossCuttingAggregate : AggregateRoot
-		{
-			private readonly Func<EditorID> _extra;
-			public List<Event> SeenEvents { get; private set; }
-
-			public CrossCuttingAggregate(Func<EditorID> extra)
-			{
-				_extra = extra;
-				SeenEvents = new List<Event>();
-				Register<TestEventOne>(SeenEvents.Add);
-				Register<Stamped>(SeenEvents.Add);
-			}
-
-			protected override void PopulateExtraEventData(Event @event)
-			{
-				base.PopulateExtraEventData(@event);
-				@event.Editor = _extra();
-			}
-
-			public void Raise(Event e) => ApplyEvent(e);
-		}
-
 		private class TestAggregate : AggregateRoot
 		{
 			public List<Event> SeenEvents { get; private set; }

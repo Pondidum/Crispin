@@ -4,10 +4,12 @@ namespace Crispin.Events
 {
 	public class TagRemoved : Event
 	{
+		public EditorID Editor { get; }
 		public string Name { get; }
 
-		public TagRemoved(string name)
+		public TagRemoved(EditorID editor, string name)
 		{
+			Editor = editor;
 			Name = name;
 		}
 

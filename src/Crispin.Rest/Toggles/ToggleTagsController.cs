@@ -17,6 +17,8 @@ namespace Crispin.Rest.Toggles
 			_mediator = mediator;
 		}
 
+		private EditorID GetEditor() => EditorID.Parse("TestApiUser");		//User.Identity.Name
+
 		[Route("id/{id}/tags")]
 		[Route("name/{id}/tags")]
 		[HttpGet]
@@ -33,7 +35,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutTag(ToggleLocator id, string tagName)
 		{
-			var request = new AddToggleTagRequest(id, tagName);
+			var request = new AddToggleTagRequest(GetEditor(), id, tagName);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Tags);
@@ -44,7 +46,7 @@ namespace Crispin.Rest.Toggles
 		[HttpDelete]
 		public async Task<IActionResult> DeleteTag(ToggleLocator id, string tagName)
 		{
-			var request = new RemoveToggleTagRequest(id, tagName);
+			var request = new RemoveToggleTagRequest(GetEditor(), id, tagName);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Tags);
