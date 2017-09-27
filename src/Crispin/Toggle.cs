@@ -103,7 +103,7 @@ namespace Crispin
 
 		protected override void PopulateExtraEventData(Event @event)
 		{
-			@event.UserID = _getCurrentUserID();
+			@event.Editor = EditorID.Parse(_getCurrentUserID());
 			base.PopulateExtraEventData(@event);
 		}
 
