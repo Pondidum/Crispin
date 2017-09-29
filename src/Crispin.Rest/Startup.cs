@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Crispin.Infrastructure.Statistics;
 using Crispin.Rest.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,8 @@ namespace Crispin.Rest
 				_.Populate(services);
 				_.AddRegistry<CrispinRestRegistry>();
 				_.AddRegistry<MediatrRegistry>();
+
+				_.For<IStatisticsWriter>().Use<LoggingStatisticsWriter>();
 			});
 
 			return container.GetInstance<IServiceProvider>();

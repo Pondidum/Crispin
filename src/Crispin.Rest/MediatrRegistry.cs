@@ -1,4 +1,5 @@
 using Crispin.Infrastructure;
+using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Validation;
 using MediatR;
 using MediatR.Pipeline;
@@ -31,6 +32,7 @@ namespace Crispin.Rest
 
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(TimingBehavior<,>));
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
+			For(typeof(IPipelineBehavior<,>)).Add(typeof(StatisticsBehavior<,>));
 
 			For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
 			For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
