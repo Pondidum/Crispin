@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
+using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Validation;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -14,23 +16,6 @@ namespace Crispin.Rest.Tests
 {
 	public class ContainerTests
 	{
-
-		private class FakeLogger<T> : ILogger<T>
-		{
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-			{
-			}
-
-			public bool IsEnabled(LogLevel logLevel)
-			{
-				return true;
-			}
-
-			public IDisposable BeginScope<TState>(TState state)
-			{
-				return Substitute.For<IDisposable>();
-			}
-		}
 		private readonly Container _container;
 
 		public ContainerTests()
@@ -55,14 +40,42 @@ namespace Crispin.Rest.Tests
 		[Fact]
 		public async Task When_resolving_a_validator_which_doesnt_exist()
 		{
-//			Should.Throw<Exception>(
-//				() => _container.GetInstance<ValidationBehavior<GetAllTogglesRequest, GetAllTogglesResponse>>()
-//			);
-
 			var mediator = _container.GetInstance<IMediator>();
 			var response = await mediator.Send(new GetAllTogglesRequest());
 
 			response.ShouldBeOfType<GetAllTogglesResponse>();
+		}
+
+		[Fact]
+		public void When_creating_statistics_writer()
+		{
+			var writer = _container.GetInstance<IStatisticsWriter>() as CompositeStatisticsWriter;
+
+			writer.ShouldSatisfyAllConditions(
+				() => writer.ShouldNotBeNull(),
+				() => writer.Writers.Select(w => w.GetType()).ShouldBe(new[]
+				{
+					typeof(StatsdStatisticsWriter),
+					typeof(LoggingStatisticsWriter)
+				}, ignoreOrder: true)
+			);
+		}
+
+		private class FakeLogger<T> : ILogger<T>
+		{
+			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+			{
+			}
+
+			public bool IsEnabled(LogLevel logLevel)
+			{
+				return true;
+			}
+
+			public IDisposable BeginScope<TState>(TState state)
+			{
+				return Substitute.For<IDisposable>();
+			}
 		}
 	}
 }

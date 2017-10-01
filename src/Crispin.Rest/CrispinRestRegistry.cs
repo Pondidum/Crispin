@@ -1,8 +1,14 @@
+using System.Collections.Generic;
+using System.Linq;
 using Crispin.Infrastructure;
+using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
 using StructureMap;
+using StructureMap.Graph;
+using StructureMap.Graph.Scanning;
+using StructureMap.TypeRules;
 
 namespace Crispin.Rest
 {
@@ -19,7 +25,7 @@ namespace Crispin.Rest
 			var store = BuildStorage();
 
 			For<IStorage>().Use(store);
-			For(typeof(IPipelineBehavior<,>)).Use(typeof(TimingBehavior<,>));
+			For<IStatisticsWriter>().Use<CompositeStatisticsWriter>();
 		}
 
 		private static InMemoryStorage BuildStorage()

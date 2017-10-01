@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using StatsdClient;
 
 namespace Crispin.Infrastructure.Statistics
 {
@@ -7,10 +9,15 @@ namespace Crispin.Infrastructure.Statistics
 	{
 		private readonly IStatisticsWriter[] _writers;
 
-		public CompositeStatisticsWriter(params IStatisticsWriter[] writers)
+		public CompositeStatisticsWriter(LoggingStatisticsWriter logging, StatsdStatisticsWriter statsd)
 		{
-			_writers = writers.ToArray();
+			_writers = new IStatisticsWriter[]
+			{
+				logging, statsd
+			};
 		}
+
+		public IEnumerable<IStatisticsWriter> Writers => _writers;
 
 		public async Task Write(string key, string value)
 		{
