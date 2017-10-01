@@ -29,7 +29,7 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			var decorator = new StatisticsBehavior<RequestWith, ResponseWithout>(_writer);
 			await decorator.Handle(new RequestWith(), () => Task.FromResult(new ResponseWithout()));
 
-			await _writer.Received().Write("Request", 0);
+			await _writer.Received().Write("Request", "0");
 		}
 
 		[Fact]
@@ -38,7 +38,7 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			var decorator = new StatisticsBehavior<RequestWithout, ResponseWith>(_writer);
 			await decorator.Handle(new RequestWithout(), () => Task.FromResult(new ResponseWith()));
 
-			await _writer.Received().Write("Response", 0);
+			await _writer.Received().Write("Response", "0");
 		}
 
 		[Fact]
@@ -47,8 +47,8 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			var decorator = new StatisticsBehavior<RequestWith, ResponseWith>(_writer);
 			await decorator.Handle(new RequestWith(), () => Task.FromResult(new ResponseWith()));
 
-			await _writer.Received().Write("Request", 0);
-			await _writer.Received().Write("Response", 0);
+			await _writer.Received().Write("Request", "0");
+			await _writer.Received().Write("Response", "0");
 		}
 
 		private class RequestWithout
@@ -61,7 +61,8 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			public async Task Write(IStatisticsWriter writer)
 			{
-				await writer.Write("Request", _count++);
+				await writer.Write("Request", _count.ToString());
+				_count++;
 			}
 		}
 
@@ -75,7 +76,8 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			public async Task Write(IStatisticsWriter writer)
 			{
-				await writer.Write("Response", _count++);
+				await writer.Write("Response", _count.ToString());
+				_count++;;
 			}
 		}
 	}
