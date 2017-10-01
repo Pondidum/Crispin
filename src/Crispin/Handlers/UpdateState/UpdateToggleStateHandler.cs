@@ -42,6 +42,7 @@ namespace Crispin.Handlers.UpdateState
 
 				return Task.FromResult(new UpdateToggleStateResponse
 				{
+					ToggleID = view.ID,
 					State = view.State
 				});
 			}
