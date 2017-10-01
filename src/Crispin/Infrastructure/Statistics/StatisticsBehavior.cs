@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 
 namespace Crispin.Infrastructure.Statistics
@@ -6,21 +7,20 @@ namespace Crispin.Infrastructure.Statistics
 	public class StatisticsBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	{
 		private readonly IStatisticsWriter _writer;
+		private readonly IEnumerable<IStatisticGenerator<TRequest, TResponse>> _generators;
 
-		public StatisticsBehavior(IStatisticsWriter writer)
+		public StatisticsBehavior(IStatisticsWriter writer, IEnumerable<IStatisticGenerator<TRequest, TResponse>> generators)
 		{
 			_writer = writer;
+			_generators = generators;
 		}
 
 		public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next)
 		{
-			if (request is IStatisticGenerator requestStatistic)
-				await requestStatistic.Write(_writer);
-
 			var response = await next();
 
-			if (response is IStatisticGenerator responseStatistic)
-				await responseStatistic.Write(_writer);
+			foreach (var generator in _generators)
+				await generator.Write(_writer, request, response);
 
 			return response;
 		}

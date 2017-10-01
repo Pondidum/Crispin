@@ -25,6 +25,7 @@ namespace Crispin.Rest
 				a.ConnectImplementationsToTypesClosing(typeof(ICancellableAsyncNotificationHandler<>));
 
 				a.ConnectImplementationsToTypesClosing(typeof(IRequestValidator<>));
+				a.ConnectImplementationsToTypesClosing(typeof(IStatisticGenerator<,>));
 			});
 
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(RequestPreProcessorBehavior<,>));
