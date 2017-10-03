@@ -14,14 +14,9 @@ namespace Crispin.Infrastructure.Statistics
 			});
 		}
 
-		public async Task Write(string key, string value)
+		public async Task WriteCount(string format, params object[] parameters)
 		{
-			await Task.Run(() => Metrics.Set(key, value));
-		}
-
-		public async Task WriteCount(string key)
-		{
-			await Task.Run(() => Metrics.Counter(key));
+			await Task.Run(() => Metrics.Counter(format.Render(parameters)));
 		}
 	}
 }

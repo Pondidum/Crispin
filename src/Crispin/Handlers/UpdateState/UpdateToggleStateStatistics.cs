@@ -17,19 +17,16 @@ namespace Crispin.Handlers.UpdateState
 
 			if (request.Anonymous.HasValue)
 			{
-				await writer.WriteCount($"toggle.{response.ToggleID}.state.anonymous");
 				await writer.WriteCount($"toggle.{response.ToggleID}.state.anonymous.{state(request.Anonymous)}");
 			}
 
 			foreach (var user in request.Users)
 			{
-				await writer.WriteCount($"toggle.{response.ToggleID}.state.users.{user.Key}");
 				await writer.WriteCount($"toggle.{response.ToggleID}.state.users.{user.Key}.{state(user.Value)}");
 			}
 
 			foreach (var group in request.Groups)
 			{
-				await writer.WriteCount($"toggle.{response.ToggleID}.state.groups.{group.Key}");
 				await writer.WriteCount($"toggle.{response.ToggleID}.state.groups.{group.Key}.{state(group.Value)}");
 			}
 		}

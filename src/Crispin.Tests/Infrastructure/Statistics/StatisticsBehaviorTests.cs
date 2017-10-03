@@ -26,7 +26,6 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.DidNotReceiveWithAnyArgs().Write("", "");
 			await _writer.DidNotReceiveWithAnyArgs().WriteCount("");
 		}
 
@@ -37,7 +36,7 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.Received().Write("key", "value");
+			await _writer.Received().WriteCount("one", "1");
 		}
 
 		[Fact]
@@ -48,8 +47,8 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.Received().Write("one", "1");
-			await _writer.Received().Write("two", "2");
+			await _writer.Received().WriteCount("one", "1");
+			await _writer.Received().WriteCount("two", "2");
 		}
 
 		private static IStatisticGenerator<Request, Response> CreateGenerator(string key, string value)
@@ -57,7 +56,7 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			var generator = Substitute.For<IStatisticGenerator<Request, Response>>();
 			generator
 				.Write(
-					Arg.Do<IStatisticsWriter>(w => w.Write(key, value)),
+					Arg.Do<IStatisticsWriter>(w => w.WriteCount(key, value)),
 					Arg.Any<Request>(),
 					Arg.Any<Response>())
 				.Returns(Task.CompletedTask);

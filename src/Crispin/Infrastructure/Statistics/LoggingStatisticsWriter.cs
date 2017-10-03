@@ -12,15 +12,9 @@ namespace Crispin.Infrastructure.Statistics
 			_logger = logger;
 		}
 
-		public Task Write(string key, string value)
+		public Task WriteCount(string format, params object[] parameters)
 		{
-			_logger.LogDebug("Statistic: {key}: {value}", key, value);
-			return Task.CompletedTask;
-		}
-
-		public Task WriteCount(string key)
-		{
-			_logger.LogDebug("Statistic: {key}++", key);
+			_logger.LogDebug("Statistic: " + format, parameters);
 			return Task.CompletedTask;
 		}
 	}

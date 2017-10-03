@@ -20,18 +20,6 @@ namespace Crispin.Tests.Infrastructure.Statistics
 		}
 
 		[Fact]
-		public async Task When_write_is_called()
-		{
-			const string key = "some key";
-			const string value = "some value";
-
-			await _writer.Write(key, value);
-
-			await _first.Received().Write(key, value);
-			await _second.Received().Write(key, value);
-		}
-
-		[Fact]
 		public async Task When_writeCount_is_called()
 		{
 			const string key = "some key";
