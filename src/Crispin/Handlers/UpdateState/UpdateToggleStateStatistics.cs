@@ -12,7 +12,7 @@ namespace Crispin.Handlers.UpdateState
 				return;
 
 			var state = new Func<States?, string>(s => s.HasValue
-				? s.Value.ToString()
+				? s.Value.ToString().ToLower()
 				: "unset");
 
 			if (request.Anonymous.HasValue)
