@@ -6,7 +6,7 @@ using Crispin.Infrastructure.Storage;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Tests.Handlers
+namespace Crispin.Tests.Handlers.UpdateState
 {
 	public class UpdateToggleStateHandlerTests : HandlerTest<UpdateToggleStateHandler>
 	{
