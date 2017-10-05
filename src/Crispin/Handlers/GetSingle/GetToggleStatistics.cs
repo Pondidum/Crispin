@@ -10,7 +10,7 @@ namespace Crispin.Handlers.GetSingle
 			if (response.Toggle == null)
 				return;
 
-			await writer.WriteCount($"toggle.{response.Toggle.ID}.queries");
+			await writer.WriteCount("toggle.{toggleID}.read", response.Toggle.ID);
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace Crispin.Handlers.GetAll
 		public async Task Write(IStatisticsWriter writer, GetAllTogglesRequest request, GetAllTogglesResponse response)
 		{
 			foreach (var toggle in response.Toggles)
-				await writer.WriteCount($"toggle.{toggle.ID}.queries");
+				await writer.WriteCount("toggle.{toggleID}.read", toggle.ID);
 
 		}
 	}
