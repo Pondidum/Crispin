@@ -4,6 +4,7 @@ using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
+using Crispin.Rest.Infrastructure;
 using MediatR;
 using StructureMap;
 using StructureMap.Graph;
@@ -20,12 +21,12 @@ namespace Crispin.Rest
 			{
 				a.AssemblyContainingType<Toggle>();
 				a.WithDefaultConventions();
+				a.Convention<CompositeDecorator<CompositeStatisticsWriter, IStatisticsWriter>>();
 			});
 
 			var store = BuildStorage();
 
 			For<IStorage>().Use(store);
-			For<IStatisticsWriter>().Use<CompositeStatisticsWriter>();
 		}
 
 		private static InMemoryStorage BuildStorage()

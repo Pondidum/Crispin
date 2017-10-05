@@ -16,7 +16,11 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			_first = Substitute.For<LoggingStatisticsWriter>();
 			_second = Substitute.For<StatsdStatisticsWriter>();
 
-			_writer = new CompositeStatisticsWriter(_first, _second);
+			_writer = new CompositeStatisticsWriter(new IStatisticsWriter[]
+			{
+				_first,
+				_second
+			});
 		}
 
 		[Fact]
