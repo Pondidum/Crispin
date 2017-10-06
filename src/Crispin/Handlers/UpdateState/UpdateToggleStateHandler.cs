@@ -25,8 +25,8 @@ namespace Crispin.Handlers.UpdateState
 				if (toggle == null)
 					return Task.FromResult(new UpdateToggleStateResponse());
 
-				if (message.Anonymous.HasValue)
-					toggle.ChangeDefaultState(message.Editor, message.Anonymous.Value);
+				if (message.Default.HasValue)
+					toggle.ChangeDefaultState(message.Editor, message.Default.Value);
 
 				foreach (var userState in message.Users)
 					toggle.ChangeState(message.Editor,userState.Key, userState.Value);

@@ -34,7 +34,7 @@ namespace Crispin.Rest.Toggles
 		[HttpPut]
 		public async Task<IActionResult> PutStateDefault(ToggleLocator id, [FromBody] StatePutRequest model)
 		{
-			var request = new UpdateToggleStateRequest(GetEditor(), id) { Anonymous = model.State };
+			var request = new UpdateToggleStateRequest(GetEditor(), id) { Default = model.State };
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.State);

@@ -86,7 +86,7 @@ namespace Crispin.Rest.Tests.Toggles
 				new StatePutRequest { State = States.On });
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.Anonymous.ShouldBe(States.On),
+				() => _request.Default.ShouldBe(States.On),
 				() => _request.Users.ShouldBeEmpty(),
 				() => _request.Groups.ShouldBeEmpty(),
 				() => response.Value.ShouldBeOfType<StateView>()
@@ -114,7 +114,7 @@ namespace Crispin.Rest.Tests.Toggles
 				new StatePutRequest { State = States.On });
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Default.ShouldBeNull(),
 				() => _request.Users.ShouldContainKeyAndValue(userid, States.On),
 				() => _request.Users.ShouldHaveSingleItem(),
 				() => _request.Groups.ShouldBeEmpty(),
@@ -143,7 +143,7 @@ namespace Crispin.Rest.Tests.Toggles
 				new StatePutRequest { State = States.On });
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Default.ShouldBeNull(),
 				() => _request.Users.ShouldBeEmpty(),
 				() => _request.Groups.ShouldContainKeyAndValue(groupid, States.On),
 				() => _request.Groups.ShouldHaveSingleItem(),
@@ -160,7 +160,7 @@ namespace Crispin.Rest.Tests.Toggles
 				userid);
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Default.ShouldBeNull(),
 				() => _request.Users.ShouldContainKeyAndValue(userid, null),
 				() => _request.Users.ShouldHaveSingleItem(),
 				() => _request.Groups.ShouldBeEmpty(),
@@ -177,7 +177,7 @@ namespace Crispin.Rest.Tests.Toggles
 				groupid);
 
 			_request.ShouldSatisfyAllConditions(
-				() => _request.Anonymous.ShouldBeNull(),
+				() => _request.Default.ShouldBeNull(),
 				() => _request.Users.ShouldBeEmpty(),
 				() => _request.Groups.ShouldContainKeyAndValue(groupid, null),
 				() => _request.Groups.ShouldHaveSingleItem(),

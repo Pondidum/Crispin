@@ -31,7 +31,7 @@ namespace Crispin.Tests.Handlers.UpdateState
 		{
 			var request = new UpdateToggleStateRequest(EditorID.Parse("me"), null)
 			{
-				Anonymous = state
+				Default = state
 			};
 
 			var writer = Substitute.For<IStatisticsWriter>();

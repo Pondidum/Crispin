@@ -30,7 +30,7 @@ namespace Crispin.Tests.Handlers.UpdateState
 		{
 			var response = await Handler.Handle(new UpdateToggleStateRequest(Editor, Locator)
 			{
-				Anonymous = States.On
+				Default = States.On
 			});
 
 			EventTypes().ShouldBe(new[]

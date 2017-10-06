@@ -11,10 +11,10 @@ namespace Crispin.Handlers.UpdateState
 			if (response.State == null)
 				return;
 
-			if (request.Anonymous.HasValue)
+			if (request.Default.HasValue)
 				await writer.WriteCount(new ToggleDefaultStateChange(
 					response.ToggleID,
-					request.Anonymous.Value));
+					request.Default.Value));
 
 			foreach (var user in request.Users)
 				await writer.WriteCount(new ToggleUserStateChange(

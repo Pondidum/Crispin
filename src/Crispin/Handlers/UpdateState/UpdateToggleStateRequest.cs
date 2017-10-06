@@ -7,7 +7,7 @@ namespace Crispin.Handlers.UpdateState
 	{
 		public EditorID Editor { get; }
 		public ToggleLocator Locator { get; }
-		public States? Anonymous { get; set; }
+		public States? Default { get; set; }
 		public Dictionary<GroupID, States?> Groups { get; set; }
 		public Dictionary<UserID, States?> Users { get; set; }
 
