@@ -56,7 +56,8 @@ namespace Crispin.Rest.Tests
 				() => writer.Writers.Select(w => w.GetType()).ShouldBe(new[]
 				{
 					typeof(StatsdStatisticsWriter),
-					typeof(LoggingStatisticsWriter)
+					typeof(LoggingStatisticsWriter),
+					typeof(InternalStatisticsWriter)
 				}, ignoreOrder: true)
 			);
 		}

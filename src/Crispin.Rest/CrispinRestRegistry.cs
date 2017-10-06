@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Crispin.Infrastructure;
@@ -27,6 +28,8 @@ namespace Crispin.Rest
 			var store = BuildStorage();
 
 			For<IStorage>().Use(store);
+			For<IStatisticsStore>().Use<InMemoryStatisticsStore>().Singleton();
+			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
 		}
 
 		private static InMemoryStorage BuildStorage()
