@@ -7,14 +7,14 @@ namespace Crispin.Tests.Infrastructure.Statistics
 {
 	public class CompositeStatisticsWriterTests
 	{
-		private readonly LoggingStatisticsWriter _first;
-		private readonly StatsdStatisticsWriter _second;
+		private readonly IStatisticsWriter _first;
+		private readonly IStatisticsWriter _second;
 		private readonly CompositeStatisticsWriter _writer;
 
 		public CompositeStatisticsWriterTests()
 		{
-			_first = Substitute.For<LoggingStatisticsWriter>();
-			_second = Substitute.For<StatsdStatisticsWriter>();
+			_first = Substitute.For<IStatisticsWriter>();
+			_second = Substitute.For<IStatisticsWriter>();
 
 			_writer = new CompositeStatisticsWriter(new IStatisticsWriter[]
 			{
