@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Statistics;
 
 namespace Crispin.Handlers.GetAll
@@ -7,9 +9,24 @@ namespace Crispin.Handlers.GetAll
 	{
 		public async Task Write(IStatisticsWriter writer, GetAllTogglesRequest request, GetAllTogglesResponse response)
 		{
-			foreach (var toggle in response.Toggles)
-				await writer.WriteCount("toggle.{toggleID}.read", toggle.ID);
+			await writer.WriteCount(new MultipleTogglesRead(
+				response.Toggles.Select(toggle => toggle.ID)
+			));
+		}
+	}
 
+	public struct MultipleTogglesRead : IStat
+	{
+		public IEnumerable<ToggleID> Toggles { get; }
+
+		public MultipleTogglesRead(IEnumerable<ToggleID> toggles)
+		{
+			Toggles = toggles;
+		}
+
+		public override string ToString()
+		{
+			return $"Toggles '{string.Join(", ", Toggles)}' was read";
 		}
 	}
 }

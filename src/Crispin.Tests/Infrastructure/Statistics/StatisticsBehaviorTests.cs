@@ -26,37 +26,40 @@ namespace Crispin.Tests.Infrastructure.Statistics
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.DidNotReceiveWithAnyArgs().WriteCount("");
+			await _writer.DidNotReceiveWithAnyArgs().WriteCount(Arg.Any<IStat>());
 		}
 
 		[Fact]
 		public async Task When_there_is_a_generator()
 		{
-			_generators.Add(CreateGenerator("one", "1"));
+			_generators.Add(CreateGenerator(Substitute.For<IStat>()));
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.Received().WriteCount("one", "1");
+			await _writer.Received().WriteCount(Arg.Any<IStat>());
 		}
 
 		[Fact]
 		public async Task When_there_is_are_multiple_generators()
 		{
-			_generators.Add(CreateGenerator("one", "1"));
-			_generators.Add(CreateGenerator("two", "2"));
+			var stat1 = Substitute.For<IStat>();
+			var stat2 = Substitute.For<IStat>();
+
+			_generators.Add(CreateGenerator(stat1));
+			_generators.Add(CreateGenerator(stat2));
 
 			await _decorator.Handle(new Request(), () => Task.FromResult(new Response()));
 
-			await _writer.Received().WriteCount("one", "1");
-			await _writer.Received().WriteCount("two", "2");
+			await _writer.Received().WriteCount(stat1);
+			await _writer.Received().WriteCount(stat2);
 		}
 
-		private static IStatisticGenerator<Request, Response> CreateGenerator(string key, string value)
+		private static IStatisticGenerator<Request, Response> CreateGenerator(IStat stat)
 		{
 			var generator = Substitute.For<IStatisticGenerator<Request, Response>>();
 			generator
 				.Write(
-					Arg.Do<IStatisticsWriter>(w => w.WriteCount(key, value)),
+					Arg.Do<IStatisticsWriter>(w => w.WriteCount(stat)),
 					Arg.Any<Request>(),
 					Arg.Any<Response>())
 				.Returns(Task.CompletedTask);
@@ -64,7 +67,12 @@ namespace Crispin.Tests.Infrastructure.Statistics
 			return generator;
 		}
 
-		public class Request {}
-		public class Response {}
+		public class Request
+		{
+		}
+
+		public class Response
+		{
+		}
 	}
 }

@@ -12,9 +12,9 @@ namespace Crispin.Infrastructure.Statistics
 			_logger = logger;
 		}
 
-		public Task WriteCount(string format, params object[] parameters)
+		public Task WriteCount(IStat stat)
 		{
-			_logger.LogDebug("Statistic: " + format, parameters);
+			_logger.LogDebug("Statistic: " + stat.ToString());
 			return Task.CompletedTask;
 		}
 	}

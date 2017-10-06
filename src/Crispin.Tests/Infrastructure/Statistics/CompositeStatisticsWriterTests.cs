@@ -26,7 +26,7 @@ namespace Crispin.Tests.Infrastructure.Statistics
 		[Fact]
 		public async Task When_writeCount_is_called()
 		{
-			const string key = "some key";
+			var key = Substitute.For<IStat>();
 
 			await _writer.WriteCount(key);
 

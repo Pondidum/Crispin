@@ -11,35 +11,79 @@ namespace Crispin.Handlers.UpdateState
 			if (response.State == null)
 				return;
 
-			var state = new Func<States?, string>(s => s.HasValue
-				? s.Value.ToString().ToLower()
-				: "unset");
-
 			if (request.Anonymous.HasValue)
-			{
-				await writer.WriteCount(
-					"toggle.{toggleID}.state.anonymous.{state}",
+				await writer.WriteCount(new ToggleDefaultStateChange(
 					response.ToggleID,
-					state(request.Anonymous));
-			}
+					request.Anonymous.Value));
 
 			foreach (var user in request.Users)
-			{
-				await writer.WriteCount(
-					"toggle.{toggleID}.state.users.{userID}.{state}",
+				await writer.WriteCount(new ToggleUserStateChange(
 					response.ToggleID,
 					user.Key,
-					state(user.Value));
-			}
+					user.Value
+				));
 
 			foreach (var group in request.Groups)
-			{
-				await writer.WriteCount(
-					"toggle.{toggleID}.state.groups.{groupID}.{state}",
+				await writer.WriteCount(new ToggleGroupStateChange(
 					response.ToggleID,
 					group.Key,
-					state(group.Value));
-			}
+					group.Value
+				));
+		}
+	}
+
+	public struct ToggleDefaultStateChange : IStat
+	{
+		public ToggleID ToggleID { get; }
+		public States State { get; }
+
+		public ToggleDefaultStateChange(ToggleID toggleID, States state)
+		{
+			ToggleID = toggleID;
+			State = state;
+		}
+
+		public override string ToString()
+		{
+			return $"Toggle '{ToggleID}' default state changed to {State}";
+		}
+	}
+
+	public struct ToggleUserStateChange : IStat
+	{
+		public ToggleID ToggleID { get; }
+		public UserID UserID { get; }
+		public States? State { get; }
+
+		public ToggleUserStateChange(ToggleID toggleID, UserID userID, States? state)
+		{
+			ToggleID = toggleID;
+			UserID = userID;
+			State = state;
+		}
+
+		public override string ToString()
+		{
+			return $"Toggle '{ToggleID}' state for user '{UserID}' changed to {State.Render()}";
+		}
+	}
+
+	public struct ToggleGroupStateChange : IStat
+	{
+		public ToggleID ToggleID { get; }
+		public GroupID GroupID { get; }
+		public States? State { get; }
+
+		public ToggleGroupStateChange(ToggleID toggleID, GroupID groupID, States? state)
+		{
+			ToggleID = toggleID;
+			GroupID = groupID;
+			State = state;
+		}
+
+		public override string ToString()
+		{
+			return $"Toggle '{ToggleID}' state for group '{GroupID}' changed to {State.Render()}";
 		}
 	}
 }

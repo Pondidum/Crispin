@@ -24,10 +24,10 @@ namespace Crispin.Tests.Handlers.UpdateState
 		}
 
 		[Theory]
-		[InlineData(null, "")]
-		[InlineData(States.Off, "off")]
-		[InlineData(States.On, "on")]
-		public async Task When_writing_an_anonymous_event(States? state, string expected)
+		[InlineData(null)]
+		[InlineData(States.Off)]
+		[InlineData(States.On)]
+		public async Task When_writing_an_anonymous_event(States? state)
 		{
 			var request = new UpdateToggleStateRequest(EditorID.Parse("me"), null)
 			{
@@ -38,21 +38,16 @@ namespace Crispin.Tests.Handlers.UpdateState
 			await _stats.Write(writer, request, _response);
 
 			if (state.HasValue)
-				await writer.Received().WriteCount(
-					"toggle.{toggleID}.state.anonymous.{state}",
-					_response.ToggleID,
-					expected);
+				await writer.Received().WriteCount(Arg.Is<ToggleDefaultStateChange>(t => t.State == state));
 			else
-				await writer.DidNotReceive().WriteCount(
-					Arg.Any<string>(),
-					Arg.Any<object[]>());
+				await writer.DidNotReceive().WriteCount(Arg.Any<ToggleDefaultStateChange>());
 		}
 
 		[Theory]
-		[InlineData(null, "unset")]
-		[InlineData(States.Off, "off")]
-		[InlineData(States.On, "on")]
-		public async Task When_writing_a_user_event(States? state, string expected)
+		[InlineData(null)]
+		[InlineData(States.Off)]
+		[InlineData(States.On)]
+		public async Task When_writing_a_user_event(States? state)
 		{
 			var userID = UserID.Parse("wat");
 			var request = new UpdateToggleStateRequest(EditorID.Parse("me"), null)
@@ -63,18 +58,17 @@ namespace Crispin.Tests.Handlers.UpdateState
 			var writer = Substitute.For<IStatisticsWriter>();
 			await _stats.Write(writer, request, _response);
 
-			await writer.Received().WriteCount(
-				"toggle.{toggleID}.state.users.{userID}.{state}",
-				_response.ToggleID,
-				userID,
-				expected);
+			await writer.Received().WriteCount(Arg.Is<ToggleUserStateChange>(t =>
+				t.ToggleID == _response.ToggleID &&
+				t.UserID == userID &&
+				t.State == state));
 		}
 
 		[Theory]
-		[InlineData(null, "unset")]
-		[InlineData(States.Off, "off")]
-		[InlineData(States.On, "on")]
-		public async Task When_writing_a_groups_event(States? state, string expected)
+		[InlineData(null)]
+		[InlineData(States.Off)]
+		[InlineData(States.On)]
+		public async Task When_writing_a_groups_event(States? state)
 		{
 			var groupID = GroupID.Parse("wat");
 			var request = new UpdateToggleStateRequest(EditorID.Parse("me"), null)
@@ -85,11 +79,10 @@ namespace Crispin.Tests.Handlers.UpdateState
 			var writer = Substitute.For<IStatisticsWriter>();
 			await _stats.Write(writer, request, _response);
 
-			await writer.Received().WriteCount(
-				"toggle.{toggleID}.state.groups.{groupID}.{state}",
-				_response.ToggleID,
-				groupID,
-				expected);
+			await writer.Received().WriteCount(Arg.Is<ToggleGroupStateChange>(t =>
+				t.ToggleID == _response.ToggleID &&
+				t.GroupID == groupID &&
+				t.State == state));
 		}
 	}
 }

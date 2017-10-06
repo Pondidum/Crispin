@@ -10,7 +10,22 @@ namespace Crispin.Handlers.GetSingle
 			if (response.Toggle == null)
 				return;
 
-			await writer.WriteCount("toggle.{toggleID}.read", response.Toggle.ID);
+			await writer.WriteCount(new ToggleRead(response.Toggle.ID));
+		}
+	}
+
+	public struct ToggleRead : IStat
+	{
+		public ToggleID ToggleID { get; }
+
+		public ToggleRead(ToggleID toggleID)
+		{
+			ToggleID = toggleID;
+		}
+
+		public override string ToString()
+		{
+			return $"Toggle '{ToggleID} was read";
 		}
 	}
 }

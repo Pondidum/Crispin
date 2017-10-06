@@ -15,10 +15,10 @@ namespace Crispin.Infrastructure.Statistics
 
 		public IEnumerable<IStatisticsWriter> Writers => _writers;
 
-		public async Task WriteCount(string format, params object[] parameters)
+		public async Task WriteCount(IStat stat)
 		{
 			await Task.WhenAll(_writers
-				.Select(writer => writer.WriteCount(format, parameters))
+				.Select(writer => writer.WriteCount(stat))
 				.ToArray());
 		}
 	}

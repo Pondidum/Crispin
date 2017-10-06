@@ -5,6 +5,11 @@ namespace Crispin.Infrastructure.Statistics
 {
 	public interface IStatisticsWriter
 	{
-		Task WriteCount(string format, params object[] parameters);
+		Task WriteCount(IStat stat);
+	}
+
+	public interface IStat
+	{
+		string ToString();
 	}
 }
