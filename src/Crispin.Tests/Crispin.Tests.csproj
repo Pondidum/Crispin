@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.1.1" />
+    <PackageReference Include="FileSystem" Version="0.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="NSubstitute" Version="2.0.3" />
     <PackageReference Include="Shouldly" Version="2.8.3" />
