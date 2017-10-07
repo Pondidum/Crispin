@@ -14,7 +14,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 	public class InMemorySessionTests
 	{
 		private readonly InMemorySession _session;
-		private readonly Dictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
+		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly Dictionary<ToggleID, List<Event>> _eventStore;
 		private readonly List<Projection> _projections;
 		private readonly ToggleID _aggregateID;
@@ -24,7 +24,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public InMemorySessionTests()
 		{
 			_aggregateID = ToggleID.CreateNew();
-			_builders = new Dictionary<Type, Func<List<Event>, AggregateRoot>>
+			_builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>
 			{
 				{ typeof(Toggle), Toggle.LoadFrom }
 			};

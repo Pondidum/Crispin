@@ -20,14 +20,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		private readonly InMemoryFileSystem _fs;
 		private readonly FileSystemSession _session;
-		private readonly Dictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
+		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly ToggleID _aggregateID;
 		private readonly EditorID _editor;
 		private readonly IGroupMembership _membership;
 
 		public FileSystemSessionTests()
 		{
-			_builders = new Dictionary<Type, Func<List<Event>, AggregateRoot>>
+			_builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>
 			{
 				{ typeof(Toggle), Toggle.LoadFrom }
 			};

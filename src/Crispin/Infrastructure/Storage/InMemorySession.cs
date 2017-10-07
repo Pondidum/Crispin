@@ -7,13 +7,13 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class InMemorySession : IStorageSession
 	{
-		private readonly IDictionary<Type, Func<List<Event>, AggregateRoot>> _builders;
+		private readonly IDictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly List<Projection> _projections;
 		private readonly IDictionary<ToggleID, List<Event>> _storeEvents;
 		private readonly Dictionary<ToggleID, List<Event>> _pendingEvents;
 
 		public InMemorySession(
-			IDictionary<Type, Func<List<Event>, AggregateRoot>> builders,
+			IDictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> builders,
 			List<Projection> projections,
 			IDictionary<ToggleID, List<Event>> storeEvents)
 		{
@@ -44,7 +44,7 @@ namespace Crispin.Infrastructure.Storage
 		public TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot
 		{
-			Func<List<Event>, AggregateRoot> builder;
+			Func<IEnumerable<Event>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new NotSupportedException($"No builder for type {typeof(TAggregate).Name} found.");
