@@ -11,15 +11,24 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class FileSystemSession : IStorageSession
 	{
+		private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+		{
+			Formatting = Formatting.None,
+			TypeNameHandling = TypeNameHandling.Objects
+		};
+
 		private readonly IFileSystem _fileSystem;
 		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly string _root;
+		private readonly Dictionary<ToggleID, List<Event>> _pending;
 
 		public FileSystemSession(IFileSystem fileSystem, Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> builders, string root)
 		{
 			_fileSystem = fileSystem;
 			_builders = builders;
 			_root = root;
+
+			_pending = new Dictionary<ToggleID, List<Event>>();
 		}
 
 		public void Dispose()
@@ -54,12 +63,6 @@ namespace Crispin.Infrastructure.Storage
 
 		private async Task<TAggregate> LoadAggregateInternal<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
 		{
-			var jsonSettings = new JsonSerializerSettings
-			{
-				Formatting = Formatting.None,
-				TypeNameHandling = TypeNameHandling.Objects
-			};
-
 			Func<IEnumerable<Event>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
@@ -71,7 +74,7 @@ namespace Crispin.Infrastructure.Storage
 				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
 
 			var events = (await _fileSystem.ReadFileLines(aggregatePath))
-				.Select(e => JsonConvert.DeserializeObject(e, jsonSettings))
+				.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
 				.Cast<Event>()
 				.ToArray();
 
@@ -85,12 +88,30 @@ namespace Crispin.Infrastructure.Storage
 
 		public void Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
 		{
-			throw new NotImplementedException();
+			var pending = aggregate.GetPendingEvents().Cast<Event>();
+
+			if (_pending.ContainsKey(aggregate.ID) == false)
+				_pending[aggregate.ID] = new List<Event>();
+
+			_pending[aggregate.ID].AddRange(pending);
+			aggregate.ClearPendingEvents();
 		}
 
 		public void Commit()
 		{
-			throw new NotImplementedException();
+			foreach (var pair in _pending)
+			{
+				var path = Path.Combine(_root, pair.Key.ToString());
+				var events = pair.Value.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings));
+
+				_fileSystem.AppendFile(path, stream =>
+				{
+					using (var writer = new StreamWriter(stream))
+						events.Each(e => writer.WriteLine(e));
+
+					return Task.CompletedTask;
+				}).Wait();
+			}
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			{
 				{ typeof(Toggle), Toggle.LoadFrom }
 			};
-			
+
 			_fs = new InMemoryFileSystem();
 			_fs.CreateDirectory(Root).Wait();
 
@@ -41,7 +41,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			_aggregateID = ToggleID.CreateNew();
 		}
 
-		
+
 		[Fact]
 		public void When_there_is_no_builder_for_an_aggregate()
 		{
@@ -55,7 +55,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			Should.Throw<KeyNotFoundException>(() => _session.LoadAggregate<Toggle>(_aggregateID));
 		}
-		
+
 		[Fact]
 		public async Task When_there_are_no_events_for_an_aggregate_stored()
 		{
@@ -66,25 +66,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 			Should.Throw<KeyNotFoundException>(() => _session.LoadAggregate<Toggle>(_aggregateID));
 		}
 
-		private async Task WriteEvents(params object[] events)
-		{
-			var jsonSettings = new JsonSerializerSettings
-			{
-				Formatting = Formatting.None,
-				TypeNameHandling = TypeNameHandling.Objects
-			};
-
-			await _fs.WriteFile(Path.Combine(Root, _aggregateID.ToString()), stream =>
-			{
-				using (var writer = new StreamWriter(stream))
-					events
-						.Select(e => JsonConvert.SerializeObject(e, jsonSettings))
-						.Each(line => writer.WriteLine(line));
-				
-				return Task.CompletedTask;
-			});
-		}
-		
 		[Fact]
 		public async Task When_an_aggregate_is_loaded()
 		{
@@ -101,6 +82,75 @@ namespace Crispin.Tests.Infrastructure.Storage
 				() => toggle.IsActive(_membership, UserID.Parse("user-1")).ShouldBeTrue(),
 				() => toggle.Tags.ShouldContain("one")
 			);
+		}
+
+		[Fact]
+		public async Task When_saving_an_aggregate_and_commit_is_not_called()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeDefaultState(_editor, newState: States.On);
+
+			_session.Save(toggle);
+
+			var exists = await _fs.FileExists(Path.Combine(Root, _aggregateID.ToString()));
+
+			exists.ShouldBeFalse();
+		}
+
+		[Fact]
+		public async Task When_saving_an_aggregate_and_commit_is_called()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeDefaultState(_editor, newState: States.On);
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			var events = await ReadEvents(toggle.ID);
+
+			events.ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(TagAdded),
+				typeof(ToggleSwitchedOnForAnonymous)
+			});
+		}
+
+
+		private async Task WriteEvents(params object[] events)
+		{
+			var jsonSettings = new JsonSerializerSettings
+			{
+				Formatting = Formatting.None,
+				TypeNameHandling = TypeNameHandling.Objects
+			};
+
+			await _fs.WriteFile(Path.Combine(Root, _aggregateID.ToString()), stream =>
+			{
+				using (var writer = new StreamWriter(stream))
+					events
+						.Select(e => JsonConvert.SerializeObject(e, jsonSettings))
+						.Each(line => writer.WriteLine(line));
+
+				return Task.CompletedTask;
+			});
+		}
+
+		private async Task<IEnumerable<Type>> ReadEvents(ToggleID id)
+		{
+			var jsonSettings = new JsonSerializerSettings
+			{
+				Formatting = Formatting.None,
+				TypeNameHandling = TypeNameHandling.Objects
+			};
+
+			var lines = (await _fs.ReadFileLines(Path.Combine(Root, id.ToString())));
+
+			return lines
+				.Select(line => JsonConvert.DeserializeObject(line, jsonSettings))
+				.Select(e => e.GetType());
 		}
 	}
 }
