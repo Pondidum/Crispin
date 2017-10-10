@@ -47,7 +47,7 @@ namespace Crispin.Infrastructure.Storage
 			throw new NotImplementedException();
 		}
 
-		public TProjection LoadProjection<TProjection>() where TProjection : Projection
+		public TProjection LoadProjection<TProjection>() where TProjection : IProjection
 		{
 			throw new NotImplementedException();
 		}

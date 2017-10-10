@@ -29,7 +29,7 @@ namespace Crispin.Infrastructure.Storage
 		}
 
 		public TProjection LoadProjection<TProjection>()
-			where TProjection : Projection
+			where TProjection : IProjection
 		{
 			var projection = _projections
 				.OfType<TProjection>()

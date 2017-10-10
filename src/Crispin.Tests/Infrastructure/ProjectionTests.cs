@@ -47,7 +47,7 @@ namespace Crispin.Tests.Infrastructure
 		public class SecondEvent : Event {}
 		public class ThirdEvent : Event {}
 
-		private class CatchAllProjection : Projection
+		private class CatchAllProjection : Projection<Memento>
 		{
 			public List<Event> SeenEvents { get; }
 
@@ -56,9 +56,18 @@ namespace Crispin.Tests.Infrastructure
 				SeenEvents = new List<Event>();
 				RegisterAll(SeenEvents.Add);
 			}
+
+			protected override Memento CreateMemento()
+			{
+				return new Memento();
+			}
+
+			protected override void ApplyMemento(Memento memento)
+			{
+			}
 		}
 
-		private class TestProjection : Projection
+		private class TestProjection : Projection<Memento>
 		{
 			public List<Event> SeenEvents { get; }
 
@@ -68,6 +77,19 @@ namespace Crispin.Tests.Infrastructure
 				Register<FirstEvent>(SeenEvents.Add);
 				Register<SecondEvent>(SeenEvents.Add);
 			}
+
+			protected override Memento CreateMemento()
+			{
+				return new Memento();
+			}
+
+			protected override void ApplyMemento(Memento memento)
+			{
+			}
 		}
+	}
+
+	internal class Memento
+	{
 	}
 }

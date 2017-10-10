@@ -6,9 +6,12 @@ namespace Crispin.Infrastructure
 	public interface IProjection
 	{
 		void Consume(Event @event);
+
+		object ToMemento();
+		void FromMemento(object memento);
 	}
 
-	public abstract class Projection : IProjection
+	public abstract class Projection<TMemento> : IProjection
 	{
 		private readonly Dictionary<Type, Action<object>> _handlers;
 		private readonly List<Action<Event>> _catchAll;
@@ -30,5 +33,11 @@ namespace Crispin.Infrastructure
 
 			_catchAll.ForEach(handle => handle(@event));
 		}
+
+		public object ToMemento() => CreateMemento();
+		public void FromMemento(object memento) => ApplyMemento((TMemento)memento);
+
+		protected abstract TMemento CreateMemento();
+		protected abstract void ApplyMemento(TMemento memento);
 	}
 }

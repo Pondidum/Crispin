@@ -5,7 +5,7 @@ using Crispin.Infrastructure;
 
 namespace Crispin.Projections
 {
-	public class AllToggles : Projection
+	public class AllToggles : Projection<AllTogglesMemento>
 	{
 		public IEnumerable<ToggleView> Toggles => _toggles.Values;
 
@@ -34,5 +34,27 @@ namespace Crispin.Projections
 			Name = e.Name,
 			Description = e.Description
 		});
+
+		protected override AllTogglesMemento CreateMemento()
+		{
+			return new AllTogglesMemento(_toggles);
+		}
+
+		protected override void ApplyMemento(AllTogglesMemento memento)
+		{
+			foreach (var pair in memento)
+				_toggles.Add(pair.Key, pair.Value);
+		}
+	}
+
+	public class AllTogglesMemento : Dictionary<ToggleID, ToggleView>
+	{
+		public AllTogglesMemento()
+		{
+		}
+
+		public AllTogglesMemento(IDictionary<ToggleID, ToggleView> other) : base(other)
+		{
+		}
 	}
 }
