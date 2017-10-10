@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
+using Crispin.Projections;
 using FileSystem;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -24,6 +25,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		private readonly ToggleID _aggregateID;
 		private readonly EditorID _editor;
 		private readonly IGroupMembership _membership;
+		private readonly List<Projection> _projections;
 
 		public FileSystemSessionTests()
 		{
@@ -31,11 +33,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 			{
 				{ typeof(Toggle), Toggle.LoadFrom }
 			};
+			_projections = new List<Projection>();
 
 			_fs = new InMemoryFileSystem();
 			_fs.CreateDirectory(Root).Wait();
 
-			_session = new FileSystemSession(_fs, _builders, Root);
+			_session = new FileSystemSession(_fs, _builders, _projections, Root);
 			_membership = Substitute.For<IGroupMembership>();
 			_editor = EditorID.Parse("wat");
 			_aggregateID = ToggleID.CreateNew();
@@ -193,19 +196,48 @@ namespace Crispin.Tests.Infrastructure.Storage
 			after.Count().ShouldBe(2);
 		}
 
+		[Fact]
+		public async Task When_there_is_a_projection()
+		{
+			var projection = new AllToggles();
+			_projections.Add(projection);
+
+			var toggle = Toggle.CreateNew(_editor, "Projected", "yes");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			var view = projection.Toggles.Single();
+
+			view.ShouldSatisfyAllConditions(
+				() => view.ID.ShouldBe(toggle.ID),
+				() => view.Name.ShouldBe(toggle.Name),
+				() => view.Description.ShouldBe(toggle.Description),
+				() => view.Tags.ShouldBeEmpty(),
+				() => view.State.Anonymous.ShouldBe(States.Off),
+				() => view.State.Users.ShouldBeEmpty(),
+				() => view.State.Groups.ShouldBeEmpty()
+			);
+
+			var fromDisk = await ReadProjection<AllToggles>();
+
+			fromDisk.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
+		}
+
+
+		private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+		{
+			Formatting = Formatting.None,
+			TypeNameHandling = TypeNameHandling.Objects
+		};
+
 		private async Task WriteEvents(params object[] events)
 		{
-			var jsonSettings = new JsonSerializerSettings
-			{
-				Formatting = Formatting.None,
-				TypeNameHandling = TypeNameHandling.Objects
-			};
-
 			await _fs.WriteFile(Path.Combine(Root, _aggregateID.ToString()), stream =>
 			{
 				using (var writer = new StreamWriter(stream))
 					events
-						.Select(e => JsonConvert.SerializeObject(e, jsonSettings))
+						.Select(e => JsonConvert.SerializeObject(e, JsonSettings))
 						.Each(line => writer.WriteLine(line));
 
 				return Task.CompletedTask;
@@ -214,17 +246,24 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		private async Task<IEnumerable<Type>> ReadEvents(ToggleID id)
 		{
-			var jsonSettings = new JsonSerializerSettings
-			{
-				Formatting = Formatting.None,
-				TypeNameHandling = TypeNameHandling.Objects
-			};
-
 			var lines = (await _fs.ReadFileLines(Path.Combine(Root, id.ToString())));
 
 			return lines
-				.Select(line => JsonConvert.DeserializeObject(line, jsonSettings))
+				.Select(line => JsonConvert.DeserializeObject(line, JsonSettings))
 				.Select(e => e.GetType());
+		}
+
+		private async Task<TProjection> ReadProjection<TProjection>()
+		{
+			var path = Path.Combine(Root, typeof(TProjection).Name + ".json");
+
+			using (var stream = await _fs.ReadFile(path))
+			using (var reader = new StreamReader(stream))
+			{
+				return (TProjection)JsonConvert.DeserializeObject(
+					await reader.ReadToEndAsync(),
+					JsonSettings);
+			}
 		}
 	}
 }

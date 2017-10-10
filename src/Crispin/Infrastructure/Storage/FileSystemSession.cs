@@ -19,13 +19,19 @@ namespace Crispin.Infrastructure.Storage
 
 		private readonly IFileSystem _fileSystem;
 		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
+		private readonly List<Projection> _projections;
 		private readonly string _root;
 		private readonly Dictionary<ToggleID, List<Event>> _pending;
 
-		public FileSystemSession(IFileSystem fileSystem, Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> builders, string root)
+		public FileSystemSession(
+			IFileSystem fileSystem,
+			Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> builders,
+			List<Projection> projections,
+			string root)
 		{
 			_fileSystem = fileSystem;
 			_builders = builders;
+			_projections = projections;
 			_root = root;
 
 			_pending = new Dictionary<ToggleID, List<Event>>();
@@ -107,13 +113,34 @@ namespace Crispin.Infrastructure.Storage
 		{
 			foreach (var pair in _pending)
 			{
-				var path = Path.Combine(_root, pair.Key.ToString());
+				var aggregatePath = Path.Combine(_root, pair.Key.ToString());
 				var events = pair.Value.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings));
 
-				_fileSystem.AppendFile(path, stream =>
+				_fileSystem.AppendFile(aggregatePath, stream =>
 				{
 					using (var writer = new StreamWriter(stream))
 						events.Each(e => writer.WriteLine(e));
+
+					return Task.CompletedTask;
+				}).Wait();
+			}
+
+			var eventsForProjection = _pending
+				.SelectMany(p => p.Value)
+				.ToArray();
+
+			foreach (var projection in _projections)
+			foreach (var @event in eventsForProjection)
+			{
+				projection.Consume(@event);
+
+				var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
+				var projectionJson = JsonConvert.SerializeObject(projection, JsonSerializerSettings);
+
+				_fileSystem.WriteFile(projectionPath, stream =>
+				{
+					using (var writer = new StreamWriter(stream))
+						writer.Write(projectionJson);
 
 					return Task.CompletedTask;
 				}).Wait();
