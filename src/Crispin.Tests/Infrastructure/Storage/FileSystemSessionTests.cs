@@ -223,6 +223,21 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			diskProjection.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
 		}
+		
+		[Fact]
+		public void When_retrieving_a_projection_from_disk()
+		{
+			_projections.Add(new AllToggles());
+
+			var toggle = Toggle.CreateNew(_editor, "Projected", "yes");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			var projection = _session.LoadProjection<AllToggles>();
+
+			projection.Toggles.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
+		}
 
 
 		private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings

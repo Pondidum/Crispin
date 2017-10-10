@@ -43,6 +43,8 @@ namespace Crispin.Projections
 
 		protected override void ApplyMemento(AllTogglesMemento memento)
 		{
+			_toggles.Clear();
+
 			foreach (var pair in memento)
 				_toggles.Add(ToggleID.Parse(Guid.Parse(pair.Key)), pair.Value);
 		}

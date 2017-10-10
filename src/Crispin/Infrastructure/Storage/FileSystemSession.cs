@@ -49,7 +49,19 @@ namespace Crispin.Infrastructure.Storage
 
 		public TProjection LoadProjection<TProjection>() where TProjection : IProjection
 		{
-			throw new NotImplementedException();
+			var projection = _projections.OfType<TProjection>().FirstOrDefault();
+			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
+
+			using (var stream = _fileSystem.ReadFile(projectionPath).Result)
+			using (var reader = new StreamReader(stream))
+			{
+				var json = reader.ReadToEnd();
+				var memento = JsonConvert.DeserializeObject(json, JsonSerializerSettings);
+
+				projection.FromMemento(memento);
+			}
+
+			return projection;
 		}
 
 		public TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
