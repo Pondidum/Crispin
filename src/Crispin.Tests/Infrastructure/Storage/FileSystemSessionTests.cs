@@ -136,6 +136,63 @@ namespace Crispin.Tests.Infrastructure.Storage
 			);
 		}
 
+		[Fact]
+		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
+			_session.Save(toggle);
+
+			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
+
+			loaded.ShouldSatisfyAllConditions(
+				() => loaded.ID.ShouldBe(toggle.ID),
+				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
+				() => loaded.Tags.ShouldContain("one")
+			);
+		}
+
+		[Fact]
+		public async Task When_there_are_pending_events_and_dispose_is_called()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+
+			_session.Save(toggle);
+			_session.Dispose();
+
+			var events = await ReadEvents(toggle.ID);
+
+			events.ShouldBe(new[]
+			{
+				typeof(ToggleCreated),
+				typeof(TagAdded)
+			});
+		}
+
+		[Fact]
+		public async Task When_commit_is_called_twice()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+
+			_session.Save(toggle);
+			_session.Commit();
+
+			var before = await ReadEvents(toggle.ID);
+			before.Count().ShouldBe(2);
+
+			_session.Commit();
+
+			var after = await ReadEvents(toggle.ID);
+			after.Count().ShouldBe(2);
+		}
+
 		private async Task WriteEvents(params object[] events)
 		{
 			var jsonSettings = new JsonSerializerSettings

@@ -33,7 +33,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			Commit();
 		}
 
 		public void Open()
@@ -72,8 +72,8 @@ namespace Crispin.Infrastructure.Storage
 
 			var fsEvents = await _fileSystem.FileExists(aggregatePath)
 				? (await _fileSystem.ReadFileLines(aggregatePath))
-					.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
-					.Cast<Event>()
+				.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
+				.Cast<Event>()
 				: Enumerable.Empty<Event>();
 
 			var sessionEvents = _pending.ContainsKey(aggregateID)
@@ -118,6 +118,8 @@ namespace Crispin.Infrastructure.Storage
 					return Task.CompletedTask;
 				}).Wait();
 			}
+
+			_pending.Clear();
 		}
 	}
 }
