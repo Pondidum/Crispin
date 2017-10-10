@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
 
@@ -37,23 +38,23 @@ namespace Crispin.Projections
 
 		protected override AllTogglesMemento CreateMemento()
 		{
-			return new AllTogglesMemento(_toggles);
+			return new AllTogglesMemento(_toggles.ToDictionary(p => p.Key.ToString(), p => p.Value));
 		}
 
 		protected override void ApplyMemento(AllTogglesMemento memento)
 		{
 			foreach (var pair in memento)
-				_toggles.Add(pair.Key, pair.Value);
+				_toggles.Add(ToggleID.Parse(Guid.Parse(pair.Key)), pair.Value);
 		}
 	}
 
-	public class AllTogglesMemento : Dictionary<ToggleID, ToggleView>
+	public class AllTogglesMemento : Dictionary<string, ToggleView>
 	{
 		public AllTogglesMemento()
 		{
 		}
 
-		public AllTogglesMemento(IDictionary<ToggleID, ToggleView> other) : base(other)
+		public AllTogglesMemento(IDictionary<string, ToggleView> other) : base(other)
 		{
 		}
 	}

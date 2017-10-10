@@ -135,7 +135,7 @@ namespace Crispin.Infrastructure.Storage
 				projection.Consume(@event);
 
 				var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
-				var projectionJson = JsonConvert.SerializeObject(projection, JsonSerializerSettings);
+				var projectionJson = JsonConvert.SerializeObject(projection.ToMemento(), JsonSerializerSettings);
 
 				_fileSystem.WriteFile(projectionPath, stream =>
 				{

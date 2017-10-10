@@ -219,9 +219,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 				() => view.State.Groups.ShouldBeEmpty()
 			);
 
-			var fromDisk = await ReadProjection<AllToggles>();
+			var diskProjection = await ReadProjection(new AllToggles());
 
-			fromDisk.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
+			diskProjection.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
 		}
 
 
@@ -253,17 +253,20 @@ namespace Crispin.Tests.Infrastructure.Storage
 				.Select(e => e.GetType());
 		}
 
-		private async Task<TProjection> ReadProjection<TProjection>()
+		private async Task<TProjection> ReadProjection<TProjection>(TProjection projection) where TProjection : IProjection
 		{
 			var path = Path.Combine(Root, typeof(TProjection).Name + ".json");
 
 			using (var stream = await _fs.ReadFile(path))
 			using (var reader = new StreamReader(stream))
 			{
-				return (TProjection)JsonConvert.DeserializeObject(
-					await reader.ReadToEndAsync(),
-					JsonSettings);
+				var json = await reader.ReadToEndAsync();
+				var memento = JsonConvert.DeserializeObject(json, JsonSettings);
+
+				projection.FromMemento(memento);
 			}
+
+			return projection;
 		}
 	}
 }
