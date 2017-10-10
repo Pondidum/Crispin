@@ -70,18 +70,24 @@ namespace Crispin.Infrastructure.Storage
 
 			var aggregatePath = Path.Combine(_root, aggregateID.ToString());
 
-			if (await _fileSystem.FileExists(aggregatePath) == false)
-				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
+			var fsEvents = await _fileSystem.FileExists(aggregatePath)
+				? (await _fileSystem.ReadFileLines(aggregatePath))
+					.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
+					.Cast<Event>()
+				: Enumerable.Empty<Event>();
 
-			var events = (await _fileSystem.ReadFileLines(aggregatePath))
-				.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
-				.Cast<Event>()
+			var sessionEvents = _pending.ContainsKey(aggregateID)
+				? _pending[aggregateID]
+				: Enumerable.Empty<Event>();
+
+			var events = fsEvents
+				.Concat(sessionEvents)
 				.ToArray();
 
 			if (events.Any() == false)
 				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
 
-			var aggregate = builder(events.ToList());
+			var aggregate = builder(events);
 
 			return (TAggregate)aggregate;
 		}

@@ -118,6 +118,23 @@ namespace Crispin.Tests.Infrastructure.Storage
 			});
 		}
 
+		[Fact]
+		public void When_loading_an_aggregate_saved_in_the_current_session()
+		{
+			var toggle = Toggle.CreateNew(_editor, "First", "hi");
+			toggle.AddTag(_editor, "one");
+			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
+
+			_session.Save(toggle);
+
+			var loaded = _session.LoadAggregate<Toggle>(toggle.ID);
+
+			loaded.ShouldSatisfyAllConditions(
+				() => loaded.ID.ShouldBe(toggle.ID),
+				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
+				() => loaded.Tags.ShouldContain("one")
+			);
+		}
 
 		private async Task WriteEvents(params object[] events)
 		{
