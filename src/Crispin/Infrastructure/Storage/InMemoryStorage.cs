@@ -7,13 +7,13 @@ namespace Crispin.Infrastructure.Storage
 	{
 		private readonly IDictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly IDictionary<ToggleID, List<Event>> _events;
-		private readonly List<Projection> _projections;
+		private readonly List<IProjection> _projections;
 
 		public InMemoryStorage(Dictionary<ToggleID, List<Event>> events = null)
 		{
 			_builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>();
 			_events = events ?? new Dictionary<ToggleID, List<Event>>();
-			_projections = new List<Projection>();
+			_projections = new List<IProjection>();
 		}
 
 		public void RegisterBuilder<TAggregate>(Func<IEnumerable<Event>, TAggregate> builder)
@@ -22,7 +22,7 @@ namespace Crispin.Infrastructure.Storage
 			_builders.Add(typeof(TAggregate), builder);
 		}
 
-		public void RegisterProjection(Projection projection)
+		public void RegisterProjection(IProjection projection)
 		{
 			_projections.Add(projection);
 		}

@@ -19,14 +19,14 @@ namespace Crispin.Infrastructure.Storage
 
 		private readonly IFileSystem _fileSystem;
 		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
-		private readonly List<Projection> _projections;
+		private readonly List<IProjection> _projections;
 		private readonly string _root;
 		private readonly Dictionary<ToggleID, List<Event>> _pending;
 
 		public FileSystemSession(
 			IFileSystem fileSystem,
 			Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> builders,
-			List<Projection> projections,
+			List<IProjection> projections,
 			string root)
 		{
 			_fileSystem = fileSystem;

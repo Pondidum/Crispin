@@ -25,7 +25,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		private readonly ToggleID _aggregateID;
 		private readonly EditorID _editor;
 		private readonly IGroupMembership _membership;
-		private readonly List<Projection> _projections;
+		private readonly List<IProjection> _projections;
 
 		public FileSystemSessionTests()
 		{
@@ -33,7 +33,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			{
 				{ typeof(Toggle), Toggle.LoadFrom }
 			};
-			_projections = new List<Projection>();
+			_projections = new List<IProjection>();
 
 			_fs = new InMemoryFileSystem();
 			_fs.CreateDirectory(Root).Wait();

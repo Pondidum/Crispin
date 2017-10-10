@@ -16,7 +16,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		private readonly InMemorySession _session;
 		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
 		private readonly Dictionary<ToggleID, List<Event>> _eventStore;
-		private readonly List<Projection> _projections;
+		private readonly List<IProjection> _projections;
 		private readonly ToggleID _aggregateID;
 		private readonly IGroupMembership _membership;
 		private readonly EditorID _editor;
@@ -30,7 +30,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			};
 
 			_eventStore = new Dictionary<ToggleID, List<Event>>();
-			_projections = new List<Projection>();
+			_projections = new List<IProjection>();
 
 			_session = new InMemorySession(_builders, _projections, _eventStore);
 			_membership = Substitute.For<IGroupMembership>();

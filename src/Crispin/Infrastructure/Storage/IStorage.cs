@@ -8,7 +8,7 @@ namespace Crispin.Infrastructure.Storage
 		void RegisterBuilder<TAggregate>(Func<IEnumerable<Event>, TAggregate> builder)
 			where TAggregate : AggregateRoot;
 
-		void RegisterProjection(Projection projection);
+		void RegisterProjection(IProjection projection);
 
 		IStorageSession BeginSession();
 	}

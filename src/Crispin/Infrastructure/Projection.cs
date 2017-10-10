@@ -3,7 +3,12 @@ using System.Collections.Generic;
 
 namespace Crispin.Infrastructure
 {
-	public abstract class Projection
+	public interface IProjection
+	{
+		void Consume(Event @event);
+	}
+
+	public abstract class Projection : IProjection
 	{
 		private readonly Dictionary<Type, Action<object>> _handlers;
 		private readonly List<Action<Event>> _catchAll;
