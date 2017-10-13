@@ -15,18 +15,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 	public class InMemorySessionTests : StorageSessionTests
 	{
 		private readonly Dictionary<ToggleID, List<Event>> _eventStore;
-		private readonly ToggleID _aggregateID;
-		private readonly IGroupMembership _membership;
-		private readonly EditorID _editor;
 
 		public InMemorySessionTests()
 		{
-			_aggregateID = ToggleID.CreateNew();
 			_eventStore = new Dictionary<ToggleID, List<Event>>();
-			
+
 			Session = new InMemorySession(Builders, Projections, _eventStore);
-			_membership = Substitute.For<IGroupMembership>();
-			_editor = EditorID.Parse("test editor");
 		}
 
 
@@ -41,9 +35,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 			return Task.CompletedTask;
 		}
 
-		protected override Task<IEnumerable<Type>> ReadEvents(ToggleID id)
+		protected override Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID)
 		{
-			return Task.FromResult(_eventStore[id].Select(e => e.GetType()));
+			return Task.FromResult(_eventStore[toggleID].Select(e => e.GetType()));
 		}
 
 		protected override Task<TProjection> ReadProjection<TProjection>(TProjection projection)
@@ -57,8 +51,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var projection = new AllToggles();
 			Projections.Add(projection);
 
-			var first = Toggle.CreateNew(_editor, "First", "yes");
-			var second = Toggle.CreateNew(_editor, "Second", "yes");
+			var first = Toggle.CreateNew(Editor, "First", "yes");
+			var second = Toggle.CreateNew(Editor, "Second", "yes");
 
 			Session.Save(first);
 			Session.Save(second);

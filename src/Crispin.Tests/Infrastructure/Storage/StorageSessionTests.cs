@@ -17,10 +17,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		protected IStorageSession Session { get; set; }
 		protected Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> Builders { get; }
 		protected List<IProjection> Projections { get; }
-
-		private readonly ToggleID _aggregateID;
-		private readonly EditorID _editor;
-		private readonly IGroupMembership _membership;
+		protected EditorID Editor { get; }
 
 		protected StorageSessionTests()
 		{
@@ -30,14 +27,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 			};
 			Projections = new List<IProjection>();
 
-			_membership = Substitute.For<IGroupMembership>();
-			_editor = EditorID.Parse("wat");
-			_aggregateID = ToggleID.CreateNew();
+			Editor = EditorID.Parse("wat");
 		}
 
 		protected abstract Task<bool> AggregateExists(ToggleID toggleID);
 		protected abstract Task WriteEvents(ToggleID toggleID, params object[] events);
-		protected abstract Task<IEnumerable<Type>> ReadEvents(ToggleID id);
+		protected abstract Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID);
 		protected abstract Task<TProjection> ReadProjection<TProjection>(TProjection projection) where TProjection : IProjection;
 
 		[Fact]
@@ -45,38 +40,41 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			Builders.Clear();
 
-			Should.Throw<NotSupportedException>(() => Session.LoadAggregate<Toggle>(_aggregateID));
+			Should.Throw<NotSupportedException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 		}
 
 		[Fact]
 		public void When_there_is_no_aggregate_stored()
 		{
-			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(_aggregateID));
+			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 		}
 
 		[Fact]
 		public async Task When_there_are_no_events_for_an_aggregate_stored()
 		{
-			await WriteEvents(_aggregateID);
+			var toggleID = ToggleID.CreateNew();
+			await WriteEvents(toggleID);
 
-			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(_aggregateID));
+			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(toggleID));
 		}
 
 		[Fact]
 		public async Task When_an_aggregate_is_loaded()
 		{
+			var toggleID = ToggleID.CreateNew();
+
 			await WriteEvents(
-				_aggregateID,
-				new ToggleCreated(_editor, _aggregateID, "First", "hi"),
-				new TagAdded(_editor, "one"),
-				new ToggleSwitchedOnForUser(_editor, UserID.Parse("user-1"))
+				toggleID,
+				new ToggleCreated(Editor, toggleID, "First", "hi"),
+				new TagAdded(Editor, "one"),
+				new ToggleSwitchedOnForUser(Editor, UserID.Parse("user-1"))
 			);
 
-			var toggle = Session.LoadAggregate<Toggle>(_aggregateID);
+			var toggle = Session.LoadAggregate<Toggle>(toggleID);
 
 			toggle.ShouldSatisfyAllConditions(
-				() => toggle.ID.ShouldBe(_aggregateID),
-				() => toggle.IsActive(_membership, UserID.Parse("user-1")).ShouldBeTrue(),
+				() => toggle.ID.ShouldBe(toggleID),
+				() => toggle.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBeTrue(),
 				() => toggle.Tags.ShouldContain("one")
 			);
 		}
@@ -84,9 +82,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_saving_an_aggregate_and_commit_is_not_called()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
-			toggle.ChangeDefaultState(_editor, newState: States.On);
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
+			toggle.ChangeDefaultState(Editor, newState: States.On);
 
 			Session.Save(toggle);
 
@@ -98,9 +96,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_saving_an_aggregate_and_commit_is_called()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
-			toggle.ChangeDefaultState(_editor, newState: States.On);
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
+			toggle.ChangeDefaultState(Editor, newState: States.On);
 
 			Session.Save(toggle);
 			Session.Commit();
@@ -118,9 +116,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_loading_an_aggregate_saved_in_the_current_session()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
-			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
+			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 
 			Session.Save(toggle);
 
@@ -128,7 +126,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
+				() => loaded.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -136,20 +134,20 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
 
 			Session.Save(toggle);
 			Session.Commit();
 
-			toggle.ChangeState(_editor, UserID.Parse("user-1"), States.On);
+			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 			Session.Save(toggle);
 
 			var loaded = Session.LoadAggregate<Toggle>(toggle.ID);
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(_membership, UserID.Parse("user-1")).ShouldBe(true),
+				() => loaded.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -157,8 +155,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_there_are_pending_events_and_dispose_is_called()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
 
 			Session.Save(toggle);
 			Session.Dispose();
@@ -175,8 +173,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_commit_is_called_twice()
 		{
-			var toggle = Toggle.CreateNew(_editor, "First", "hi");
-			toggle.AddTag(_editor, "one");
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
 
 			Session.Save(toggle);
 			Session.Commit();
@@ -196,7 +194,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var projection = new AllToggles();
 			Projections.Add(projection);
 
-			var toggle = Toggle.CreateNew(_editor, "Projected", "yes");
+			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			Session.Save(toggle);
 			Session.Commit();
@@ -223,7 +221,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			Projections.Add(new AllToggles());
 
-			var toggle = Toggle.CreateNew(_editor, "Projected", "yes");
+			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			Session.Save(toggle);
 			Session.Commit();

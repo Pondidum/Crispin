@@ -47,9 +47,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 			});
 		}
 
-		protected override async Task<IEnumerable<Type>> ReadEvents(ToggleID id)
+		protected override async Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID)
 		{
-			var lines = await _fs.ReadFileLines(Path.Combine(Root, id.ToString()));
+			var lines = await _fs.ReadFileLines(Path.Combine(Root, toggleID.ToString()));
 
 			return lines
 				.Select(line => JsonConvert.DeserializeObject(line, JsonSettings))
