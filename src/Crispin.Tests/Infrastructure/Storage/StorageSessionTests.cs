@@ -86,7 +86,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.AddTag(Editor, "one");
 			toggle.ChangeDefaultState(Editor, newState: States.On);
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 
 			var exists = await AggregateExists(toggle.ID);
 
@@ -100,7 +100,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.AddTag(Editor, "one");
 			toggle.ChangeDefaultState(Editor, newState: States.On);
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			await Session.Commit();
 
 			var events = await ReadEvents(toggle.ID);
@@ -120,7 +120,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.AddTag(Editor, "one");
 			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 
 			var loaded = await Session.LoadAggregate<Toggle>(toggle.ID);
 
@@ -137,11 +137,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			await Session.Commit();
 
 			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
-			Session.Save(toggle);
+			await Session.Save(toggle);
 
 			var loaded = await Session.LoadAggregate<Toggle>(toggle.ID);
 
@@ -158,7 +158,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			Session.Dispose();
 
 			var events = await ReadEvents(toggle.ID);
@@ -176,7 +176,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			await Session.Commit();
 
 			var before = await ReadEvents(toggle.ID);
@@ -196,7 +196,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			await Session.Commit();
 
 			var view = projection.Toggles.Single();
@@ -223,7 +223,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
-			Session.Save(toggle);
+			await Session.Save(toggle);
 			await Session.Commit();
 
 			var projection = await Session.LoadProjection<AllToggles>();

@@ -40,7 +40,7 @@ namespace Crispin.Handlers.UpdateTags
 				var toggle = await locator.LocateAggregate(session);
 
 				modify(toggle);
-				session.Save(toggle);
+				await session.Save(toggle);
 
 				return new UpdateToggleTagsResponse
 				{

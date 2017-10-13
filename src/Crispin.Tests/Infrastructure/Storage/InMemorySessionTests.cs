@@ -54,8 +54,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var first = Toggle.CreateNew(Editor, "First", "yes");
 			var second = Toggle.CreateNew(Editor, "Second", "yes");
 
-			Session.Save(first);
-			Session.Save(second);
+			await Session.Save(first);
+			await Session.Save(second);
 			await Session.Commit();
 
 			projection.Toggles.Select(v => v.ID).ShouldBe(new[]

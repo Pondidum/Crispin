@@ -92,7 +92,7 @@ namespace Crispin.Infrastructure.Storage
 			return (TAggregate)aggregate;
 		}
 
-		public void Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
+		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
 		{
 			var pending = aggregate.GetPendingEvents().Cast<Event>();
 
@@ -101,6 +101,8 @@ namespace Crispin.Infrastructure.Storage
 
 			_pending[aggregate.ID].AddRange(pending);
 			aggregate.ClearPendingEvents();
+
+			return Task.CompletedTask;
 		}
 
 		public async Task Commit()
@@ -115,7 +117,6 @@ namespace Crispin.Infrastructure.Storage
 					using (var writer = new StreamWriter(stream))
 						foreach (var @event in events)
 							await writer.WriteLineAsync(@event);
-
 				});
 			}
 

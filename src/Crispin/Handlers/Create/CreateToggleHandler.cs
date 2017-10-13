@@ -22,7 +22,7 @@ namespace Crispin.Handlers.Create
 					message.Name,
 					message.Description);
 
-				session.Save(newToggle);
+				await session.Save(newToggle);
 
 				return new CreateTogglesResponse
 				{

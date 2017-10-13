@@ -13,7 +13,7 @@ namespace Crispin.Infrastructure.Storage
 		Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot;
 
-		void Save<TAggregate>(TAggregate aggregate)
+		Task Save<TAggregate>(TAggregate aggregate)
 			where TAggregate: AggregateRoot, IEvented;
 
 		Task Commit();

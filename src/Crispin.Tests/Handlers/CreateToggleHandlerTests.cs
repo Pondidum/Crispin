@@ -33,7 +33,7 @@ namespace Crispin.Tests.Handlers
 
 			response.ToggleID.ShouldNotBe(ToggleID.Empty);
 
-			_session.Received().Save(Arg.Is<Toggle>(t => t.ID == response.ToggleID));
+			await _session.Received().Save(Arg.Is<Toggle>(t => t.ID == response.ToggleID));
 		}
 	}
 }

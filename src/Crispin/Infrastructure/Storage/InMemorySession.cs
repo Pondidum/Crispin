@@ -64,7 +64,7 @@ namespace Crispin.Infrastructure.Storage
 		}
 
 
-		public void Save<TAggregate>(TAggregate aggregate)
+		public Task Save<TAggregate>(TAggregate aggregate)
 			where TAggregate : AggregateRoot, IEvented
 		{
 			if (_pendingEvents.ContainsKey(aggregate.ID) == false)
@@ -73,6 +73,8 @@ namespace Crispin.Infrastructure.Storage
 			_pendingEvents[aggregate.ID].AddRange(aggregate.GetPendingEvents().Cast<Event>());
 
 			aggregate.ClearPendingEvents();
+
+			return Task.CompletedTask;
 		}
 
 		public Task Commit()

@@ -30,7 +30,7 @@ namespace Crispin.Tests.Handlers
 			InitialiseToggle(toggle);
 
 			using (var session = Storage.BeginSession().Result)
-				session.Save(toggle);
+				session.Save(toggle).Wait();
 
 			Toggle = toggle;
 			Locator = ToggleLocator.Create(toggle.ID);
