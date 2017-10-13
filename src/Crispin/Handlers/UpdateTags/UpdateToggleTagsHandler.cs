@@ -37,7 +37,7 @@ namespace Crispin.Handlers.UpdateTags
 		{
 			using (var session = await _storage.BeginSession())
 			{
-				var toggle = locator.LocateAggregate(session);
+				var toggle = await locator.LocateAggregate(session);
 
 				modify(toggle);
 				session.Save(toggle);

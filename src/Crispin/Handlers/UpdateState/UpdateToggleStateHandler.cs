@@ -20,7 +20,7 @@ namespace Crispin.Handlers.UpdateState
 		{
 			using (var session = await _storage.BeginSession())
 			{
-				var toggle = message.Locator.LocateAggregate(session);
+				var toggle = await message.Locator.LocateAggregate(session);
 
 				if (toggle == null)
 					return new UpdateToggleStateResponse();
@@ -37,7 +37,7 @@ namespace Crispin.Handlers.UpdateState
 				session.Save(toggle);
 				await session.Commit();
 
-				var projection = session.LoadProjection<AllToggles>();
+				var projection = await session.LoadProjection<AllToggles>();
 				var view = projection.Toggles.Single(tv => tv.ID == toggle.ID);
 
 				return new UpdateToggleStateResponse

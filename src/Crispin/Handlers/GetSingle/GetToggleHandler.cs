@@ -17,7 +17,7 @@ namespace Crispin.Handlers.GetSingle
 		{
 			using (var session = await _storage.BeginSession())
 			{
-				var view = message.Locator.LocateView(session);
+				var view = await message.Locator.LocateView(session);
 
 				return new GetToggleResponse
 				{

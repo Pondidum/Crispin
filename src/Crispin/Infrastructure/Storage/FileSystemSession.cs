@@ -44,15 +44,15 @@ namespace Crispin.Infrastructure.Storage
 
 		public Task Open() => Task.CompletedTask;
 
-		public TProjection LoadProjection<TProjection>() where TProjection : IProjection
+		public async Task<TProjection> LoadProjection<TProjection>() where TProjection : IProjection
 		{
 			var projection = _projections.OfType<TProjection>().FirstOrDefault();
 			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
 
-			using (var stream = _fileSystem.ReadFile(projectionPath).Result)
+			using (var stream = await _fileSystem.ReadFile(projectionPath))
 			using (var reader = new StreamReader(stream))
 			{
-				var json = reader.ReadToEnd();
+				var json = await reader.ReadToEndAsync();
 				var memento = JsonConvert.DeserializeObject(json, JsonSerializerSettings);
 
 				projection.FromMemento(memento);
@@ -61,22 +61,7 @@ namespace Crispin.Infrastructure.Storage
 			return projection;
 		}
 
-		public TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
-		{
-			try
-			{
-				return LoadAggregateInternal<TAggregate>(aggregateID).Result;
-			}
-			catch (AggregateException e)
-			{
-				if (e.InnerException != null)
-					throw e.InnerException;
-				else
-					throw;
-			}
-		}
-
-		private async Task<TAggregate> LoadAggregateInternal<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
+		public async Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
 		{
 			Func<IEnumerable<Event>, AggregateRoot> builder;
 

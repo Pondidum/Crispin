@@ -66,13 +66,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_retrieving_a_projection_which_exists_in_the_session()
+		public async Task When_retrieving_a_projection_which_exists_in_the_session()
 		{
 			var projection = new AllToggles();
 			Projections.Add(projection);
 
-			Session.LoadProjection<AllToggles>()
-				.ShouldBe(projection);
+			var loadProjection = await Session.LoadProjection<AllToggles>();
+			loadProjection.ShouldBe(projection);
 		}
 
 		[Fact]

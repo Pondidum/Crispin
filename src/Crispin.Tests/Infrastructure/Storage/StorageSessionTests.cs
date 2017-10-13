@@ -70,7 +70,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 				new ToggleSwitchedOnForUser(Editor, UserID.Parse("user-1"))
 			);
 
-			var toggle = Session.LoadAggregate<Toggle>(toggleID);
+			var toggle = await Session.LoadAggregate<Toggle>(toggleID);
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(toggleID),
@@ -114,7 +114,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_loading_an_aggregate_saved_in_the_current_session()
+		public async Task When_loading_an_aggregate_saved_in_the_current_session()
 		{
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
@@ -122,7 +122,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			Session.Save(toggle);
 
-			var loaded = Session.LoadAggregate<Toggle>(toggle.ID);
+			var loaded = await Session.LoadAggregate<Toggle>(toggle.ID);
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
@@ -143,7 +143,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 			Session.Save(toggle);
 
-			var loaded = Session.LoadAggregate<Toggle>(toggle.ID);
+			var loaded = await Session.LoadAggregate<Toggle>(toggle.ID);
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
@@ -226,7 +226,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			Session.Save(toggle);
 			await Session.Commit();
 
-			var projection = Session.LoadProjection<AllToggles>();
+			var projection = await Session.LoadProjection<AllToggles>();
 
 			projection.Toggles.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
 		}

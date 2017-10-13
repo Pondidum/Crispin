@@ -26,7 +26,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public Task Open() => Task.CompletedTask;
 
-		public TProjection LoadProjection<TProjection>()
+		public Task<TProjection> LoadProjection<TProjection>()
 			where TProjection : IProjection
 		{
 			var projection = _projections
@@ -34,12 +34,12 @@ namespace Crispin.Infrastructure.Storage
 				.FirstOrDefault();
 
 			if (projection != null)
-				return projection;
+				return Task.FromResult(projection);
 
 			throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
 		}
 
-		public TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID)
+		public Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot
 		{
 			Func<IEnumerable<Event>, AggregateRoot> builder;
@@ -60,7 +60,7 @@ namespace Crispin.Infrastructure.Storage
 
 			var aggregate = builder(eventsToLoad);
 
-			return (TAggregate)aggregate;
+			return Task.FromResult((TAggregate)aggregate);
 		}
 
 

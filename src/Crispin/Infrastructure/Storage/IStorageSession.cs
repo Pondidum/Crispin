@@ -7,10 +7,10 @@ namespace Crispin.Infrastructure.Storage
 	{
 		Task Open();
 
-		TProjection LoadProjection<TProjection>()
+		Task<TProjection> LoadProjection<TProjection>()
 			where TProjection : IProjection;
 
-		TAggregate LoadAggregate<TAggregate>(ToggleID aggregateID)
+		Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot;
 
 		void Save<TAggregate>(TAggregate aggregate)

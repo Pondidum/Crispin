@@ -1,4 +1,5 @@
-﻿using Crispin.Infrastructure.Storage;
+﻿using System.Threading.Tasks;
+using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 
 namespace Crispin
@@ -8,7 +9,7 @@ namespace Crispin
 		public static ToggleLocator Create(ToggleID id) => new ToggleLocatorByID(id);
 		public static ToggleLocator Create(string name) => new ToggleLocatorByName(name);
 
-		internal abstract ToggleView LocateView(IStorageSession session);
-		internal abstract Toggle LocateAggregate(IStorageSession session);
+		internal abstract Task<ToggleView> LocateView(IStorageSession session);
+		internal abstract Task<Toggle> LocateAggregate(IStorageSession session);
 	}
 }
