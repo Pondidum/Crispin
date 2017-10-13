@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
 {
@@ -23,10 +24,7 @@ namespace Crispin.Infrastructure.Storage
 			_pendingEvents = new Dictionary<ToggleID, List<Event>>();
 		}
 
-		public void Open()
-		{
-			//nothing
-		}
+		public Task Open() => Task.CompletedTask;
 
 		public TProjection LoadProjection<TProjection>()
 			where TProjection : IProjection

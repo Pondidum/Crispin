@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
 {
@@ -10,6 +11,6 @@ namespace Crispin.Infrastructure.Storage
 
 		void RegisterProjection(IProjection projection);
 
-		IStorageSession BeginSession();
+		Task<IStorageSession> BeginSession();
 	}
 }

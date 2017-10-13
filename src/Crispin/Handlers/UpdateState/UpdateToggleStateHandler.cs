@@ -16,14 +16,14 @@ namespace Crispin.Handlers.UpdateState
 			_storage = storage;
 		}
 
-		public Task<UpdateToggleStateResponse> Handle(UpdateToggleStateRequest message)
+		public async Task<UpdateToggleStateResponse> Handle(UpdateToggleStateRequest message)
 		{
-			using (var session = _storage.BeginSession())
+			using (var session = await _storage.BeginSession())
 			{
 				var toggle = message.Locator.LocateAggregate(session);
 
 				if (toggle == null)
-					return Task.FromResult(new UpdateToggleStateResponse());
+					return new UpdateToggleStateResponse();
 
 				if (message.Default.HasValue)
 					toggle.ChangeDefaultState(message.Editor, message.Default.Value);
@@ -40,11 +40,11 @@ namespace Crispin.Handlers.UpdateState
 				var projection = session.LoadProjection<AllToggles>();
 				var view = projection.Toggles.Single(tv => tv.ID == toggle.ID);
 
-				return Task.FromResult(new UpdateToggleStateResponse
+				return new UpdateToggleStateResponse
 				{
 					ToggleID = view.ID,
 					State = view.State
-				});
+				};
 			}
 		}
 	}

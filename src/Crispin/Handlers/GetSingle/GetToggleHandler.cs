@@ -13,16 +13,16 @@ namespace Crispin.Handlers.GetSingle
 			_storage = storage;
 		}
 
-		public Task<GetToggleResponse> Handle(GetToggleRequest message)
+		public async Task<GetToggleResponse> Handle(GetToggleRequest message)
 		{
-			using (var session = _storage.BeginSession())
+			using (var session = await _storage.BeginSession())
 			{
 				var view = message.Locator.LocateView(session);
 
-				return Task.FromResult(new GetToggleResponse
+				return new GetToggleResponse
 				{
 					Toggle = view
-				});
+				};
 			}
 		}
 	}

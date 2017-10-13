@@ -33,19 +33,19 @@ namespace Crispin.Handlers.UpdateTags
 			);
 		}
 
-		private Task<UpdateToggleTagsResponse> ModifyTags(ToggleLocator locator, Action<Toggle> modify)
+		private async Task<UpdateToggleTagsResponse> ModifyTags(ToggleLocator locator, Action<Toggle> modify)
 		{
-			using (var session = _storage.BeginSession())
+			using (var session = await _storage.BeginSession())
 			{
 				var toggle = locator.LocateAggregate(session);
 
 				modify(toggle);
 				session.Save(toggle);
 
-				return Task.FromResult(new UpdateToggleTagsResponse
+				return new UpdateToggleTagsResponse
 				{
 					Tags = toggle.Tags.ToArray()
-				});
+				};
 			}
 		}
 	}

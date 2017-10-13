@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
 {
@@ -27,10 +28,10 @@ namespace Crispin.Infrastructure.Storage
 			_projections.Add(projection);
 		}
 
-		public IStorageSession BeginSession()
+		public async Task<IStorageSession> BeginSession()
 		{
 			var session = new InMemorySession(_builders, _projections, _events);
-			session.Open();
+			await session.Open();
 
 			return session;
 		}

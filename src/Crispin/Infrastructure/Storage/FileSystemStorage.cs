@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FileSystem;
 
 namespace Crispin.Infrastructure.Storage
@@ -30,9 +31,12 @@ namespace Crispin.Infrastructure.Storage
 			_projections.Add(projection);
 		}
 
-		public IStorageSession BeginSession()
+		public async Task<IStorageSession> BeginSession()
 		{
-			return new FileSystemSession(_fileSystem, _builders, _projections, _root);
+			var session = new FileSystemSession(_fileSystem, _builders, _projections, _root);
+			await session.Open();
+
+			return session;
 		}
 	}
 }

@@ -42,9 +42,7 @@ namespace Crispin.Infrastructure.Storage
 			Commit();
 		}
 
-		public void Open()
-		{
-		}
+		public Task Open() => Task.CompletedTask;
 
 		public TProjection LoadProjection<TProjection>() where TProjection : IProjection
 		{

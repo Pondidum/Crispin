@@ -1,10 +1,11 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
 {
 	public interface IStorageSession : IDisposable
 	{
-		void Open();
+		Task Open();
 
 		TProjection LoadProjection<TProjection>()
 			where TProjection : IProjection;

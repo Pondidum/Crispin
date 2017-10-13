@@ -29,7 +29,7 @@ namespace Crispin.Tests.Handlers
 			var toggle = Toggle.CreateNew(EditorID.Parse("editor"), "name", "desc");
 			InitialiseToggle(toggle);
 
-			using (var session = Storage.BeginSession())
+			using (var session = Storage.BeginSession().Result)
 				session.Save(toggle);
 
 			Toggle = toggle;
