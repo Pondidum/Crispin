@@ -39,7 +39,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public void Dispose()
 		{
-			Commit();
+			Commit().Wait();
 		}
 
 		public Task Open() => Task.CompletedTask;
@@ -118,20 +118,20 @@ namespace Crispin.Infrastructure.Storage
 			aggregate.ClearPendingEvents();
 		}
 
-		public void Commit()
+		public async Task Commit()
 		{
 			foreach (var pair in _pending)
 			{
 				var aggregatePath = Path.Combine(_root, pair.Key.ToString());
 				var events = pair.Value.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings));
 
-				_fileSystem.AppendFile(aggregatePath, stream =>
+				await _fileSystem.AppendFile(aggregatePath, async stream =>
 				{
 					using (var writer = new StreamWriter(stream))
-						events.Each(e => writer.WriteLine(e));
+						foreach (var @event in events)
+							await writer.WriteLineAsync(@event);
 
-					return Task.CompletedTask;
-				}).Wait();
+				});
 			}
 
 			var eventsForProjection = _pending
@@ -146,13 +146,11 @@ namespace Crispin.Infrastructure.Storage
 				var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
 				var projectionJson = JsonConvert.SerializeObject(projection.ToMemento(), JsonSerializerSettings);
 
-				_fileSystem.WriteFile(projectionPath, stream =>
+				await _fileSystem.WriteFile(projectionPath, async stream =>
 				{
 					using (var writer = new StreamWriter(stream))
-						writer.Write(projectionJson);
-
-					return Task.CompletedTask;
-				}).Wait();
+						await writer.WriteAsync(projectionJson);
+				});
 			}
 
 			_pending.Clear();

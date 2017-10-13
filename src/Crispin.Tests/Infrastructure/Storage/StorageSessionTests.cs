@@ -101,7 +101,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.ChangeDefaultState(Editor, newState: States.On);
 
 			Session.Save(toggle);
-			Session.Commit();
+			await Session.Commit();
 
 			var events = await ReadEvents(toggle.ID);
 
@@ -132,13 +132,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
+		public async Task When_loading_an_aggregate_existing_in_store_and_saved_in_the_current_session()
 		{
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
 
 			Session.Save(toggle);
-			Session.Commit();
+			await Session.Commit();
 
 			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 			Session.Save(toggle);
@@ -177,12 +177,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 			toggle.AddTag(Editor, "one");
 
 			Session.Save(toggle);
-			Session.Commit();
+			await Session.Commit();
 
 			var before = await ReadEvents(toggle.ID);
 			before.Count().ShouldBe(2);
 
-			Session.Commit();
+			await Session.Commit();
 
 			var after = await ReadEvents(toggle.ID);
 			after.Count().ShouldBe(2);
@@ -197,7 +197,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			Session.Save(toggle);
-			Session.Commit();
+			await Session.Commit();
 
 			var view = projection.Toggles.Single();
 
@@ -217,14 +217,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_retrieving_a_projection_from_disk()
+		public async Task When_retrieving_a_projection_from_disk()
 		{
 			Projections.Add(new AllToggles());
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			Session.Save(toggle);
-			Session.Commit();
+			await Session.Commit();
 
 			var projection = Session.LoadProjection<AllToggles>();
 

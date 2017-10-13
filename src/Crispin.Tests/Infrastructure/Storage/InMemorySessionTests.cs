@@ -46,7 +46,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public void When_there_is_a_projection_with_multiple_aggregates()
+		public async Task When_there_is_a_projection_with_multiple_aggregates()
 		{
 			var projection = new AllToggles();
 			Projections.Add(projection);
@@ -56,7 +56,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			Session.Save(first);
 			Session.Save(second);
-			Session.Commit();
+			await Session.Commit();
 
 			projection.Toggles.Select(v => v.ID).ShouldBe(new[]
 			{

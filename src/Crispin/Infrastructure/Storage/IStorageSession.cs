@@ -16,6 +16,6 @@ namespace Crispin.Infrastructure.Storage
 		void Save<TAggregate>(TAggregate aggregate)
 			where TAggregate: AggregateRoot, IEvented;
 
-		void Commit();
+		Task Commit();
 	}
 }

@@ -35,7 +35,7 @@ namespace Crispin.Handlers.UpdateState
 					toggle.ChangeState(message.Editor,groupState.Key, groupState.Value);
 
 				session.Save(toggle);
-				session.Commit();
+				await session.Commit();
 
 				var projection = session.LoadProjection<AllToggles>();
 				var view = projection.Toggles.Single(tv => tv.ID == toggle.ID);
