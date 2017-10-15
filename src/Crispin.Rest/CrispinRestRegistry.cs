@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Crispin.Rest.Infrastructure;
-using MediatR;
+using FileSystem;
 using StructureMap;
-using StructureMap.Graph;
-using StructureMap.Graph.Scanning;
-using StructureMap.TypeRules;
 
 namespace Crispin.Rest
 {
@@ -32,9 +26,10 @@ namespace Crispin.Rest
 			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
 		}
 
-		private static InMemoryStorage BuildStorage()
+		private static IStorage BuildStorage()
 		{
-			var store = new InMemoryStorage();
+			var fs = new PhysicalFileSystem();
+			var store = new FileSystemStorage(fs, "../../storage");
 			store.RegisterProjection(new AllToggles());
 			store.RegisterBuilder(Toggle.LoadFrom);
 
