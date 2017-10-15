@@ -42,11 +42,18 @@ namespace Crispin.Infrastructure.Storage
 			Commit().Wait();
 		}
 
-		public Task Open() => Task.CompletedTask;
+		public async Task Open()
+		{
+			await _fileSystem.CreateDirectory(_root);
+		}
 
 		public async Task<TProjection> LoadProjection<TProjection>() where TProjection : IProjection
 		{
 			var projection = _projections.OfType<TProjection>().FirstOrDefault();
+
+			if (projection == null)
+				throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
+
 			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
 
 			using (var stream = await _fileSystem.ReadFile(projectionPath))

@@ -189,6 +189,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
+		public void When_there_is_no_projection_registered()
+		{
+			Should.Throw<ProjectionNotRegisteredException>(() => Session.LoadProjection<AllToggles>());
+		}
+
+		[Fact]
 		public async Task When_there_is_a_projection()
 		{
 			var projection = new AllToggles();

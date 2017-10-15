@@ -7,6 +7,9 @@ using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using FileSystem;
 using Newtonsoft.Json;
+using NSubstitute;
+using Shouldly;
+using Xunit;
 
 namespace Crispin.Tests.Infrastructure.Storage
 {
@@ -70,6 +73,15 @@ namespace Crispin.Tests.Infrastructure.Storage
 			}
 
 			return projection;
+		}
+
+		[Fact]
+		public async Task When_the_session_is_opened()
+		{
+			await Session.Open();
+
+			var exists = await _fs.DirectoryExists(Root);
+			exists.ShouldBe(true);
 		}
 	}
 }
