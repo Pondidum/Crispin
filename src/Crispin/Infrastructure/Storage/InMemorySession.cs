@@ -45,7 +45,7 @@ namespace Crispin.Infrastructure.Storage
 			Func<IEnumerable<Event>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
-				throw new NotSupportedException($"No builder for type {typeof(TAggregate).Name} found.");
+				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
 
 			var eventsToLoad = new List<Event>();
 

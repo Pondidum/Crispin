@@ -30,7 +30,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			using (var session = await Storage.BeginSession())
 			{
-				Should.Throw<NotSupportedException>(
+				Should.Throw<BuilderNotFoundException>(
 					() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 			}
 		}

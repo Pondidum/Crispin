@@ -40,7 +40,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			Builders.Clear();
 
-			Should.Throw<NotSupportedException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
+			Should.Throw<BuilderNotFoundException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 		}
 
 		[Fact]
