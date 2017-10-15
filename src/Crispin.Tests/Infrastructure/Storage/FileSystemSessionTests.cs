@@ -7,7 +7,6 @@ using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using FileSystem;
 using Newtonsoft.Json;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 

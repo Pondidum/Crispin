@@ -195,6 +195,17 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
+		public async Task When_the_projection_hasnt_been_written_to()
+		{
+			var allToggles = new AllToggles();
+			Projections.Add(allToggles);
+
+			var projection = await Session.LoadProjection<AllToggles>();
+
+			projection.ShouldBe(allToggles);
+		}
+
+		[Fact]
 		public async Task When_there_is_a_projection()
 		{
 			var projection = new AllToggles();

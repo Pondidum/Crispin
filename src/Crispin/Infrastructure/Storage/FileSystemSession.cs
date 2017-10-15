@@ -56,6 +56,9 @@ namespace Crispin.Infrastructure.Storage
 
 			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
 
+			if (await _fileSystem.FileExists(projectionPath) == false)
+				return projection;
+
 			using (var stream = await _fileSystem.ReadFile(projectionPath))
 			using (var reader = new StreamReader(stream))
 			{
