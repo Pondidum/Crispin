@@ -85,7 +85,7 @@ namespace Crispin.Infrastructure.Storage
 				.ToArray();
 
 			if (events.Any() == false)
-				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
+				throw new AggregateNotFoundException(typeof(TAggregate), aggregateID);
 
 			var aggregate = builder(events);
 

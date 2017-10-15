@@ -46,7 +46,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_there_is_no_aggregate_stored()
 		{
-			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
+			Should.Throw<AggregateNotFoundException>(() => Session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 		}
 
 		[Fact]
@@ -55,7 +55,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var toggleID = ToggleID.CreateNew();
 			await WriteEvents(toggleID);
 
-			Should.Throw<KeyNotFoundException>(() => Session.LoadAggregate<Toggle>(toggleID));
+			Should.Throw<AggregateNotFoundException>(() => Session.LoadAggregate<Toggle>(toggleID));
 		}
 
 		[Fact]

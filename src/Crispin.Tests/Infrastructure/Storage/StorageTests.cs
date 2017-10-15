@@ -42,7 +42,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			using (var session = await Storage.BeginSession())
 			{
-				Should.Throw<KeyNotFoundException>(
+				Should.Throw<AggregateNotFoundException>(
 					() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
 			}
 		}

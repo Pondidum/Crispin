@@ -56,7 +56,7 @@ namespace Crispin.Infrastructure.Storage
 				eventsToLoad.AddRange(_pendingEvents[aggregateID]);
 
 			if (eventsToLoad.Any() == false)
-				throw new KeyNotFoundException($"Unable to find an aggregate with ID {aggregateID}");
+				throw new AggregateNotFoundException(typeof(TAggregate), aggregateID);
 
 			var aggregate = builder(eventsToLoad);
 
