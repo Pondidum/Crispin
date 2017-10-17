@@ -19,7 +19,7 @@ Restful Feature Toggle Service
     * a header of some form would be enough I think, something like `X-CRISPIN-USER`
     * no header means anonymous, gets the "everyone" state of the toggle
     * views will need to be aware of multiple states of toggles
-  * [ ] `/toggles`
+  * [x] `/toggles`
     * [x] GET =>`[ { toggleview }, { toggleview } ]`
     * [x] POST => `{ name, description }` => 201 created, `/toggles/id/{id}`
     * [ ] `/id/{id}`
@@ -33,23 +33,23 @@ Restful Feature Toggle Service
         * `/{tagName}`
           * [x] PUT => `[ tag, tag, tag ]`
           * [x] DELETE => `[ tag, tag, tag ]`
-    * [ ] `/name/{name}`
-      * [ ] `/state`
+    * [x] `/name/{name}`
+      * [x] `/state`
         * see `id/state`
-      * [ ] `/tags`
+      * [x] `/tags`
         * see `id/tags`
   * [ ] `/stats`
     * ???
   * [ ] `/management`
     * [ ] `/users`
       * ???
-* [ ] design statistics logging
+* [x] design statistics logging
   * [ ] stats include querying
-* [ ] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
+* [x] use custom exceptions for domain exceptions (e.g. currently using `KeyNotFound`, should be `ToggleNotFound`)
 * [x] replace `ValidationMiddleware` with a `ValidationActionFilter` instead
-* [ ] refactor `/tags` endpoint
+* [x] refactor `/tags` endpoint
   * something like `PUT /tags/some-tag-name` and `DELETE /tags/some-tag-name`
-* [ ] refactor `/state` endpoint, something like
+* [x] refactor `/state` endpoint, something like
   * `PUT /state/user/{userid} : { active: true }` to activate or deactivate
   * `DELETE /state/user/{userid}` to clear state setting
 * [ ] toggle: implement validation of tag names
