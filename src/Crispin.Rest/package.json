@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "kill": "taskkill -F -IM dotnet.exe",
-    "start": "set ASPNETCORE_ENVIRONMENT=Development&& dotnet run"
+    "start": "set ASPNETCORE_ENVIRONMENT=Development&& dotnet run",
+    "test": "jest"
   },
   "dependencies": {
     "aspnet-prerendering": "^3.0.1",
@@ -38,5 +39,10 @@
     "webpack": "2.5.1",
     "webpack-hot-middleware": "2.18.2",
     "webpack-merge": "4.1.0"
+  },
+  "devDependencies": {
+    "babel-jest": "^21.2.0",
+    "jest": "^21.2.1",
+    "regenerator-runtime": "^0.11.0"
   }
 }
