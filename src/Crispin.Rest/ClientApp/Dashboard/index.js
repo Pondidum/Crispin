@@ -22,11 +22,9 @@ class Dashboard extends Component {
   render() {
     const toggles = this.props.toggles || []
     return (
-      <div className="row">
-        <ul className="list-unstyled">
-          {toggles.map((toggle, index) => (<Toggle key={index} toggle={toggle} />)) }
-        </ul>
-      </div>
+      <ul className="list-unstyled row">
+        {toggles.map((toggle, index) => (<Toggle key={index} toggle={toggle} />)) }
+      </ul>
     )
   }
 }

@@ -16,7 +16,7 @@ const Toggle = ({ toggle }) => {
         Object.keys(state.groups).length;
 
     return (
-        <div className="toggle panel panel-default">
+        <div className="toggle panel panel-default col-sm-12">
             <h3>{name}</h3>
             <span>{description}</span>
             <p>Default: {toggleState(state.anonymous)}{specificStates > 0 ? ` and ${specificStates} other states.`: '.'}</p>
