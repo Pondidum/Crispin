@@ -1,4 +1,5 @@
 import './css/site.css';
+import './css/layout.css';
 import 'bootstrap';
 import React from 'react';
 import ReactDOM from 'react-dom';
