@@ -4,32 +4,31 @@ import Toggle from '../Toggle'
 import { listAllToggles } from './actions'
 
 const mapStateToProps = (state) => {
-    return state.toggles
+  return state.toggles
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        listAllToggles: () => dispatch(listAllToggles())
-    }
+  return {
+    listAllToggles: () => dispatch(listAllToggles())
+  }
 }
 
 class Dashboard extends Component {
 
-    componentDidMount() {
-        this.props.listAllToggles();
-    }
+  componentDidMount() {
+    this.props.listAllToggles();
+  }
 
-    render() {
-        const toggles = this.props.toggles || []
-        return (
-            <div className="row">
-                <ul>
-                    {toggles.map((toggle, index) => (<Toggle key={index} toggle={toggle} />)) }
-                </ul>
-            </div>
-        )
-    }
+  render() {
+    const toggles = this.props.toggles || []
+    return (
+      <div className="row">
+        <ul className="list-unstyled">
+          {toggles.map((toggle, index) => (<Toggle key={index} toggle={toggle} />)) }
+        </ul>
+      </div>
+    )
+  }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
