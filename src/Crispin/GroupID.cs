@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace Crispin
 {
+	[TypeConverter(typeof(GroupIDTypeConverter))]
 	[JsonConverter(typeof(GroupIDConverter))]
 	public struct GroupID : IEquatable<GroupID>
 	{
@@ -59,5 +61,10 @@ namespace Crispin
 		{
 			return GroupID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
 		}
+	}
+
+	public class GroupIDTypeConverter : IDTypeConverter
+	{
+		protected override object Parse(string value) => GroupID.Parse(value);
 	}
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace Crispin
 {
+	[TypeConverter(typeof(ToggleIDTypeConverter))]
 	[JsonConverter(typeof(ToggleIDConverter))]
 	public class ToggleID : IEquatable<ToggleID>
 	{
@@ -68,5 +70,10 @@ namespace Crispin
 				? ToggleID.Parse(guid)
 				: null;
 		}
+	}
+
+	public class ToggleIDTypeConverter : IDTypeConverter
+	{
+		protected override object Parse(string value) => ToggleID.Parse(Guid.Parse(value));
 	}
 }

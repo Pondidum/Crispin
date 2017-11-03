@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace Crispin
 {
+	[TypeConverter(typeof(EditorIDTypeConverter))]
 	[JsonConverter(typeof(EditorIDConverter))]
 	public struct EditorID : IEquatable<EditorID>
 	{
@@ -59,5 +61,10 @@ namespace Crispin
 		{
 			return EditorID.Parse(Convert.ToString(reader.Value) ?? string.Empty);
 		}
+	}
+
+	public class EditorIDTypeConverter : IDTypeConverter
+	{
+		protected override object Parse(string value) => EditorID.Parse(value);
 	}
 }

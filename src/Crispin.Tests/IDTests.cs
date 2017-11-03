@@ -40,6 +40,17 @@ namespace Crispin.Tests
 		}
 
 		[Fact]
+		public void When_deserializing_as_a_key()
+		{
+			var id = Guid.NewGuid();
+			var json = $"{{\"{id}\":\"test\"}}";
+
+			var dictionary = JsonConvert.DeserializeObject<Dictionary<T, string>>(json);
+
+			dictionary.ShouldContainKey(Parse(id));
+		}
+
+		[Fact]
 		public void When_checking_for_equality()
 		{
 			var one = CreateOne();
