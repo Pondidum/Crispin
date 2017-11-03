@@ -38,7 +38,6 @@ renderApp();
 if (module.hot) {
     module.hot.accept('./routes', () => {
         const newRoutes = require('./routes');
-        console.log(newRoutes);
         routes = newRoutes;
         renderApp();
     });
