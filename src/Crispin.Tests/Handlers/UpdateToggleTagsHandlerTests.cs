@@ -23,7 +23,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public void When_adding_tags_and_the_toggle_doesnt_exist()
 		{
-			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
+			Should.Throw<AggregateNotFoundException>(async () => await Handler.Handle(
 				new AddToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
 			);
 		}
@@ -31,7 +31,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public void When_removing_tags_and_the_toggle_doesnt_exist()
 		{
-			Should.Throw<KeyNotFoundException>(async () => await Handler.Handle(
+			Should.Throw<AggregateNotFoundException>(async () => await Handler.Handle(
 				new RemoveToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
 			);
 		}

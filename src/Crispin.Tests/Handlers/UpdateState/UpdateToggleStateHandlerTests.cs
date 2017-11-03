@@ -20,7 +20,7 @@ namespace Crispin.Tests.Handlers.UpdateState
 		{
 			var invalidLocator = ToggleLocator.Create(ToggleID.CreateNew());
 
-			Should.Throw<KeyNotFoundException>(
+			Should.Throw<AggregateNotFoundException>(
 				() => Handler.Handle(new UpdateToggleStateRequest(Editor, invalidLocator ))
 			);
 		}
