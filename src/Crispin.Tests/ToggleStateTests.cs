@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Crispin.Events;
 using Shouldly;
 using System.Linq;
+using Crispin.Projections;
 using NSubstitute;
 using Xunit;
 
@@ -65,6 +66,12 @@ namespace Crispin.Tests
 			}
 		}
 
+		[Fact]
+		public void The_view_if_supplied_cannot_be_null()
+		{
+			Should.Throw<ArgumentNullException>(() => new ToggleState(null));
+		}
+
 		[Theory]
 		[MemberData(nameof(ToggleStateMatrix))]
 		public void When_testing_all_toggly_things(State[] events, UserID user, bool expected)
@@ -97,22 +104,23 @@ namespace Crispin.Tests
 		[InlineData(States.Off, States.Off, true, false)]
 		public void When_passing_state_to_a_user(States initialState, States? newState, bool shouldContain, bool expectedActive)
 		{
-			var state = new ToggleState();
+			var view = new StateView();
+			var state = new ToggleState(view);
 			state.HandleSwitching(User3, initialState);
 
 			state.HandleSwitching(User3, newState);
 
 			if (shouldContain)
-				state.UserState.ShouldContainKey(User3);
+				view.Users.ShouldContainKey(User3);
 			else
-				state.UserState.ShouldNotContainKey(User3);
+				view.Users.ShouldNotContainKey(User3);
 
 			var membership = Substitute.For<IGroupMembership>();
 			membership.GetGroupsFor(Arg.Any<UserID>()).Returns(Enumerable.Empty<GroupID>());
 
 			state.IsActive(membership, User3).ShouldBe(expectedActive);
 		}
-		
+
 		[Theory]
 		[InlineData(States.On, null, false, false)]
 		[InlineData(States.Off, null, false, false)]
@@ -122,15 +130,16 @@ namespace Crispin.Tests
 		[InlineData(States.Off, States.Off, true, false)]
 		public void When_passing_state_to_a_group(States initialState, States? newState, bool shouldContain, bool expectedActive)
 		{
-			var state = new ToggleState();
+			var view = new StateView();
+			var state = new ToggleState(view);
 			state.HandleSwitching(Group1, initialState);
 
 			state.HandleSwitching(Group1, newState);
 
 			if (shouldContain)
-				state.GroupState.ShouldContainKey(Group1);
+				view.Groups.ShouldContainKey(Group1);
 			else
-				state.GroupState.ShouldNotContainKey(Group1);
+				view.Groups.ShouldNotContainKey(Group1);
 
 			var membership = Substitute.For<IGroupMembership>();
 			membership.GetGroupsFor(Arg.Any<UserID>()).Returns(new[] { Group1 });

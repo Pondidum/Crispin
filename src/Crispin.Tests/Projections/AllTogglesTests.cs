@@ -4,6 +4,7 @@ using Crispin.Events;
 using Crispin.Projections;
 using Shouldly;
 using System.Linq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Crispin.Tests.Projections
@@ -108,6 +109,26 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(new TagRemoved(_editor, "one") { AggregateID = created.ID });
 
 			_projection.Toggles.Single().Tags.ShouldBe(new[] { "two" });
+		}
+
+		[Fact]
+		public void When_deserializing()
+		{
+			var settings = new JsonSerializerSettings
+			{
+				Formatting = Formatting.None,
+				TypeNameHandling = TypeNameHandling.Objects
+			};
+
+			var toggleID = ToggleID.CreateNew();
+			_projection.Consume(new ToggleCreated(_editor, toggleID, "toggle-1", ""));
+			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = toggleID });
+
+			var json = JsonConvert.SerializeObject(_projection.ToMemento(), settings);
+			var memento = JsonConvert.DeserializeObject(json, settings) as AllTogglesMemento;
+
+			memento.Single().Value.Name.ShouldBe("toggle-1");
+			memento.Single().Value.State.Anonymous.ShouldBe(States.On);
 		}
 	}
 }

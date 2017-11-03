@@ -8,21 +8,16 @@ namespace Crispin.Projections
 		public ToggleID ID { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public HashSet<string> Tags { get; }
-
-		public StateView State => new StateView
-		{
-			Anonymous = _states.AnonymousState,
-			Users = _states.UserState,
-			Groups = _states.GroupState
-		};
+		public HashSet<string> Tags { get; set; }
+		public StateView State { get; set; }
 
 		private readonly ToggleState _states;
 
 		public ToggleView()
 		{
 			Tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			_states = new ToggleState();
+			State = new StateView();
+			_states = new ToggleState(State);
 		}
 
 		public void SwitchOnByDefault() => _states.HandleSwitching(States.On);

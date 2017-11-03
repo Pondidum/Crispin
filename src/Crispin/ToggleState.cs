@@ -1,24 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using Crispin.Projections;
 
 namespace Crispin
 {
 	public class ToggleState
 	{
-		private readonly Dictionary<UserID, States> _users;
-		private readonly Dictionary<GroupID, States> _groups;
-		private States _anonymousActive;
+		private readonly StateView _view;
 
-		public ToggleState()
+		public ToggleState() : this(new StateView())
 		{
-			_users = new Dictionary<UserID, States>();
-			_groups = new Dictionary<GroupID, States>();
-			_anonymousActive = States.Off;
 		}
 
-		public States AnonymousState => _anonymousActive;
-		public Dictionary<UserID, States> UserState => new Dictionary<UserID, States>(_users);
-		public Dictionary<GroupID, States> GroupState => new Dictionary<GroupID, States>(_groups);
+		public ToggleState(StateView view)
+		{
+			_view = view ?? throw new ArgumentNullException(nameof(view));
+		}
 
 		public void HandleSwitching(UserID user, States? newState)
 		{
@@ -29,9 +26,9 @@ namespace Crispin
 				return;
 
 			if (hasValue)
-				_users[user] = newState.Value;
+				_view.Users[user] = newState.Value;
 			else
-				_users.Remove(user);
+				_view.Users.Remove(user);
 		}
 
 		public void HandleSwitching(GroupID group, States? newState)
@@ -43,29 +40,29 @@ namespace Crispin
 				return;
 
 			if (hasValue)
-				_groups[group] = newState.Value;
+				_view.Groups[group] = newState.Value;
 			else
-				_groups.Remove(group);
+				_view.Groups.Remove(group);
 		}
 
 		public void HandleSwitching(States newState)
 		{
-			_anonymousActive = newState;
+			_view.Anonymous = newState;
 		}
 
 		public bool IsActive(IGroupMembership membership, UserID userID)
 		{
 			if (userID == UserID.Empty)
-				return _anonymousActive == States.On;
+				return _view.Anonymous == States.On;
 
-			if (_users.ContainsKey(userID))
-				return _users[userID]  == States.On;
+			if (_view.Users.ContainsKey(userID))
+				return _view.Users[userID] == States.On;
 
 			var userGroups = membership.GetGroupsFor(userID);
 
 			var setGroups = userGroups
-				.Where(g => _groups.ContainsKey(g))
-				.Select(g => _groups[g])
+				.Where(g => _view.Groups.ContainsKey(g))
+				.Select(g => _view.Groups[g])
 				.ToArray();
 
 			if (setGroups.Any() && setGroups.All(x => x == States.On))
@@ -73,7 +70,7 @@ namespace Crispin
 				return true;
 			}
 
-			return _anonymousActive == States.On;
+			return _view.Anonymous == States.On;
 		}
 	}
 }

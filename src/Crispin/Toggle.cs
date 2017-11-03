@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using Crispin.Projections;
 
 namespace Crispin
 {
@@ -39,7 +40,6 @@ namespace Crispin
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
 			_state = new ToggleState();
 
 			Register<ToggleCreated>(Apply);
