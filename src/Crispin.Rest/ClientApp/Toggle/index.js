@@ -1,5 +1,5 @@
-import React from 'react'
-import ToggleState from './toggleState'
+import React from "react";
+import ToggleState from "./toggleState";
 
 const Toggle = ({ toggle }) => {
   const { name, description, state } = toggle;
@@ -10,7 +10,7 @@ const Toggle = ({ toggle }) => {
       <span>{description}</span>
       <ToggleState state={state} />
     </div>
-  )
-}
+  );
+};
 
-export default Toggle
+export default Toggle;
