@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import { connect } from "react-redux";
+import { createToggle } from "./actions";
+
+const mapDispatchToProps = dispatch => {
+  return {
+    createToggle: (name, description) =>
+      dispatch(createToggle(name, description))
+  };
+};
 
 class CreateToggle extends Component {
   constructor() {
@@ -15,6 +24,11 @@ class CreateToggle extends Component {
   render() {
     const open = () => this.setState({ showModal: true });
     const close = () => this.setState({ showModal: false });
+
+    const save = () => {
+      this.props.createToggle(this.state.name, this.state.description);
+      close();
+    };
 
     const toggleModal = e => {
       e.preventDefault();
@@ -53,7 +67,7 @@ class CreateToggle extends Component {
             </form>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={close} bsStyle="primary">
+            <Button onClick={save} bsStyle="primary">
               Create
             </Button>
             <Button onClick={close}>Close</Button>
@@ -64,4 +78,4 @@ class CreateToggle extends Component {
   }
 }
 
-export default CreateToggle;
+export default connect(null, mapDispatchToProps)(CreateToggle);
