@@ -1,6 +1,9 @@
 import { fetch, addTask } from "domain-task";
 
-export const createToggle = (name, description) => (dispatch, getState) => {
+export const createToggle = (name, description, closeForm) => (
+  dispatch,
+  getState
+) => {
   const options = {
     method: "POST",
     headers: {
@@ -12,9 +15,10 @@ export const createToggle = (name, description) => (dispatch, getState) => {
     })
   };
 
-  let fetchTask = fetch(`/toggles`, options).then(response =>
-    dispatch({ type: "CREATE_TOGGLE_SUCCESS" })
-  );
+  const fetchTask = fetch(`/toggles`, options).then(response => {
+    dispatch({ type: "CREATE_TOGGLE_SUCCESS" });
+    closeForm();
+  });
 
   addTask(fetchTask);
   dispatch({ type: "CREATE_TOGGLE_REQUEST" });

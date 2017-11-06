@@ -6,8 +6,8 @@ import { createToggle } from "./actions";
 
 const mapDispatchToProps = dispatch => {
   return {
-    createToggle: (name, description) =>
-      dispatch(createToggle(name, description))
+    createToggle: (name, description, closeForm) =>
+      dispatch(createToggle(name, description, closeForm))
   };
 };
 
@@ -26,8 +26,7 @@ class CreateToggle extends Component {
     const close = () => this.setState({ showModal: false });
 
     const save = () => {
-      this.props.createToggle(this.state.name, this.state.description);
-      close();
+      this.props.createToggle(this.state.name, this.state.description, close);
     };
 
     const toggleModal = e => {
