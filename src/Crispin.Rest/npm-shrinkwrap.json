@@ -5973,6 +5973,14 @@
         "react-router": "4.1.1"
       }
     },
+    "react-trend": {
+      "version": "1.2.4",
+      "resolved": "https://registry.npmjs.org/react-trend/-/react-trend-1.2.4.tgz",
+      "integrity": "sha1-SYmHKGq9Q+49/4gRFc1k0cjnLZU=",
+      "requires": {
+        "prop-types": "15.5.10"
+      }
+    },
     "read-pkg": {
       "version": "1.1.0",
       "resolved": "https://registry.npmjs.org/read-pkg/-/read-pkg-1.1.0.tgz",
