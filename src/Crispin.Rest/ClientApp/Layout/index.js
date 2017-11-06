@@ -1,6 +1,7 @@
-import React from 'react'
-import { Col, Row } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { Col, Row } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import CreateToggle from "../CreateToggle";
 
 export default ({ children }) => (
   <div className="container-fluid" id="root">
@@ -9,15 +10,18 @@ export default ({ children }) => (
         <h1>Crispin</h1>
         <ul className="list-unstyled">
           <li>
-            <NavLink exact to={ '/' } activeClassName='active'>
-              <span className='glyphicon glyphicon-home'></span> Home
+            <NavLink exact to={"/"} activeClassName="active">
+              <span className="glyphicon glyphicon-home" /> Home
             </NavLink>
+          </li>
+          <li>
+            <CreateToggle />
           </li>
         </ul>
       </Col>
       <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
-        { children }
+        {children}
       </Col>
     </Row>
   </div>
-)
+);
