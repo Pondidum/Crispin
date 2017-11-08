@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
 using Crispin.Rest.Infrastructure;
 using MediatR;
