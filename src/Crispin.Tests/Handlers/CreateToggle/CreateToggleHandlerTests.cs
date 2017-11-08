@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Crispin.Handlers;
+﻿using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Infrastructure.Storage;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Tests.Handlers
+namespace Crispin.Tests.Handlers.CreateToggle
 {
 	public class CreateToggleHandlerTests
 	{
