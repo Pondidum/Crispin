@@ -19,6 +19,7 @@ export const createToggle = (name, description, success, failure) => (
     if (response.status === 201) {
       dispatch({ type: "CREATE_TOGGLE_SUCCESS" });
       success();
+      return;
     }
 
     response.json().then(body => {
