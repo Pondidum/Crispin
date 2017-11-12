@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
+using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Validation;
 using MediatR;

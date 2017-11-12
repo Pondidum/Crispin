@@ -21,7 +21,7 @@ namespace Crispin.Infrastructure.Validation
 
 			if (validator != null)
 			{
-				var messages = validator.Validate(request);
+				var messages = await validator.Validate(request);
 				if (messages.Any())
 					throw new ValidationException(messages);
 			}

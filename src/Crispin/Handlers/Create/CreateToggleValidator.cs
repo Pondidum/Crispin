@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
 using Crispin.Projections;
@@ -16,16 +17,16 @@ namespace Crispin.Handlers.Create
 			_storage = storage;
 		}
 
-		public ICollection<string> Validate(CreateToggleRequest request)
+		public async Task<ICollection<string>> Validate(CreateToggleRequest request)
 		{
 			if (string.IsNullOrWhiteSpace(request.Name))
 				return new[] { "The Name property must be filled out" };
 
-			using (var session = _storage.BeginSession().Result)
+			using (var session = await _storage.BeginSession())
 			{
-				var view = session.LoadProjection<AllToggles>().Result.Toggles;
+				var view = await session.LoadProjection<AllToggles>();
 
-				if (view.Any(tv => string.Equals(tv.Name, request.Name, StringComparison.OrdinalIgnoreCase)))
+				if (view.Toggles.Any(tv => string.Equals(tv.Name, request.Name, StringComparison.OrdinalIgnoreCase)))
 				{
 					return new[] { $"The Name '{request.Name}' is already in use" };
 				}

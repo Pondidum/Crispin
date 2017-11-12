@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Validation
 {
 	public interface IRequestValidator<T>
 	{
-		ICollection<string> Validate(T request);
+		Task<ICollection<string>> Validate(T request);
 	}
 }
