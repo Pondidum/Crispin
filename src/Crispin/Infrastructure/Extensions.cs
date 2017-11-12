@@ -10,5 +10,8 @@ namespace Crispin.Infrastructure
 			foreach (var item in self)
 				action(item);
 		}
+
+		public static bool EqualsIgnore(this string first, string second) =>
+			string.Equals(first, second, StringComparison.OrdinalIgnoreCase);
 	}
 }

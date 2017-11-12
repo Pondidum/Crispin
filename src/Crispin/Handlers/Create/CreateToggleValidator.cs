@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
 using Crispin.Projections;
@@ -22,17 +23,21 @@ namespace Crispin.Handlers.Create
 			if (string.IsNullOrWhiteSpace(request.Name))
 				return new[] { "The Name property must be filled out" };
 
+			var toggles = await GetExistingToggles();
+
+			if (toggles.Any(tv => tv.Name.EqualsIgnore(request.Name)))
+				return new[] { $"The Name '{request.Name}' is already in use" };
+
+			return Array.Empty<string>();
+		}
+
+		private async Task<IEnumerable<ToggleView>> GetExistingToggles()
+		{
 			using (var session = await _storage.BeginSession())
 			{
 				var view = await session.LoadProjection<AllToggles>();
-
-				if (view.Toggles.Any(tv => string.Equals(tv.Name, request.Name, StringComparison.OrdinalIgnoreCase)))
-				{
-					return new[] { $"The Name '{request.Name}' is already in use" };
-				}
+				return view.Toggles;
 			}
-
-			return Array.Empty<string>();
 		}
 	}
 }
