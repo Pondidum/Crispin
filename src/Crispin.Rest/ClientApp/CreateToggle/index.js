@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Alert, Button, Modal } from "react-bootstrap";
 import {
+  Button,
+  Modal,
   FormGroup,
   ControlLabel,
   FormControl,
@@ -28,14 +29,14 @@ class CreateToggle extends Component {
     this.closeModal = this.closeModal.bind(this);
     this.resetForm = this.resetForm.bind(this);
 
-    this.renderMessage = this.renderMessage.bind(this);
+    this.onNameChange = this.onNameChange.bind(this);
     this.renderForm = this.renderForm.bind(this);
 
     this.state = {
       showModal: false,
       name: "",
       description: "",
-      failureMessages: []
+      nameMessages: []
     };
   }
 
@@ -53,55 +54,46 @@ class CreateToggle extends Component {
     this.setState({
       name: "",
       description: "",
-      failureMessages: []
+      nameMessages: []
     });
   }
 
-  renderMessage() {
-    const messages = this.state.failureMessages;
-
-    if (messages.length === 0) return null;
-
-    return (
-      <Alert bsStyle="danger">
-        <ul className="list-unstyled">
-          {messages.map((m, i) => <li key={i}>{m}</li>)}
-        </ul>
-      </Alert>
+  onNameChange(name) {
+    const inUse = this.props.toggles.find(
+      t => t.name.toLowerCase() === name.toLowerCase()
     );
+
+    const nameMessages = [];
+
+    if (inUse)
+      nameMessages.push("This name is already in use by another toggle");
+
+    if (!name || name.trim() === "")
+      nameMessages.push("The toggle name cannot be blank");
+
+    this.setState({
+      name: name,
+      nameMessages: nameMessages
+    });
   }
 
   renderForm() {
-    const getNameValidationState = () => {
-      const name = this.state.name;
-
-      if (!name || name === "") return null;
-
-      const exists = this.props.toggles.find(
-        t => t.name.toLowerCase() === name.toLowerCase()
-      );
-
-      return exists ? "error" : "success";
-    };
-
-    const nameValidationMessage =
-      getNameValidationState() === "success"
-        ? ""
-        : "This name is already in use by another toggle";
     return (
       <form>
         <FormGroup
           controlId="toggleName"
-          validationState={getNameValidationState()}
+          validationState={
+            this.state.nameMessages.length === 0 ? "success" : "error"
+          }
         >
           <ControlLabel>Name</ControlLabel>
           <FormControl
             type="text"
             placeholder="My-Toggle"
             value={this.state.name}
-            onChange={e => this.setState({ name: e.target.value })}
+            onChange={e => this.onNameChange(e.target.value)}
           />
-          <HelpBlock>{nameValidationMessage}</HelpBlock>
+          <HelpBlock>{this.state.nameMessages[0] || ""}</HelpBlock>
         </FormGroup>
         <FormGroup controlId="toggleDescription">
           <ControlLabel>Description</ControlLabel>
@@ -122,7 +114,7 @@ class CreateToggle extends Component {
         this.state.name,
         this.state.description,
         () => this.closeModal(),
-        body => this.setState({ failureMessages: body.messages })
+        body => this.setState({ nameMessages: body.messages })
       );
 
     return (
@@ -134,10 +126,7 @@ class CreateToggle extends Component {
           <Modal.Header closeButton>
             <Modal.Title>Create new Toggle</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            {this.renderMessage()}
-            {this.renderForm()}
-          </Modal.Body>
+          <Modal.Body>{this.renderForm()}</Modal.Body>
           <Modal.Footer>
             <Button onClick={save} bsStyle="primary">
               Create
