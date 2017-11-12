@@ -1,6 +1,6 @@
 import { fetch, addTask } from "domain-task";
 
-export const createToggle = (name, description, closeForm) => (
+export const createToggle = (name, description, success, failure) => (
   dispatch,
   getState
 ) => {
@@ -16,8 +16,15 @@ export const createToggle = (name, description, closeForm) => (
   };
 
   const fetchTask = fetch(`/toggles`, options).then(response => {
-    dispatch({ type: "CREATE_TOGGLE_SUCCESS" });
-    closeForm();
+    if (response.status === 201) {
+      dispatch({ type: "CREATE_TOGGLE_SUCCESS" });
+      success();
+    }
+
+    response.json().then(body => {
+      dispatch({ type: "CREATE_TOGGLE_FAILURE", messages: body.messages });
+      failure(body);
+    });
   });
 
   addTask(fetchTask);
