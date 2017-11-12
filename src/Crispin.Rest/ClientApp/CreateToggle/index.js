@@ -21,13 +21,38 @@ const mapDispatchToProps = dispatch => {
 class CreateToggle extends Component {
   constructor() {
     super();
+
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.resetForm = this.resetForm.bind(this);
+
     this.renderMessage = this.renderMessage.bind(this);
+    this.renderForm = this.renderForm.bind(this);
+
     this.state = {
       showModal: false,
       name: "",
       description: "",
       failureMessages: []
     };
+  }
+
+  openModal(e) {
+    e.preventDefault();
+    this.setState({ showModal: true });
+  }
+
+  closeModal() {
+    this.resetForm();
+    this.setState({ showModal: false });
+  }
+
+  resetForm() {
+    this.setState({
+      name: "",
+      description: "",
+      failureMessages: []
+    });
   }
 
   renderMessage() {
@@ -44,60 +69,58 @@ class CreateToggle extends Component {
     );
   }
 
-  render() {
-    const open = () => this.setState({ showModal: true });
-    const close = () => this.setState({ showModal: false });
+  renderForm() {
+    return (
+      <form>
+        <FormGroup controlId="toggleName">
+          <ControlLabel>Name</ControlLabel>
+          <FormControl
+            type="text"
+            placeholder="My-Toggle"
+            value={this.state.name}
+            onChange={e => this.setState({ name: e.target.value })}
+          />
+        </FormGroup>
+        <FormGroup controlId="toggleDescription">
+          <ControlLabel>Description</ControlLabel>
+          <FormControl
+            type="text"
+            placeholder="some short description of the toggle"
+            value={this.state.description}
+            onChange={e => this.setState({ description: e.target.value })}
+          />
+        </FormGroup>
+      </form>
+    );
+  }
 
+  render() {
     const save = () =>
       this.props.createToggle(
         this.state.name,
         this.state.description,
-        close,
+        () => this.closeModal(),
         body => this.setState({ failureMessages: body.messages })
       );
 
-    const toggleModal = e => {
-      e.preventDefault();
-      open();
-    };
-
     return (
       <span>
-        <a href="#" onClick={toggleModal}>
+        <a href="#" onClick={this.openModal}>
           Create Toggle
         </a>
-        <Modal show={this.state.showModal} onHide={close}>
+        <Modal show={this.state.showModal} onHide={this.closeModal}>
           <Modal.Header closeButton>
             <Modal.Title>Create new Toggle</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {this.renderMessage()}
-            <form>
-              <FormGroup controlId="toggleName">
-                <ControlLabel>Name</ControlLabel>
-                <FormControl
-                  type="text"
-                  placeholder="My-Toggle"
-                  value={this.state.name}
-                  onChange={e => this.setState({ name: e.target.value })}
-                />
-              </FormGroup>
-              <FormGroup controlId="toggleDescription">
-                <ControlLabel>Description</ControlLabel>
-                <FormControl
-                  type="text"
-                  placeholder="some short description of the toggle"
-                  value={this.state.description}
-                  onChange={e => this.setState({ description: e.target.value })}
-                />
-              </FormGroup>
-            </form>
+            {this.renderForm()}
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={save} bsStyle="primary">
               Create
             </Button>
-            <Button onClick={close}>Close</Button>
+            <Button onClick={this.closeModal}>Close</Button>
           </Modal.Footer>
         </Modal>
       </span>
