@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import { Alert, Button, Modal } from "react-bootstrap";
-import { FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import {
+  FormGroup,
+  ControlLabel,
+  FormControl,
+  HelpBlock
+} from "react-bootstrap";
 import { connect } from "react-redux";
 import { createToggle } from "./actions";
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-    ...ownProps,
-    create: state.create
-  };
+  return state.toggles;
 };
 
 const mapDispatchToProps = dispatch => {
@@ -70,9 +72,28 @@ class CreateToggle extends Component {
   }
 
   renderForm() {
+    const getNameValidationState = () => {
+      const name = this.state.name;
+
+      if (!name || name === "") return null;
+
+      const exists = this.props.toggles.find(
+        t => t.name.toLowerCase() === name.toLowerCase()
+      );
+
+      return exists ? "error" : "success";
+    };
+
+    const nameValidationMessage =
+      getNameValidationState() === "success"
+        ? ""
+        : "This name is already in use by another toggle";
     return (
       <form>
-        <FormGroup controlId="toggleName">
+        <FormGroup
+          controlId="toggleName"
+          validationState={getNameValidationState()}
+        >
           <ControlLabel>Name</ControlLabel>
           <FormControl
             type="text"
@@ -80,6 +101,7 @@ class CreateToggle extends Component {
             value={this.state.name}
             onChange={e => this.setState({ name: e.target.value })}
           />
+          <HelpBlock>{nameValidationMessage}</HelpBlock>
         </FormGroup>
         <FormGroup controlId="toggleDescription">
           <ControlLabel>Description</ControlLabel>
