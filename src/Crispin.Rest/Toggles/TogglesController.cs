@@ -50,7 +50,7 @@ namespace Crispin.Rest.Toggles
 			var request = new CreateToggleRequest(editor, model.Name, model.Description);
 			var response = await _mediator.Send(request);
 
-			return Created("/toggles/id/" + response.ToggleID, null);
+			return Created("/toggles/id/" + response.Toggle.ID, response.Toggle);
 		}
 	}
 }

@@ -10,17 +10,29 @@ namespace Crispin.Rest.Tests.Toggles
 {
 	public class CreateToggleTests : TogglesControllerTests
 	{
+		private readonly CreateTogglesResponse _response;
+
+		public CreateToggleTests()
+		{
+			_response = new CreateTogglesResponse
+			{
+				Toggle = Toggle.CreateNew(EditorID.Parse("123"), "one", "two").ToView()
+			};
+		}
+
 		[Fact]
 		public async Task When_creating_a_toggle_the_response_location_is_set()
 		{
-			var response = new CreateTogglesResponse { ToggleID = ToggleID.CreateNew() };
 			Mediator
 				.Send(Arg.Any<CreateToggleRequest>())
-				.Returns(response);
+				.Returns(_response);
 
-			var result = (CreatedResult) await Controller.Post(new TogglePostRequest());
+			var result = (CreatedResult)await Controller.Post(new TogglePostRequest());
 
-			result.Location.ShouldBe("/toggles/id/" + response.ToggleID);
+			result.ShouldSatisfyAllConditions(
+				() => result.Location.ShouldBe("/toggles/id/" + _response.Toggle.ID),
+				() => result.Value.ShouldBe(_response.Toggle)
+			);
 		}
 
 		[Fact]
@@ -28,7 +40,7 @@ namespace Crispin.Rest.Tests.Toggles
 		{
 			Mediator
 				.Send(Arg.Any<CreateToggleRequest>())
-				.Returns(new CreateTogglesResponse());
+				.Returns(_response);
 
 			var model = new TogglePostRequest
 			{

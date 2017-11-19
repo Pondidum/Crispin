@@ -26,7 +26,7 @@ namespace Crispin.Handlers.Create
 
 				return new CreateTogglesResponse
 				{
-					ToggleID = newToggle.ID
+					Toggle = newToggle.ToView()
 				};
 			}
 		}

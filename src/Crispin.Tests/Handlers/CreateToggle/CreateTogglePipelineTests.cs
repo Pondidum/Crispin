@@ -21,7 +21,7 @@ namespace Crispin.Tests.Handlers.CreateToggle
 		{
 			await Send(new CreateToggleRequest(Editor, "name-one", ""));
 
-			Response.ToggleID.ShouldNotBe(ToggleID.Empty);
+			Response.Toggle.ID.ShouldNotBe(ToggleID.Empty);
 		}
 
 		[Fact]

@@ -29,9 +29,9 @@ namespace Crispin.Tests.Handlers.CreateToggle
 				name: "Test",
 				description: "desc"));
 
-			response.ToggleID.ShouldNotBe(ToggleID.Empty);
+			response.Toggle.ShouldNotBeNull();
 
-			await _session.Received().Save(Arg.Is<Toggle>(t => t.ID == response.ToggleID));
+			await _session.Received().Save(Arg.Is<Toggle>(t => t.ID == response.Toggle.ID));
 		}
 	}
 }

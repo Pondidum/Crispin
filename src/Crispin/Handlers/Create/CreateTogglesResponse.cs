@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Crispin.Views;
 
 namespace Crispin.Handlers.Create
 {
 	public class CreateTogglesResponse
 	{
-		public ToggleID ToggleID { get; set; }
+		public ToggleView Toggle { get; set; }
 	}
 }
