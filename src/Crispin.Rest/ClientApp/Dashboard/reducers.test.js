@@ -29,3 +29,14 @@ it("should populate toggles when receiving all toggles", () => {
     toggles: [1, 2, 3]
   });
 });
+
+it("should handle a new toggle being created", () => {
+  const state = reducer(
+    { toggles: [{ name: "first" }] },
+    { type: "CREATE_TOGGLE_SUCCESS", toggle: { name: "wat" } }
+  );
+
+  expect(state).toEqual({
+    toggles: [{ name: "first" }, { name: "wat" }]
+  });
+});

@@ -1,11 +1,12 @@
 {
-  "name": "nots",
+  "name": "Crispin.RestUI",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "kill": "taskkill -F -IM dotnet.exe",
     "start": "set ASPNETCORE_ENVIRONMENT=Development&& dotnet run",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "aspnet-prerendering": "^3.0.1",

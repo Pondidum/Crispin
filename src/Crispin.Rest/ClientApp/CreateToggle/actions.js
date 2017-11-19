@@ -15,18 +15,17 @@ export const createToggle = (name, description, success, failure) => (
     })
   };
 
-  const fetchTask = fetch(`/toggles`, options).then(response => {
-    if (response.status === 201) {
-      dispatch({ type: "CREATE_TOGGLE_SUCCESS" });
-      success();
-      return;
-    }
-
+  const fetchTask = fetch(`/toggles`, options).then(response =>
     response.json().then(body => {
-      dispatch({ type: "CREATE_TOGGLE_FAILURE", messages: body.messages });
-      failure(body);
-    });
-  });
+      if (response.status === 201) {
+        dispatch({ type: "CREATE_TOGGLE_SUCCESS", toggle: body });
+        success();
+      } else {
+        dispatch({ type: "CREATE_TOGGLE_FAILURE", messages: body.messages });
+        failure(body);
+      }
+    })
+  );
 
   addTask(fetchTask);
   dispatch({ type: "CREATE_TOGGLE_REQUEST" });
