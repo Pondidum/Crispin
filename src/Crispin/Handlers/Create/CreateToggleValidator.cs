@@ -6,6 +6,7 @@ using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
 using Crispin.Projections;
+using Crispin.Views;
 
 namespace Crispin.Handlers.Create
 {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Crispin.Handlers;
 using Crispin.Handlers.GetAll;
 using Crispin.Projections;
+using Crispin.Views;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Shouldly;

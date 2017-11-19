@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Crispin.Projections;
+using Crispin.Views;
 
 namespace Crispin
 {

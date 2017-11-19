@@ -3,6 +3,7 @@ using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
 using Crispin.Projections;
 using Crispin.Rest.Toggles;
+using Crispin.Views;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;

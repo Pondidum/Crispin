@@ -4,6 +4,7 @@ using Crispin.Events;
 using Shouldly;
 using System.Linq;
 using Crispin.Projections;
+using Crispin.Views;
 using NSubstitute;
 using Xunit;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using Crispin.Views;
 
 namespace Crispin.Projections
 {

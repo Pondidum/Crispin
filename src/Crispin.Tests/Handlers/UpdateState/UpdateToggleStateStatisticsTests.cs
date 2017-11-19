@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Crispin.Handlers.UpdateState;
 using Crispin.Infrastructure.Statistics;
 using Crispin.Projections;
+using Crispin.Views;
 using NSubstitute;
 using Xunit;
 
