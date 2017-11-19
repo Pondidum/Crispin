@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Crispin.Projections;
 using Crispin.Views;
@@ -17,6 +18,13 @@ namespace Crispin
 		{
 			_view = view ?? throw new ArgumentNullException(nameof(view));
 		}
+		
+		public StateView ToView() => new StateView
+		{
+			Anonymous = _view.Anonymous,
+			Groups = new Dictionary<GroupID, States>(_view.Groups),
+			Users = new Dictionary<UserID, States>(_view.Users)
+		};
 
 		public void HandleSwitching(UserID user, States? newState)
 		{

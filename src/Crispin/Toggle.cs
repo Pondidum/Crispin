@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Projections;
+using Crispin.Views;
 
 namespace Crispin
 {
@@ -98,6 +99,16 @@ namespace Crispin
 
 			ApplyEvent(new TagRemoved(editor, tag));
 		}
+		
+		public ToggleView ToView() => new ToggleView
+		{
+			ID = ID,
+			Name = Name,
+			Description = Description,
+			Tags = new HashSet<string>(_tags),
+			State = _state.ToView()
+		};
+
 
 		//handlers which apply the results of the domainy things
 		private void Apply(ToggleCreated e)

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
-using Microsoft.VisualBasic.CompilerServices;
 using NSubstitute;
 
 namespace Crispin.Tests.ToggleTests
