@@ -23,7 +23,7 @@ namespace Crispin.Rest
 			var store = BuildStorage();
 
 			For<IStorage>().Use(store);
-			For<IStatisticsStore>().Use<InMemoryStatisticsStore>().Singleton();
+			For<IStatisticsStore>().Use<FileSystemStatisticsStore>().Singleton();
 			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
 		}
 
