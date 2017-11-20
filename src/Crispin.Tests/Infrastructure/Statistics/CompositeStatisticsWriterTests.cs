@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Crispin.Infrastructure.Statistics;
+using Crispin.Infrastructure.Statistics.Writers;
 using NSubstitute;
 using Xunit;
 

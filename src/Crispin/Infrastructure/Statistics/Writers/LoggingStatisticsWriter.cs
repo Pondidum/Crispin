@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Crispin.Infrastructure.Statistics
+namespace Crispin.Infrastructure.Statistics.Writers
 {
 	public class LoggingStatisticsWriter : IStatisticsWriter
 	{

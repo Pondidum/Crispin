@@ -6,7 +6,7 @@ using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateState;
 using StatsdClient;
 
-namespace Crispin.Infrastructure.Statistics
+namespace Crispin.Infrastructure.Statistics.Writers
 {
 	public class StatsdStatisticsWriter : IStatisticsWriter
 	{

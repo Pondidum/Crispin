@@ -5,6 +5,7 @@ using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
+using Crispin.Infrastructure.Statistics.Writers;
 using Crispin.Infrastructure.Validation;
 using MediatR;
 using Microsoft.Extensions.Logging;

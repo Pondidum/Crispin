@@ -1,5 +1,6 @@
 using System;
 using Crispin.Infrastructure.Statistics;
+using Crispin.Infrastructure.Statistics.Writers;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Crispin.Rest.Infrastructure;

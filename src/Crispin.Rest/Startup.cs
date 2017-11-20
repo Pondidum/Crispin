@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Statistics;
+using Crispin.Infrastructure.Statistics.Writers;
 using Crispin.Rest.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;

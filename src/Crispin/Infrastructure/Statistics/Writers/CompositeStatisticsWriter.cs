@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Crispin.Infrastructure.Statistics
+namespace Crispin.Infrastructure.Statistics.Writers
 {
 	public class CompositeStatisticsWriter : IStatisticsWriter
 	{

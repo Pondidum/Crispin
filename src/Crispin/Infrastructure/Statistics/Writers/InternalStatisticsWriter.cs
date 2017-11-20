@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Crispin.Infrastructure.Statistics
+namespace Crispin.Infrastructure.Statistics.Writers
 {
 	public class InternalStatisticsWriter : IStatisticsWriter
 	{
