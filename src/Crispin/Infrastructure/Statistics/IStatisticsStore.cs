@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Statistics
 {
 	public interface IStatisticsStore
 	{
-		void Append(DateTime timestamp, IStat stat);
+		Task Append(DateTime timestamp, IStat stat);
 	}
 }

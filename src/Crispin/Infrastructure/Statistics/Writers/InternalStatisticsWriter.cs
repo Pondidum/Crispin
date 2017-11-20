@@ -14,10 +14,9 @@ namespace Crispin.Infrastructure.Statistics.Writers
 			_getTimestamp = getTimestamp;
 		}
 
-		public Task WriteCount(IStat stat)
+		public async Task WriteCount(IStat stat)
 		{
-			_store.Append(_getTimestamp(), stat);
-			return Task.CompletedTask;
+			await _store.Append(_getTimestamp(), stat);
 		}
 	}
 }

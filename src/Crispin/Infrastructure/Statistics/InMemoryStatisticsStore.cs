@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Statistics
 {
@@ -12,9 +13,10 @@ namespace Crispin.Infrastructure.Statistics
 			_stats = new List<StatWrapper>();
 		}
 
-		public void Append(DateTime timestamp, IStat stat)
+		public Task Append(DateTime timestamp, IStat stat)
 		{
 			_stats.Add(new StatWrapper(timestamp, stat));
+			return Task.CompletedTask;
 		}
 
 		private struct StatWrapper
