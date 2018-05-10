@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crispin.Rest", "src\Crispin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crispin.Rest.Tests", "src\Crispin.Rest.Tests\Crispin.Rest.Tests.csproj", "{EFD313C8-4E0A-484D-B9B4-2A3C5C3DC5E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruler", "src\Ruler\Ruler.csproj", "{29A7F918-53A3-49BC-8071-4F314C3406E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruler.Tests", "src\Ruler.Tests\Ruler.Tests.csproj", "{3E3973AD-33E3-41B0-AB59-2CD49160556D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{EFD313C8-4E0A-484D-B9B4-2A3C5C3DC5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFD313C8-4E0A-484D-B9B4-2A3C5C3DC5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFD313C8-4E0A-484D-B9B4-2A3C5C3DC5E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29A7F918-53A3-49BC-8071-4F314C3406E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29A7F918-53A3-49BC-8071-4F314C3406E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29A7F918-53A3-49BC-8071-4F314C3406E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29A7F918-53A3-49BC-8071-4F314C3406E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
