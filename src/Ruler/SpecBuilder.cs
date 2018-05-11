@@ -7,25 +7,28 @@ namespace Ruler
 {
 	public class SpecBuilder<T>
 	{
+		private readonly Dictionary<string, Func<Func<SpecPart, ISpecification<T>>, SpecPart, ISpecification<T>>> _builders;
+
 		public SpecBuilder()
 		{
-			//_builders = new Dictionary<string, Func<SpecPart>
+			_builders = new Dictionary<string, Func<Func<SpecPart, ISpecification<T>>, SpecPart, ISpecification<T>>>
+			{
+				["not"] = (build, part) => new NotSpecification<T>(build(part.Children.Single())),
+				["and"] = (build, part) => new AndSpecification<T>(part.Children.Select(build)),
+				["or"] = (build, part) => new OrSpecification<T>(part.Children.Select(build)),
+				["all"] = (build, part) => new AllSpecification<T>(part.Children.Select(build)),
+				["any"] = (build, part) => new AnySpecification<T>(part.Children.Select(build)),
+				["true"] = (build, part) => new FixedSpecification<T>(true),
+				["false"] = (build, part) => new FixedSpecification<T>(false)
+			};
 		}
 
 		public ISpecification<T> Build(SpecPart part)
 		{
-			switch (part.Type)
-			{
-				case "not": return new NotSpecification<T>(part.Children.Select(Build).Single());
-				case "and": return new AndSpecification<T>(part.Children.Select(Build));
-				case "or": return new OrSpecification<T>(part.Children.Select(Build));
-				case "all": return new AllSpecification<T>(part.Children.Select(Build));
-				case "any": return new AnySpecification<T>(part.Children.Select(Build));
-				case "true": return new FixedSpecification<T>(true);
-				case "false": return new FixedSpecification<T>(false);
-			}
+			if (_builders.ContainsKey(part.Type) == false)
+				throw new NotSupportedException(part.Type);
 
-			throw new NotSupportedException(part.Type);
+			return _builders[part.Type](Build, part);
 		}
 	}
 
