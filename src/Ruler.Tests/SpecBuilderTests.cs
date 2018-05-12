@@ -1,4 +1,5 @@
 ﻿using System;
+using NSubstitute;
 using Ruler.Specifications;
 using Shouldly;
 using Xunit;
@@ -44,6 +45,17 @@ namespace Ruler.Tests
 			var spec = _builder.Build(dto);
 			spec.ShouldBeOfType<AndSpecification<string>>();
 			spec.IsMatch("wat").ShouldBeFalse();
+		}
+
+		[Fact]
+		public void Additional_specificatons_can_be_added()
+		{
+			var custom = Substitute.For<ISpecification<string>>();
+			_builder.Add("custom", (build, part) => custom);
+
+			var spec = _builder.Build(new SpecPart { Type = "custom" });
+
+			spec.ShouldBe(custom);
 		}
 	}
 }
