@@ -35,15 +35,4 @@ namespace Ruler
 			return _builders[part.Type](Build, part);
 		}
 	}
-
-	public class SpecPart
-	{
-		public string Type { get; set; }
-		public IEnumerable<SpecPart> Children { get; set; }
-
-		public SpecPart()
-		{
-			Children = Enumerable.Empty<SpecPart>();
-		}
-	}
 }
