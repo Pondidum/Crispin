@@ -34,12 +34,6 @@ namespace Crispin.Rest.Tests.Toggles
 				ID = ToggleID.CreateNew(),
 				Name = "toggle-1",
 				Description = "the first toggle",
-				State =
-				{
-					Anonymous = States.Off,
-					Groups = { { GroupID.Parse("group-1"), States.On } },
-					Users = { }
-				},
 				Tags = { "first", "dev" }
 			};
 

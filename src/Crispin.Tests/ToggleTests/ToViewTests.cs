@@ -23,31 +23,16 @@ namespace Crispin.Tests.ToggleTests
 		}
 
 		[Fact]
-		public void When_there_is_state()
-		{
-			Toggle.ChangeDefaultState(Editor, States.On);
-			Toggle.ChangeState(Editor, UserID.Parse("123"), States.On);
-
-			var view = Toggle.ToView();
-
-			view.ShouldSatisfyAllConditions(
-				() => view.State.Anonymous.ShouldBe(States.On),
-				() => view.State.Groups.ShouldBeEmpty(),
-				() => view.State.Users.ShouldContainKeyAndValue(UserID.Parse("123"), States.On)
-			);
-		}
-
-		[Fact]
 		public void Changing_the_view_doesnt_affect_the_toggle()
 		{
 			var userID = UserID.Parse("123");
-			Toggle.ChangeState(Editor, userID, States.On);
+			Toggle.AddTag(Editor, "wat");
 
 			var view = Toggle.ToView();
 
-			view.State.Users[userID] = States.Off;
+			view.Tags.Remove("wat");
 
-			Toggle.IsActive(Membership, userID).ShouldBe(true);
+			Toggle.Tags.ShouldBe(new[] { "wat" });
 		}
 	}
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Crispin.Events;
 using Crispin.Infrastructure;
-using Crispin.Projections;
 using Crispin.Views;
 
 namespace Crispin
@@ -32,58 +30,20 @@ namespace Crispin
 
 		public string Name { get; private set; }
 		public string Description { get; private set; }
-		public DateTime? LastToggled { get; private set; }
 		public IEnumerable<string> Tags => _tags;
 
 		private readonly HashSet<string> _tags;
-		private readonly ToggleState _state;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			_state = new ToggleState();
 
 			Register<ToggleCreated>(Apply);
-
-			Register<ToggleSwitchedOnForAnonymous>(Apply);
-			Register<ToggleSwitchedOffForAnonymous>(Apply);
-			Register<ToggleSwitchedOnForUser>(Apply);
-			Register<ToggleSwitchedOffForUser>(Apply);
-			Register<ToggleSwitchedOnForGroup>(Apply);
-			Register<ToggleSwitchedOffForGroup>(Apply);
-
 			Register<TagAdded>(Apply);
 			Register<TagRemoved>(Apply);
 		}
 
 		//public methods which do domainy things
-		public bool IsActive(IGroupMembership membership, UserID userID)
-			=> _state.IsActive(membership, userID);
-
-		public void ChangeState(EditorID editor, UserID user, States? newState)
-		{
-			if (newState.HasValue == false)
-				ApplyEvent(new ToggleUnsetForUser(editor, user));
-			else if (newState.Value == States.On)
-				ApplyEvent(new ToggleSwitchedOnForUser(editor, user));
-			else
-				ApplyEvent(new ToggleSwitchedOffForUser(editor, user));
-		}
-
-		public void ChangeState(EditorID editor, GroupID group, States? newState)
-		{
-			if (newState.HasValue == false)
-				ApplyEvent(new ToggleUnsetForGroup(editor, group));
-			else if (newState.Value == States.On)
-				ApplyEvent(new ToggleSwitchedOnForGroup(editor, group));
-			else
-				ApplyEvent(new ToggleSwitchedOffForGroup(editor, group));
-		}
-
-		public void ChangeDefaultState(EditorID editor, States newState) => ApplyEvent(newState == States.On
-			? new ToggleSwitchedOnForAnonymous(editor) as Event
-			: new ToggleSwitchedOffForAnonymous(editor) as Event);
-
 		public void AddTag(EditorID editor, string tag)
 		{
 			if (_tags.Contains(tag))
@@ -105,8 +65,7 @@ namespace Crispin
 			ID = ID,
 			Name = Name,
 			Description = Description,
-			Tags = new HashSet<string>(_tags),
-			State = _state.ToView()
+			Tags = new HashSet<string>(_tags)
 		};
 
 
@@ -116,42 +75,6 @@ namespace Crispin
 			ID = e.ID;
 			Name = e.Name;
 			Description = e.Description;
-		}
-
-		private void Apply(ToggleSwitchedOffForAnonymous e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(newState: States.Off);
-		}
-
-		private void Apply(ToggleSwitchedOnForAnonymous e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(newState: States.On);
-		}
-
-		private void Apply(ToggleSwitchedOffForUser e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.User, newState: States.Off);
-		}
-
-		private void Apply(ToggleSwitchedOnForUser e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.User, newState: States.On);
-		}
-
-		private void Apply(ToggleSwitchedOffForGroup e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.Group, newState: States.Off);
-		}
-
-		private void Apply(ToggleSwitchedOnForGroup e)
-		{
-			LastToggled = e.TimeStamp;
-			_state.HandleSwitching(e.Group, newState: States.On);
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);

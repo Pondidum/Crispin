@@ -6,7 +6,6 @@ using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -66,15 +65,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 			await WriteEvents(
 				toggleID,
 				new ToggleCreated(Editor, toggleID, "First", "hi"),
-				new TagAdded(Editor, "one"),
-				new ToggleSwitchedOnForUser(Editor, UserID.Parse("user-1"))
+				new TagAdded(Editor, "one")
 			);
 
 			var toggle = await Session.LoadAggregate<Toggle>(toggleID);
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(toggleID),
-				() => toggle.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBeTrue(),
 				() => toggle.Tags.ShouldContain("one")
 			);
 		}
@@ -84,7 +81,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
-			toggle.ChangeDefaultState(Editor, newState: States.On);
 
 			await Session.Save(toggle);
 
@@ -98,7 +94,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
-			toggle.ChangeDefaultState(Editor, newState: States.On);
 
 			await Session.Save(toggle);
 			await Session.Commit();
@@ -109,7 +104,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 			{
 				typeof(ToggleCreated),
 				typeof(TagAdded),
-				typeof(ToggleSwitchedOnForAnonymous)
 			});
 		}
 
@@ -118,7 +112,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 		{
 			var toggle = Toggle.CreateNew(Editor, "First", "hi");
 			toggle.AddTag(Editor, "one");
-			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
 
 			await Session.Save(toggle);
 
@@ -126,7 +119,6 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBe(true),
 				() => loaded.Tags.ShouldContain("one")
 			);
 		}
@@ -140,15 +132,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 			await Session.Save(toggle);
 			await Session.Commit();
 
-			toggle.ChangeState(Editor, UserID.Parse("user-1"), States.On);
+			toggle.AddTag(Editor, "two");
 			await Session.Save(toggle);
 
 			var loaded = await Session.LoadAggregate<Toggle>(toggle.ID);
 
 			loaded.ShouldSatisfyAllConditions(
 				() => loaded.ID.ShouldBe(toggle.ID),
-				() => loaded.IsActive(Substitute.For<IGroupMembership>(), UserID.Parse("user-1")).ShouldBe(true),
-				() => loaded.Tags.ShouldContain("one")
+				() => loaded.Tags.ShouldContain("one", "two")
 			);
 		}
 
@@ -222,10 +213,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 				() => view.ID.ShouldBe(toggle.ID),
 				() => view.Name.ShouldBe(toggle.Name),
 				() => view.Description.ShouldBe(toggle.Description),
-				() => view.Tags.ShouldBeEmpty(),
-				() => view.State.Anonymous.ShouldBe(States.Off),
-				() => view.State.Users.ShouldBeEmpty(),
-				() => view.State.Groups.ShouldBeEmpty()
+				() => view.Tags.ShouldBeEmpty()
 			);
 
 			var diskProjection = await ReadProjection(new AllToggles());

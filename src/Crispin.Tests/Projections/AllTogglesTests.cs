@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Crispin.Events;
+﻿using Crispin.Events;
 using Crispin.Projections;
 using Shouldly;
 using System.Linq;
@@ -38,10 +36,7 @@ namespace Crispin.Tests.Projections
 				() => view.ID.ShouldBe(created.ID),
 				() => view.Name.ShouldBe(created.Name),
 				() => view.Description.ShouldBe(created.Description),
-				() => view.Tags.ShouldBeEmpty(),
-				() => view.State.Anonymous.ShouldBe(States.Off),
-				() => view.State.Users.ShouldBeEmpty(),
-				() => view.State.Groups.ShouldBeEmpty()
+				() => view.Tags.ShouldBeEmpty()
 			);
 		}
 
@@ -62,29 +57,6 @@ namespace Crispin.Tests.Projections
 				second.ID,
 				third.ID
 			}, ignoreOrder: true);
-		}
-
-		[Fact]
-		public void When_a_toggle_is_switched_on()
-		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-
-			_projection.Consume(created);
-			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = created.ID });
-
-			_projection.Toggles.Single().State.Anonymous.ShouldBe(States.On);
-		}
-
-		[Fact]
-		public void When_a_toggle_is_switched_off()
-		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-
-			_projection.Consume(created);
-			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = created.ID });
-			_projection.Consume(new ToggleSwitchedOffForAnonymous(_editor) { AggregateID = created.ID });
-
-			_projection.Toggles.Single().State.Anonymous.ShouldBe(States.Off);
 		}
 
 		[Fact]
@@ -122,13 +94,11 @@ namespace Crispin.Tests.Projections
 
 			var toggleID = ToggleID.CreateNew();
 			_projection.Consume(new ToggleCreated(_editor, toggleID, "toggle-1", ""));
-			_projection.Consume(new ToggleSwitchedOnForAnonymous(_editor) { AggregateID = toggleID });
 
 			var json = JsonConvert.SerializeObject(_projection.ToMemento(), settings);
 			var memento = JsonConvert.DeserializeObject(json, settings) as AllTogglesMemento;
 
 			memento.Single().Value.Name.ShouldBe("toggle-1");
-			memento.Single().Value.State.Anonymous.ShouldBe(States.On);
 		}
 	}
 }
