@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using Crispin.Rules;
 using Crispin.Views;
 
 namespace Crispin
@@ -31,6 +32,7 @@ namespace Crispin
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 		public IEnumerable<string> Tags => _tags;
+		public Condition Condition { get; private set; }
 
 		private readonly HashSet<string> _tags;
 
@@ -59,7 +61,17 @@ namespace Crispin
 
 			ApplyEvent(new TagRemoved(editor, tag));
 		}
-		
+
+		public void AddCondition(Condition condition, int? parentCondition)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void RemoveCondition(int condition)
+		{
+			throw new NotImplementedException();
+		}
+
 		public ToggleView ToView() => new ToggleView
 		{
 			ID = ID,
@@ -75,6 +87,7 @@ namespace Crispin
 			ID = e.ID;
 			Name = e.Name;
 			Description = e.Description;
+			Condition = new DisabledCondition { ID = 0 };
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
