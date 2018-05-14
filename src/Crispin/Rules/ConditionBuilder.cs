@@ -41,7 +41,7 @@ namespace Crispin.Rules
 				throw new InvalidOperationException($"Could not find parent with ID '{parentCondition}'");
 
 			if (parent is IMultipleChildren multi)
-				multi.Children = multi.Children.Append(condition);
+				multi.Children = (multi.Children ?? Enumerable.Empty<Condition>()).Append(condition);
 
 			if (parent is ISingleChild single)
 				single.Child = condition;
