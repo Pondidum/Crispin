@@ -75,5 +75,24 @@ namespace Crispin.Tests.Rules
 				typeof(DisabledCondition)
 			});
 		}
+
+		[Fact]
+		public void Child_conditions_can_be_removed_from_a_condition()
+		{
+			_builder.AddCondition(new AnyCondition());
+			_builder.AddCondition(new EnabledCondition(), _builder.Condition.ID);
+			_builder.AddCondition(new DisabledCondition(), _builder.Condition.ID);
+
+			_builder.RemoveCondition(1);
+
+			var root = _builder
+				.Condition
+				.ShouldBeOfType<AnyCondition>();
+
+			root.Children.Select(c => c.GetType()).ShouldBe(new[]
+			{
+				typeof(DisabledCondition)
+			});
+		}
 	}
 }

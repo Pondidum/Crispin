@@ -21,22 +21,29 @@ namespace Crispin.Rules
 			if (Condition != null)
 				throw new NotSupportedException("There is already a root condition");
 
-			condition.ID = _nextConditionId;
-			_nextConditionId++;
+			ApplyID(condition);
 
 			Condition = condition;
+		}
+
+		private void ApplyID(Condition condition)
+		{
+			condition.ID = _nextConditionId;
+			_nextConditionId++;
 		}
 
 		public void RemoveCondition(int conditionID)
 		{
 			if (Condition?.ID == conditionID)
 				Condition = null;
+			else
+				RemoveCondition(Condition, conditionID);
 		}
 
 		public void AddCondition(Condition condition, int parentCondition)
 		{
 			var parent = FindCondition(Condition, parentCondition);
-			
+
 			if (parent == null)
 				throw new InvalidOperationException($"Could not find parent with ID '{parentCondition}'");
 
@@ -45,6 +52,8 @@ namespace Crispin.Rules
 
 			if (parent is ISingleChild single)
 				single.Child = condition;
+
+			ApplyID(condition);
 		}
 
 
@@ -70,6 +79,30 @@ namespace Crispin.Rules
 			}
 
 			return null;
+		}
+
+		private void RemoveCondition(Condition current, int id)
+		{
+			switch (current)
+			{
+				case null:
+					return;
+
+				case ISingleChild single when single?.Child.ID == id:
+					single.Child = null;
+					return;
+
+				case ISingleChild single:
+					RemoveCondition(single.Child, id);
+					break;
+
+				case IMultipleChildren multiple:
+					multiple.Children = multiple.Children.Where(c => c.ID != id).ToArray();
+
+					foreach (var child in multiple.Children)
+						RemoveCondition(child, id);
+					break;
+			}
 		}
 	}
 }
