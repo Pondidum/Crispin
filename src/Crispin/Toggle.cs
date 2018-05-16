@@ -32,7 +32,7 @@ namespace Crispin
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 		public IEnumerable<string> Tags => _tags;
-		public Condition Condition { get; private set; }
+		public ConditionModes ConditionMode { get; private set; }
 
 		private readonly HashSet<string> _tags;
 
@@ -43,6 +43,9 @@ namespace Crispin
 			Register<ToggleCreated>(Apply);
 			Register<TagAdded>(Apply);
 			Register<TagRemoved>(Apply);
+
+			Register<EnabledOnAllConditions>(Apply);
+			Register<EnabledOnAnyCondition>(Apply);
 		}
 
 		//public methods which do domainy things
@@ -62,14 +65,20 @@ namespace Crispin
 			ApplyEvent(new TagRemoved(editor, tag));
 		}
 
-		public void AddCondition(Condition condition, int? parentCondition)
+		public void EnableOnAnyCondition(EditorID editor)
 		{
-			throw new NotImplementedException();
+			if (ConditionMode == ConditionModes.Any)
+				return;
+
+			ApplyEvent(new EnabledOnAnyCondition(editor));
 		}
 
-		public void RemoveCondition(int condition)
+		public void EnableOnAllConditions(EditorID editor)
 		{
-			throw new NotImplementedException();
+			if (ConditionMode == ConditionModes.All)
+				return;
+
+			ApplyEvent(new EnabledOnAllConditions(editor));
 		}
 
 		public ToggleView ToView() => new ToggleView
@@ -87,10 +96,13 @@ namespace Crispin
 			ID = e.ID;
 			Name = e.Name;
 			Description = e.Description;
-			Condition = new DisabledCondition { ID = 0 };
+			ConditionMode = ConditionModes.All;
 		}
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
 		private void Apply(TagRemoved e) => _tags.Remove(e.Name);
+
+		private void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
+		private void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
 	}
 }
