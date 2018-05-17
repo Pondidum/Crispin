@@ -2,19 +2,16 @@
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
-using NSubstitute;
 
 namespace Crispin.Tests.ToggleTests
 {
 	public abstract class ToggleTest
 	{
 		protected Toggle Toggle { get; set; }
-		protected IGroupMembership Membership { get; }
 		protected EditorID Editor { get; }
 
 		protected ToggleTest()
 		{
-			Membership = Substitute.For<IGroupMembership>();
 			Editor = EditorID.Parse("Testing");
 		}
 
