@@ -28,7 +28,7 @@ namespace Crispin.Tests.ToggleTests
 				new[] { create }.Concat(events));
 		}
 
-		protected IEnumerable<object> Events => ((IEvented)Toggle).GetPendingEvents().Select(e => e.GetType());
+		protected IEnumerable<Type> EventTypes => ((IEvented)Toggle).GetPendingEvents().Select(e => e.GetType());
 
 		protected TEvent SingleEvent<TEvent>() => (TEvent)((IEvented)Toggle).GetPendingEvents().Single();
 		protected void SingleEvent<TEvent>(Action<TEvent> callback) => callback(SingleEvent<TEvent>());

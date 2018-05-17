@@ -26,7 +26,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(new TagAdded(Editor, "first-tag"));
 			Toggle.AddTag(Editor, "first-tag");
 
-			Events.ShouldBeEmpty();
+			EventTypes.ShouldBeEmpty();
 			Toggle.Tags.ShouldBe(new [] { "first-tag" });
 		}
 
@@ -36,7 +36,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle();
 			Toggle.RemoveTag(Editor, "something");
 
-			Events.ShouldBeEmpty();
+			EventTypes.ShouldBeEmpty();
 			Toggle.Tags.ShouldBeEmpty();
 		}
 
@@ -56,7 +56,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(new TagAdded(Editor, "testing"));
 			Toggle.AddTag(Editor, "TESTING");
 
-			Events.ShouldBeEmpty();
+			EventTypes.ShouldBeEmpty();
 			Toggle.Tags.ShouldBe(new[] { "testing" });
 		}
 

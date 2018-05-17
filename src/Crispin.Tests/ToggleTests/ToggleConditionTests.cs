@@ -1,4 +1,6 @@
-﻿using Crispin.Events;
+﻿using System.Linq;
+using Crispin.Events;
+using Crispin.Infrastructure;
 using Crispin.Rules;
 using Shouldly;
 using Xunit;
