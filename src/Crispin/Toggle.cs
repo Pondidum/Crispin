@@ -35,10 +35,12 @@ namespace Crispin
 		public ConditionModes ConditionMode { get; private set; }
 
 		private readonly HashSet<string> _tags;
+		private readonly List<Condition> _conditions;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			_conditions = new List<Condition>();
 
 			Register<ToggleCreated>(Apply);
 			Register<TagAdded>(Apply);
@@ -46,6 +48,7 @@ namespace Crispin
 
 			Register<EnabledOnAllConditions>(Apply);
 			Register<EnabledOnAnyCondition>(Apply);
+			Register<ConditionAdded>(Apply);
 		}
 
 		//public methods which do domainy things
@@ -81,6 +84,11 @@ namespace Crispin
 			ApplyEvent(new EnabledOnAllConditions(editor));
 		}
 
+		public void AddCondition(EditorID editor, Condition condition)
+		{
+			ApplyEvent(new ConditionAdded(editor, condition, 0));
+		}
+
 		public ToggleView ToView() => new ToggleView
 		{
 			ID = ID,
@@ -104,5 +112,7 @@ namespace Crispin
 
 		private void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
 		private void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
+
+		private void Apply(ConditionAdded e) => _conditions.Add(e.Condition);
 	}
 }

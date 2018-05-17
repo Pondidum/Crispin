@@ -1,4 +1,5 @@
 ﻿using Crispin.Events;
+using Crispin.Rules;
 using Shouldly;
 using Xunit;
 
@@ -56,6 +57,25 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.EnableOnAnyCondition(Editor);
 
 			SingleEvent<EnabledOnAnyCondition>().Editor.ShouldBe(Editor);
+		}
+
+		[Fact]
+		public void Adding_a_condition_generates_a_well_formed_event()
+		{
+			var condition = new InGroupCondition
+			{
+				GroupName = "testGroup",
+				SearchKey = "searchValue"
+			};
+
+			CreateToggle();
+			Toggle.AddCondition(Editor, condition);
+
+			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
+				() => e.Condition.ShouldBe(condition),
+				() => e.Editor.ShouldBe(Editor),
+				() => e.ConditionID.ShouldBe(0)
+			));
 		}
 	}
 }
