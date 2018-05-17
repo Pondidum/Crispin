@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Rules;
@@ -97,6 +98,9 @@ namespace Crispin
 
 		public void RemoveCondition(EditorID editor, int conditionID)
 		{
+			if (_conditions.Any(condition => condition.ID == conditionID) == false)
+				throw new ConditionNotFoundException(conditionID);
+
 			ApplyEvent(new ConditionRemoved(editor, conditionID));
 		}
 

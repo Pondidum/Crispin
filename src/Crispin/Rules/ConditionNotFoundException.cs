@@ -1,0 +1,17 @@
+﻿using System;
+using System.Runtime.Serialization;
+
+namespace Crispin.Rules
+{
+	public class ConditionNotFoundException : Exception
+	{
+		public ConditionNotFoundException(int conditionID)
+			: base($"Unable to find a condition with the ID '{conditionID}'")
+		{
+		}
+
+		protected ConditionNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
+	}
+}

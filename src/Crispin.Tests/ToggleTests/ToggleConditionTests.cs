@@ -152,5 +152,21 @@ namespace Crispin.Tests.ToggleTests
 				.Last()
 				.Condition.ID.ShouldBe(additions);
 		}
+
+		[Fact]
+		public void Trying_to_remove_a_non_existing_condition_throws()
+		{
+			CreateToggle();
+
+			var additions = 5;
+			var toRemove = additions + 3;
+
+			for (int i = 0; i < additions; i++)
+				Toggle.AddCondition(Editor, new EnabledCondition());
+
+			Should
+				.Throw<ConditionNotFoundException>(() => Toggle.RemoveCondition(Editor, toRemove))
+				.Message.ShouldContain(toRemove.ToString());
+		}
 	}
 }
