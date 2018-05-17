@@ -79,5 +79,37 @@ namespace Crispin.Tests.ToggleTests
 				() => e.ConditionID.ShouldBe(0)
 			));
 		}
+
+		[Fact]
+		public void Multiple_conditions_can_be_added()
+		{
+			var conditionOne = new EnabledCondition();
+			var conditionTwo = new NotCondition();
+
+			CreateToggle();
+			Toggle.AddCondition(Editor, conditionOne);
+			Toggle.AddCondition(Editor, conditionTwo);
+
+			Events.Length.ShouldBe(2);
+			Event<ConditionAdded>(0).ConditionID.ShouldBe(0);
+			Event<ConditionAdded>(1).ConditionID.ShouldBe(1);
+		}
+
+		[Fact]
+		public void Conditions_maintain_order()
+		{
+			var conditionOne = new EnabledCondition();
+			var conditionTwo = new NotCondition();
+
+			CreateToggle();
+			Toggle.AddCondition(Editor, conditionOne);
+			Toggle.AddCondition(Editor, conditionTwo);
+
+			Toggle.Conditions.ShouldBe(new Condition[]
+			{
+				conditionOne,
+				conditionTwo
+			});
+		}
 	}
 }

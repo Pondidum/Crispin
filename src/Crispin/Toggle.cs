@@ -33,6 +33,7 @@ namespace Crispin
 		public string Description { get; private set; }
 		public IEnumerable<string> Tags => _tags;
 		public ConditionModes ConditionMode { get; private set; }
+		public IEnumerable<Condition> Conditions => _conditions;
 
 		private readonly HashSet<string> _tags;
 		private readonly List<Condition> _conditions;
@@ -86,7 +87,7 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, Condition condition)
 		{
-			ApplyEvent(new ConditionAdded(editor, condition, 0));
+			ApplyEvent(new ConditionAdded(editor, condition, _conditions.Count));
 		}
 
 		public ToggleView ToView() => new ToggleView
