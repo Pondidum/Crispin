@@ -4,6 +4,7 @@ namespace Crispin.Rules
 {
 	public abstract class Condition
 	{
+		public int ID { get; set; }
 	}
 
 	public interface ISingleChild

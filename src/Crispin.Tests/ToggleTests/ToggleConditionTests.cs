@@ -2,6 +2,7 @@
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Rules;
+using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 
@@ -76,7 +77,7 @@ namespace Crispin.Tests.ToggleTests
 			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBe(condition),
 				() => e.Editor.ShouldBe(Editor),
-				() => e.ConditionID.ShouldBe(0)
+				() => e.Condition.ID.ShouldBe(0)
 			));
 		}
 
@@ -91,25 +92,65 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.AddCondition(Editor, conditionTwo);
 
 			Events.Length.ShouldBe(2);
-			Event<ConditionAdded>(0).ConditionID.ShouldBe(0);
-			Event<ConditionAdded>(1).ConditionID.ShouldBe(1);
+			Event<ConditionAdded>(0).Condition.ID.ShouldBe(0);
+			Event<ConditionAdded>(1).Condition.ID.ShouldBe(1);
 		}
 
 		[Fact]
 		public void Conditions_maintain_order()
 		{
-			var conditionOne = new EnabledCondition();
-			var conditionTwo = new NotCondition();
+			var conditions = Enumerable.Range(0, 15).Select(i => new EnabledCondition()).ToArray();
 
 			CreateToggle();
-			Toggle.AddCondition(Editor, conditionOne);
-			Toggle.AddCondition(Editor, conditionTwo);
 
-			Toggle.Conditions.ShouldBe(new Condition[]
-			{
-				conditionOne,
-				conditionTwo
-			});
+			foreach (var condition in conditions)
+				Toggle.AddCondition(Editor, condition);
+
+			Toggle.Conditions.ShouldBe(conditions);
+		}
+
+		[Fact]
+		public void Conditions_can_be_removed()
+		{
+			var one = new EnabledCondition { ID = 0 };
+			var two = new EnabledCondition { ID = 1 };
+			var three = new EnabledCondition { ID = 2 };
+
+			CreateToggle(
+				new ConditionAdded(Editor, one),
+				new ConditionAdded(Editor, two),
+				new ConditionAdded(Editor, three)
+			);
+
+			Toggle.RemoveCondition(Editor, 1);
+
+			SingleEvent<ConditionRemoved>(e => e.ShouldSatisfyAllConditions(
+				() => e.ConditionID.ShouldBe(1),
+				() => e.Editor.ShouldBe(Editor))
+			);
+
+			Toggle.Conditions.ShouldBe(new[] { one, three });
+		}
+
+		[Fact]
+		public void Condition_ids_always_increment_when_removals_happen()
+		{
+			CreateToggle();
+
+			var additions = 12;
+
+			for (int i = 0; i < additions; i++)
+				Toggle.AddCondition(Editor, new EnabledCondition());
+
+			Toggle.RemoveCondition(Editor, 5);
+			Toggle.RemoveCondition(Editor, 2);
+
+			Toggle.AddCondition(Editor, new EnabledCondition());
+
+			Events
+				.OfType<ConditionAdded>()
+				.Last()
+				.Condition.ID.ShouldBe(additions);
 		}
 	}
 }

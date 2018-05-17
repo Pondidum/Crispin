@@ -7,13 +7,11 @@ namespace Crispin.Events
 	{
 		public EditorID Editor { get; }
 		public Condition Condition { get; }
-		public int ConditionID { get; }
 
-		public ConditionAdded(EditorID editor, Condition condition, int conditionID)
+		public ConditionAdded(EditorID editor, Condition condition)
 		{
 			Editor = editor;
 			Condition = condition;
-			ConditionID = conditionID;
 		}
 	}
 }
