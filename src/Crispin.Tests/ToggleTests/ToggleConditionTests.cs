@@ -77,7 +77,8 @@ namespace Crispin.Tests.ToggleTests
 			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBe(condition),
 				() => e.Editor.ShouldBe(Editor),
-				() => e.Condition.ID.ShouldBe(0)
+				() => e.Condition.ID.ShouldBe(0),
+				() => e.ParentConditionID.ShouldBeNull()
 			));
 		}
 
@@ -126,8 +127,8 @@ namespace Crispin.Tests.ToggleTests
 
 			SingleEvent<ConditionRemoved>(e => e.ShouldSatisfyAllConditions(
 				() => e.ConditionID.ShouldBe(1),
-				() => e.Editor.ShouldBe(Editor))
-			);
+				() => e.Editor.ShouldBe(Editor)
+			));
 
 			Toggle.Conditions.ShouldBe(new[] { one, three });
 		}
@@ -167,6 +168,38 @@ namespace Crispin.Tests.ToggleTests
 			Should
 				.Throw<ConditionNotFoundException>(() => Toggle.RemoveCondition(Editor, toRemove))
 				.Message.ShouldContain(toRemove.ToString());
+		}
+
+		[Fact]
+		public void Conditions_can_have_a_parent_specified()
+		{
+			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
+
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0);
+
+			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
+				() => e.Condition.ShouldBeOfType<EnabledCondition>(),
+				() => e.Editor.ShouldBe(Editor),
+				() => e.ParentConditionID.ShouldBe(0)
+			));
+		}
+
+		[Fact]
+		public void Conditions_can_be_added_to_conditions_supporting_children()
+		{
+			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
+
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0);
+
+			var parent = Toggle
+				.Conditions
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<AnyCondition>();
+
+			parent
+				.Children
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<EnabledCondition>();
 		}
 	}
 }

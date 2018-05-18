@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Crispin.Rules
 {
@@ -33,11 +34,21 @@ namespace Crispin.Rules
 	public class AnyCondition : Condition, IMultipleChildren
 	{
 		public IEnumerable<Condition> Children { get; set; }
+
+		public AnyCondition()
+		{
+			Children = Enumerable.Empty<Condition>();
+		}
 	}
-	
+
 	public class AllCondition : Condition, IMultipleChildren
 	{
 		public IEnumerable<Condition> Children { get; set; }
+
+		public AllCondition()
+		{
+			Children = Enumerable.Empty<Condition>();
+		}
 	}
 
 	public class InGroupCondition : Condition

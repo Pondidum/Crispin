@@ -96,6 +96,13 @@ namespace Crispin
 			ApplyEvent(new ConditionAdded(editor, condition));
 		}
 
+		public void AddCondition(EditorID editor, EnabledCondition condition, int parentCondition)
+		{
+			condition.ID = _nextConditionID++;
+
+			ApplyEvent(new ConditionAdded(editor, condition, parentCondition));
+		}
+
 		public void RemoveCondition(EditorID editor, int conditionID)
 		{
 			if (_conditions.Any(condition => condition.ID == conditionID) == false)
@@ -128,7 +135,43 @@ namespace Crispin
 		private void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
 		private void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
 
-		private void Apply(ConditionAdded e) => _conditions.Add(e.Condition);
+		private void Apply(ConditionAdded e) => e.ParentConditionID.Match(
+			hasValue: parent => AddChild(FindCondition(_conditions, parent), e.Condition),
+			noValue: () => _conditions.Add(e.Condition)
+		);
+
 		private void Apply(ConditionRemoved e) => _conditions.RemoveAll(c => c.ID == e.ConditionID);
+
+
+		private static void AddChild(Condition parent, Condition child)
+		{
+			if (parent is ISingleChild single)
+				single.Child = child;
+
+			if (parent is IMultipleChildren multi)
+				multi.Children = multi.Children.Append(child);
+		}
+
+		private static Condition FindCondition(IEnumerable<Condition> conditions, int id)
+		{
+			var next = new List<Condition>();
+
+			foreach (var condition in conditions)
+			{
+				if (condition.ID == id)
+					return condition;
+
+				if (condition is ISingleChild single)
+					next.Add(single.Child);
+
+				if (condition is IMultipleChildren multi)
+					next.AddRange(multi.Children);
+			}
+
+			if (next.Any())
+				return FindCondition(next, id);
+
+			return null;
+		}
 	}
 }
