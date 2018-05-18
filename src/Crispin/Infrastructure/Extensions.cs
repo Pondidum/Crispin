@@ -13,5 +13,13 @@ namespace Crispin.Infrastructure
 
 		public static bool EqualsIgnore(this string first, string second) =>
 			string.Equals(first, second, StringComparison.OrdinalIgnoreCase);
+
+		public static void Match<T>(this T? self, Action<T> hasValue, Action noValue) where T : struct
+		{
+			if (self.HasValue)
+				hasValue(self.Value);
+			else
+				noValue();
+		}
 	}
 }
