@@ -28,6 +28,13 @@ namespace Crispin.Tests.ToggleTests
 				new[] { create }.Concat(events));
 		}
 
+		protected void CreateToggle(Action<Toggle> setup)
+		{
+			CreateToggle();
+			setup(Toggle);
+			((IEvented)Toggle).ClearPendingEvents();
+		}
+
 		protected IEnumerable<Type> EventTypes => Events.Select(e => e.GetType());
 		protected object[] Events => ((IEvented)Toggle).GetPendingEvents().ToArray();
 
