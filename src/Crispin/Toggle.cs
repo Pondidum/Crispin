@@ -98,6 +98,9 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, EnabledCondition condition, int parentCondition)
 		{
+			if (FindCondition(_conditions, parentCondition) == null)
+				throw new ConditionNotFoundException(parentCondition);
+
 			condition.ID = _nextConditionID++;
 
 			ApplyEvent(new ConditionAdded(editor, condition, parentCondition));

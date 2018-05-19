@@ -201,5 +201,15 @@ namespace Crispin.Tests.ToggleTests
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<EnabledCondition>();
 		}
+
+		[Fact]
+		public void When_the_parent_condition_doesnt_exist()
+		{
+			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
+
+			Should.Throw<ConditionNotFoundException>(
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 13)
+			);
+		}
 	}
 }
