@@ -6,6 +6,8 @@ namespace Crispin.Rules
 	public abstract class Condition
 	{
 		public int ID { get; set; }
+
+		public bool SupportsChildren => this is ISingleChild || this is IMultipleChildren;
 	}
 
 	public interface ISingleChild

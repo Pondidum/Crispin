@@ -98,8 +98,13 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, EnabledCondition condition, int parentCondition)
 		{
-			if (FindCondition(_conditions, parentCondition) == null)
+			var parent = FindCondition(_conditions, parentCondition);
+
+			if (parent == null)
 				throw new ConditionNotFoundException(parentCondition);
+
+			if (parent.SupportsChildren == false)
+				throw new ConditionException($"{parent.GetType().Name} does not support children.");
 
 			condition.ID = _nextConditionID++;
 
@@ -144,7 +149,6 @@ namespace Crispin
 		);
 
 		private void Apply(ConditionRemoved e) => _conditions.RemoveAll(c => c.ID == e.ConditionID);
-
 
 		private static void AddChild(Condition parent, Condition child)
 		{

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Rules;
@@ -209,6 +210,16 @@ namespace Crispin.Tests.ToggleTests
 
 			Should.Throw<ConditionNotFoundException>(
 				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 13)
+			);
+		}
+
+		[Fact]
+		public void When_adding_a_child_to_a_condition_which_doesnt_support_children()
+		{
+			CreateToggle(t => { t.AddCondition(Editor, new EnabledCondition()); });
+
+			Should.Throw<ConditionException>(
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0)
 			);
 		}
 	}
