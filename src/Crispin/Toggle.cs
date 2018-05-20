@@ -34,16 +34,16 @@ namespace Crispin
 		public string Description { get; private set; }
 		public IEnumerable<string> Tags => _tags;
 		public ConditionModes ConditionMode { get; private set; }
-		public IEnumerable<Condition> Conditions => _conditions;
+		public IEnumerable<Condition> Conditions => _conditions.All;
 
 		private readonly HashSet<string> _tags;
-		private readonly List<Condition> _conditions;
+		private readonly ConditionBuilder _conditions;
 		private int _nextConditionID;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			_conditions = new List<Condition>();
+			_conditions = new ConditionBuilder();
 			_nextConditionID = 0;
 
 			Register<ToggleCreated>(Apply);
@@ -98,7 +98,7 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, Condition condition, int parentCondition)
 		{
-			var parent = FindCondition(_conditions, parentCondition);
+			var parent = _conditions.FindCondition(parentCondition);
 
 			if (parent == null)
 				throw new ConditionNotFoundException(parentCondition);
@@ -113,7 +113,7 @@ namespace Crispin
 
 		public void RemoveCondition(EditorID editor, int conditionID)
 		{
-			if (FindCondition(_conditions, conditionID) == null)
+			if (_conditions.HasCondition(conditionID) == false)
 				throw new ConditionNotFoundException(conditionID);
 
 			ApplyEvent(new ConditionRemoved(editor, conditionID));
@@ -144,61 +144,10 @@ namespace Crispin
 		private void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
 
 		private void Apply(ConditionAdded e) => e.ParentConditionID.Match(
-			hasValue: parent => AddChild(FindCondition(_conditions, parent), e.Condition),
+			hasValue: parent => _conditions.Add(e.Condition, parent),
 			noValue: () => _conditions.Add(e.Condition)
 		);
 
-		private void Apply(ConditionRemoved e) => RemoveChild(_conditions, e.ConditionID);
-
-		private static void AddChild(Condition parent, Condition child)
-		{
-			if (parent is ISingleChild single)
-				single.Child = child;
-
-			if (parent is IMultipleChildren multi)
-				multi.Children.Add(child);
-		}
-
-		private static Condition FindCondition(IEnumerable<Condition> conditions, int id)
-		{
-			var next = new List<Condition>();
-
-			foreach (var condition in conditions)
-			{
-				if (condition.ID == id)
-					return condition;
-
-				if (condition is ISingleChild single)
-					next.Add(single.Child);
-
-				if (condition is IMultipleChildren multi)
-					next.AddRange(multi.Children);
-			}
-
-			if (next.Any())
-				return FindCondition(next, id);
-
-			return null;
-		}
-
-		private static void RemoveChild(List<Condition> conditions, int id)
-		{
-			var removed = conditions.RemoveAll(c => c.ID == id);
-
-			if (removed > 0)
-				return;
-
-			foreach (var condition in conditions)
-			{
-				if (condition is ISingleChild single && single.Child.ID == id)
-				{
-					single.Child = null;
-					return;
-				}
-
-				if (condition is IMultipleChildren multi)
-					RemoveChild(multi.Children, id);
-			}
-		}
+		private void Apply(ConditionRemoved e) => _conditions.Remove(e.ConditionID);
 	}
 }
