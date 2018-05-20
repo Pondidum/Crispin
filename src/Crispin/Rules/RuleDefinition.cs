@@ -17,7 +17,7 @@ namespace Crispin.Rules
 
 	public interface IMultipleChildren
 	{
-		IEnumerable<Condition> Children { get; set; }
+		List<Condition> Children { get; set; }
 	}
 
 	public class EnabledCondition : Condition
@@ -35,21 +35,21 @@ namespace Crispin.Rules
 
 	public class AnyCondition : Condition, IMultipleChildren
 	{
-		public IEnumerable<Condition> Children { get; set; }
+		public List<Condition> Children { get; set; }
 
 		public AnyCondition()
 		{
-			Children = Enumerable.Empty<Condition>();
+			Children = new List<Condition>();
 		}
 	}
 
 	public class AllCondition : Condition, IMultipleChildren
 	{
-		public IEnumerable<Condition> Children { get; set; }
+		public List<Condition> Children { get; set; }
 
 		public AllCondition()
 		{
-			Children = Enumerable.Empty<Condition>();
+			Children = new List<Condition>();
 		}
 	}
 

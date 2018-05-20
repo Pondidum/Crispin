@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Rules;
@@ -221,6 +222,30 @@ namespace Crispin.Tests.ToggleTests
 			Should.Throw<ConditionException>(
 				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0)
 			);
+		}
+
+		[Fact]
+		public void Child_conditions_can_be_removed()
+		{
+			var parent = new AnyCondition();
+			var childOne = new EnabledCondition();
+			var childTwo = new DisabledCondition();
+
+			CreateToggle(t =>
+			{
+				t.AddCondition(Editor, parent);
+				t.AddCondition(Editor, childOne, parent.ID);
+				t.AddCondition(Editor, childTwo, parent.ID);
+			});
+
+			Toggle.RemoveCondition(Editor, conditionID: childOne.ID);
+
+			Toggle
+				.Conditions
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<AnyCondition>();
+
+			parent.Children.ShouldBe(new[] { childTwo });
 		}
 	}
 }
