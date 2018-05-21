@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crispin.Conditions;
 using Crispin.Events;
 using Crispin.Infrastructure;
-using Crispin.Rules;
 using Crispin.Views;
 
 namespace Crispin

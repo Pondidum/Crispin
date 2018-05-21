@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Crispin.Rules
+namespace Crispin.Conditions
 {
 	public class ConditionNotFoundException : Exception
 	{

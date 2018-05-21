@@ -1,5 +1,5 @@
-﻿using Crispin.Infrastructure;
-using Crispin.Rules;
+﻿using Crispin.Conditions;
+using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using Crispin.Conditions;
 using Crispin.Events;
 using Crispin.Infrastructure;
-using Crispin.Rules;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
