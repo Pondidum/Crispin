@@ -15,8 +15,27 @@ namespace Crispin.Conditions
 		}
 
 		public void Add(Condition condition) => _conditions.Add(condition);
-		public void Add(Condition condition, int parentConditionID) => AddChild(FindCondition(_conditions, parentConditionID), condition);
-		public void Remove(int conditionID) => RemoveChild(_conditions, conditionID);
+
+		public void Add(Condition condition, int parentConditionID)
+		{
+			var parent = FindCondition(parentConditionID);
+
+			if (parent == null)
+				throw new ConditionNotFoundException(parentConditionID);
+
+			if (parent.SupportsChildren == false)
+				throw new ConditionException($"{parent.GetType().Name} does not support children.");
+
+			AddChild(parent, condition);
+		}
+
+		public void Remove(int conditionID)
+		{
+			if (HasCondition(conditionID) == false)
+				throw new ConditionNotFoundException(conditionID);
+
+			RemoveChild(_conditions, conditionID);
+		}
 
 		public bool HasCondition(int id) => FindCondition(_conditions, id) != null;
 		public Condition FindCondition(int id) => FindCondition(_conditions, id);
