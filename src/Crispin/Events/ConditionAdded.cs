@@ -21,5 +21,9 @@ namespace Crispin.Events
 			Condition = condition;
 			ParentConditionID = parentConditionID;
 		}
+
+		public override string ToString() => ParentConditionID.HasValue
+			? $"Added Condition '{Condition}' as a child of Condition {ParentConditionID.Value} to Toggle '{AggregateID}'"
+			: $"Added Condition '{Condition}' to Toggle '{AggregateID}'";
 	}
 }
