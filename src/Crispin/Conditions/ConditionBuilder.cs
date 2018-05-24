@@ -43,7 +43,12 @@ namespace Crispin.Conditions
 		private static void AddChild(Condition parent, Condition child)
 		{
 			if (parent is ISingleChild single)
+			{
+				if (single.Child != null)
+					throw new ConditionException("The parent condition only supports one child, and it already has one");
+
 				single.Child = child;
+			}
 
 			if (parent is IMultipleChildren multi)
 				multi.Children.Add(child);

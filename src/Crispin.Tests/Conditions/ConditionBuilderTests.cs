@@ -86,6 +86,40 @@ namespace Crispin.Tests.Conditions
 		}
 
 		[Fact]
+		public void Conditions_can_be_added_to_conditions_supporting_a_single_child()
+		{
+			_builder.Add(new NotCondition());
+			_builder.Add(new EnabledCondition(), parentConditionID: 0);
+
+			var parent = _builder
+				.All
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<NotCondition>();
+
+			parent
+				.Child
+				.ShouldBeOfType<EnabledCondition>();
+		}
+
+		[Fact]
+		public void Conditions_cannot_be_added_to_conditions_supporting_a_single_child_which_have_a_child_already()
+		{
+			_builder.Add(new NotCondition());
+			_builder.Add(new EnabledCondition(), parentConditionID: 0);
+
+			Should.Throw<ConditionException>(() => _builder.Add(new DisabledCondition(), parentConditionID: 0));
+
+			var parent = _builder
+				.All
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<NotCondition>();
+
+			parent
+				.Child
+				.ShouldBeOfType<EnabledCondition>();
+		}
+
+		[Fact]
 		public void When_the_parent_condition_doesnt_exist()
 		{
 			_builder.Add(new AnyCondition());
