@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Crispin.Conditions
 {
@@ -6,7 +7,7 @@ namespace Crispin.Conditions
 	{
 		public int ID { get; set; }
 
-		public bool SupportsChildren => this is ISingleChild || this is IParentCondition;
+		public bool SupportsChildren => this is IParentCondition;
 	}
 
 	public interface IParentCondition
@@ -17,11 +18,6 @@ namespace Crispin.Conditions
 		void RemoveChild(int childID);
 	}
 
-	public interface ISingleChild
-	{
-		Condition Child { get; set; }
-	}
-
 	public class EnabledCondition : Condition
 	{
 	}
@@ -30,9 +26,27 @@ namespace Crispin.Conditions
 	{
 	}
 
-	public class NotCondition : Condition, ISingleChild
+	public class NotCondition : Condition, IParentCondition
 	{
-		public Condition Child { get; set; }
+		private Condition _child;
+
+		public IEnumerable<Condition> Children => _child == null
+			? Enumerable.Empty<Condition>()
+			: new[] { _child };
+
+		public void AddChild(Condition child)
+		{
+			if (_child != null)
+				throw new ConditionException("The parent condition only supports one child, and it already has one");
+
+			_child = child;
+		}
+
+		public void RemoveChild(int childID)
+		{
+			if (_child?.ID == childID)
+				_child = null;
+		}
 	}
 
 	public class AnyCondition : Condition, IParentCondition

@@ -97,7 +97,8 @@ namespace Crispin.Tests.Conditions
 				.ShouldBeOfType<NotCondition>();
 
 			parent
-				.Child
+				.Children
+				.ShouldHaveSingleItem()
 				.ShouldBeOfType<EnabledCondition>();
 		}
 
@@ -115,7 +116,8 @@ namespace Crispin.Tests.Conditions
 				.ShouldBeOfType<NotCondition>();
 
 			parent
-				.Child
+				.Children
+				.ShouldHaveSingleItem()
 				.ShouldBeOfType<EnabledCondition>();
 		}
 

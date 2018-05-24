@@ -42,14 +42,6 @@ namespace Crispin.Conditions
 
 		private static void AddChild(Condition parent, Condition child)
 		{
-			if (parent is ISingleChild single)
-			{
-				if (single.Child != null)
-					throw new ConditionException("The parent condition only supports one child, and it already has one");
-
-				single.Child = child;
-			}
-
 			if (parent is IParentCondition multi)
 				multi.AddChild(child);
 		}
@@ -62,9 +54,6 @@ namespace Crispin.Conditions
 			{
 				if (condition.ID == id)
 					return condition;
-
-				if (condition is ISingleChild single)
-					next.Add(single.Child);
 
 				if (condition is IParentCondition multi)
 					next.AddRange(multi.Children);
@@ -88,19 +77,10 @@ namespace Crispin.Conditions
 
 		private static void RemoveChild(IEnumerable<Condition> conditions, int id)
 		{
-			foreach (var condition in conditions)
+			foreach (var parent in conditions.OfType<IParentCondition>())
 			{
-				if (condition is ISingleChild single && single.Child.ID == id)
-				{
-					single.Child = null;
-					return;
-				}
-
-				if (condition is IParentCondition multi)
-				{
-					multi.RemoveChild(id);
-					RemoveChild(multi.Children, id);
-				}
+				parent.RemoveChild(id);
+				RemoveChild(parent.Children, id);
 			}
 		}
 	}
