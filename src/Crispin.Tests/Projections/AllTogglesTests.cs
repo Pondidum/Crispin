@@ -3,6 +3,7 @@ using Crispin.Projections;
 using Shouldly;
 using System.Linq;
 using Crispin.Conditions;
+using Crispin.Infrastructure;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -12,31 +13,38 @@ namespace Crispin.Tests.Projections
 	{
 		private readonly AllToggles _projection;
 		private readonly EditorID _editor;
+		private readonly ToggleCreated _created;
 
 		public AllTogglesTests()
 		{
 			_projection = new AllToggles();
 			_editor = EditorID.Parse("test");
+
+			_created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
+			_projection.Consume(_created);
+		}
+
+		private void Consume(Event @event)
+		{
+			@event.AggregateID = _created.ID;
+			_projection.Consume(@event);
 		}
 
 		[Fact]
 		public void When_no_events_have_been_processed()
 		{
-			_projection.Toggles.ShouldBeEmpty();
+			new AllToggles().Toggles.ShouldBeEmpty();
 		}
 
 		[Fact]
 		public void When_a_single_toggle_has_been_created()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-			_projection.Consume(created);
-
 			var view = _projection.Toggles.Single();
 
 			view.ShouldSatisfyAllConditions(
-				() => view.ID.ShouldBe(created.ID),
-				() => view.Name.ShouldBe(created.Name),
-				() => view.Description.ShouldBe(created.Description),
+				() => view.ID.ShouldBe(_created.ID),
+				() => view.Name.ShouldBe(_created.Name),
+				() => view.Description.ShouldBe(_created.Description),
 				() => view.Tags.ShouldBeEmpty()
 			);
 		}
@@ -44,17 +52,15 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_multiple_toggles_have_been_created()
 		{
-			var first = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 			var second = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 			var third = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
 
-			_projection.Consume(first);
 			_projection.Consume(second);
 			_projection.Consume(third);
 
 			_projection.Toggles.Select(v => v.ID).ShouldBe(new[]
 			{
-				first.ID,
+				_created.ID,
 				second.ID,
 				third.ID
 			}, ignoreOrder: true);
@@ -63,10 +69,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_has_a_tag_added()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-
-			_projection.Consume(created);
-			_projection.Consume(new TagAdded(_editor, "one") { AggregateID = created.ID });
+			Consume(new TagAdded(_editor, "one"));
 
 			_projection.Toggles.Single().Tags.ShouldBe(new[] { "one" });
 		}
@@ -74,12 +77,9 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_toggle_has_a_tag_removed()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-
-			_projection.Consume(created);
-			_projection.Consume(new TagAdded(_editor, "one") { AggregateID = created.ID });
-			_projection.Consume(new TagAdded(_editor, "two") { AggregateID = created.ID });
-			_projection.Consume(new TagRemoved(_editor, "one") { AggregateID = created.ID });
+			Consume(new TagAdded(_editor, "one"));
+			Consume(new TagAdded(_editor, "two"));
+			Consume(new TagRemoved(_editor, "one"));
 
 			_projection.Toggles.Single().Tags.ShouldBe(new[] { "two" });
 		}
@@ -87,10 +87,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_condition_is_added()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-			_projection.Consume(created);
-
-			_projection.Consume(new ConditionAdded(_editor, new DisabledCondition()) { AggregateID = created.ID });
+			Consume(new ConditionAdded(_editor, new DisabledCondition()));
 
 			_projection.Toggles.Single().ConditionCount.ShouldBe(1);
 		}
@@ -98,13 +95,10 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_conditions_are_removed()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-			_projection.Consume(created);
-
-			_projection.Consume(new ConditionAdded(_editor, new DisabledCondition()) { AggregateID = created.ID });
-			_projection.Consume(new ConditionAdded(_editor, new AllCondition()) { AggregateID = created.ID });
-			_projection.Consume(new ConditionAdded(_editor, new EnabledCondition()) { AggregateID = created.ID });
-			_projection.Consume(new ConditionRemoved(_editor, 1) { AggregateID = created.ID });
+			Consume(new ConditionAdded(_editor, new DisabledCondition()));
+			Consume(new ConditionAdded(_editor, new AllCondition()));
+			Consume(new ConditionAdded(_editor, new EnabledCondition()));
+			Consume(new ConditionRemoved(_editor, 1));
 
 			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
 		}
@@ -112,11 +106,8 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_child_conditions_are_added()
 		{
-			var created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
-			_projection.Consume(created);
-
-			_projection.Consume(new ConditionAdded(_editor, new AllCondition { ID = 0 }) { AggregateID = created.ID });
-			_projection.Consume(new ConditionAdded(_editor, new EnabledCondition { ID = 1 }, 0) { AggregateID = created.ID });
+			Consume(new ConditionAdded(_editor, new AllCondition { ID = 0 }));
+			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = 1 }, 0));
 
 			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
 		}
@@ -129,9 +120,6 @@ namespace Crispin.Tests.Projections
 				Formatting = Formatting.None,
 				TypeNameHandling = TypeNameHandling.Objects
 			};
-
-			var toggleID = ToggleID.CreateNew();
-			_projection.Consume(new ToggleCreated(_editor, toggleID, "toggle-1", ""));
 
 			var json = JsonConvert.SerializeObject(_projection.ToMemento(), settings);
 			var memento = JsonConvert.DeserializeObject(json, settings) as AllTogglesMemento;
