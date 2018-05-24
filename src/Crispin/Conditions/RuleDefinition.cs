@@ -6,17 +6,20 @@ namespace Crispin.Conditions
 	{
 		public int ID { get; set; }
 
-		public bool SupportsChildren => this is ISingleChild || this is IMultipleChildren;
+		public bool SupportsChildren => this is ISingleChild || this is IParentCondition;
+	}
+
+	public interface IParentCondition
+	{
+		IEnumerable<Condition> Children { get; }
+
+		void AddChild(Condition child);
+		void RemoveChild(int childID);
 	}
 
 	public interface ISingleChild
 	{
 		Condition Child { get; set; }
-	}
-
-	public interface IMultipleChildren
-	{
-		List<Condition> Children { get; set; }
 	}
 
 	public class EnabledCondition : Condition
@@ -32,24 +35,34 @@ namespace Crispin.Conditions
 		public Condition Child { get; set; }
 	}
 
-	public class AnyCondition : Condition, IMultipleChildren
+	public class AnyCondition : Condition, IParentCondition
 	{
-		public List<Condition> Children { get; set; }
+		private readonly List<Condition> _children;
 
 		public AnyCondition()
 		{
-			Children = new List<Condition>();
+			_children = new List<Condition>();
 		}
+
+		public IEnumerable<Condition> Children => _children;
+
+		public void AddChild(Condition child) => _children.Add(child);
+		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
 	}
 
-	public class AllCondition : Condition, IMultipleChildren
+	public class AllCondition : Condition, IParentCondition
 	{
-		public List<Condition> Children { get; set; }
+		private readonly List<Condition> _children;
 
 		public AllCondition()
 		{
-			Children = new List<Condition>();
+			_children = new List<Condition>();
 		}
+
+		public IEnumerable<Condition> Children => _children;
+
+		public void AddChild(Condition child) => _children.Add(child);
+		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
 	}
 
 	public class InGroupCondition : Condition

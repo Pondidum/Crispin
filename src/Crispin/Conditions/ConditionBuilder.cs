@@ -34,7 +34,7 @@ namespace Crispin.Conditions
 			if (HasCondition(conditionID) == false)
 				throw new ConditionNotFoundException(conditionID);
 
-			RemoveChild(_conditions, conditionID);
+			RemoveChild(conditionID);
 		}
 
 		public bool HasCondition(int id) => FindCondition(_conditions, id) != null;
@@ -50,8 +50,8 @@ namespace Crispin.Conditions
 				single.Child = child;
 			}
 
-			if (parent is IMultipleChildren multi)
-				multi.Children.Add(child);
+			if (parent is IParentCondition multi)
+				multi.AddChild(child);
 		}
 
 		private static Condition FindCondition(IEnumerable<Condition> conditions, int id)
@@ -66,7 +66,7 @@ namespace Crispin.Conditions
 				if (condition is ISingleChild single)
 					next.Add(single.Child);
 
-				if (condition is IMultipleChildren multi)
+				if (condition is IParentCondition multi)
 					next.AddRange(multi.Children);
 			}
 
@@ -76,13 +76,18 @@ namespace Crispin.Conditions
 			return null;
 		}
 
-		private static void RemoveChild(List<Condition> conditions, int id)
+		private void RemoveChild(int childId)
 		{
-			var removed = conditions.RemoveAll(c => c.ID == id);
+			var removed = _conditions.RemoveAll(c => c.ID == childId);
 
 			if (removed > 0)
 				return;
 
+			RemoveChild(_conditions, childId);
+		}
+
+		private static void RemoveChild(IEnumerable<Condition> conditions, int id)
+		{
 			foreach (var condition in conditions)
 			{
 				if (condition is ISingleChild single && single.Child.ID == id)
@@ -91,8 +96,11 @@ namespace Crispin.Conditions
 					return;
 				}
 
-				if (condition is IMultipleChildren multi)
+				if (condition is IParentCondition multi)
+				{
+					multi.RemoveChild(id);
 					RemoveChild(multi.Children, id);
+				}
 			}
 		}
 	}
