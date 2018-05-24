@@ -61,14 +61,14 @@ namespace Crispin.Conditions
 			return null;
 		}
 
-		private void RemoveChild(int childId)
+		private void RemoveChild(int childID)
 		{
-			var removed = _conditions.RemoveAll(c => c.ID == childId);
+			var removed = _conditions.RemoveAll(c => c.ID == childID);
 
 			if (removed > 0)
 				return;
 
-			RemoveChild(_conditions, childId);
+			RemoveChild(_conditions, childID);
 		}
 
 		private static void RemoveChild(IEnumerable<Condition> conditions, int id)
