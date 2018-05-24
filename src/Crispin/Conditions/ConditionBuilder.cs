@@ -44,19 +44,19 @@ namespace Crispin.Conditions
 
 		private static Condition FindCondition(IEnumerable<Condition> conditions, int id)
 		{
-			var next = new List<Condition>();
-
 			foreach (var condition in conditions)
 			{
 				if (condition.ID == id)
 					return condition;
 
 				if (condition is IParentCondition multi)
-					next.AddRange(multi.Children);
-			}
+				{
+					var found = FindCondition(multi.Children, id);
 
-			if (next.Any())
-				return FindCondition(next, id);
+					if (found != null)
+						return found;
+				}
+			}
 
 			return null;
 		}
