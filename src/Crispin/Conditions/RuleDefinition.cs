@@ -14,6 +14,7 @@ namespace Crispin.Conditions
 	{
 		IEnumerable<Condition> Children { get; }
 
+		bool CanAdd(Condition child);
 		void AddChild(Condition child);
 		void RemoveChild(int childID);
 	}
@@ -33,6 +34,8 @@ namespace Crispin.Conditions
 		public IEnumerable<Condition> Children => _child == null
 			? Enumerable.Empty<Condition>()
 			: new[] { _child };
+
+		public bool CanAdd(Condition child) => _child == null;
 
 		public void AddChild(Condition child)
 		{
@@ -60,6 +63,7 @@ namespace Crispin.Conditions
 
 		public IEnumerable<Condition> Children => _children;
 
+		public bool CanAdd(Condition child) => true;
 		public void AddChild(Condition child) => _children.Add(child);
 		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
 	}
@@ -75,6 +79,7 @@ namespace Crispin.Conditions
 
 		public IEnumerable<Condition> Children => _children;
 
+		public bool CanAdd(Condition child) => true;
 		public void AddChild(Condition child) => _children.Add(child);
 		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
 	}

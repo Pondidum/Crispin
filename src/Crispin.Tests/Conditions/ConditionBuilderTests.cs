@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Crispin.Conditions;
 using Crispin.Events;
 using Shouldly;
@@ -160,6 +161,53 @@ namespace Crispin.Tests.Conditions
 				.ShouldBeOfType<AnyCondition>();
 
 			parent.Children.ShouldBe(new[] { childTwo });
+		}
+
+		[Fact]
+		public void CanAdd_is_false_when_parent_condition_doesnt_exist()
+		{
+			_builder
+				.CanAdd(new EnabledCondition(), 1324)
+				.ShouldBeFalse();
+		}
+
+		[Fact]
+		public void CanAdd_is_fales_when_parent_doesnt_support_children()
+		{
+			_builder.Add(new DisabledCondition { ID = 10 });
+			_builder
+				.CanAdd(new EnabledCondition(), 10)
+				.ShouldBeFalse();
+		}
+
+		[Fact]
+		public void CanAdd_is_false_if_a_parent_cannot_add_a_child()
+		{
+			_builder.Add(new CannotAddChildCondition { ID = 10 });
+			_builder
+				.CanAdd(new EnabledCondition(), 10)
+				.ShouldBeFalse();
+		}
+
+		[Fact]
+		public void CanAdd_is_true_if_parent_can_add_child()
+		{
+			_builder.Add(new AnyCondition { ID = 10 });
+			_builder
+				.CanAdd(new EnabledCondition(), 10)
+				.ShouldBeTrue();
+		}
+
+		private class CannotAddChildCondition : Condition, IParentCondition
+		{
+			public IEnumerable<Condition> Children => Enumerable.Empty<Condition>();
+
+			public bool CanAdd(Condition child) => false;
+			public void AddChild(Condition child) => throw new ConditionException("The parent condition cannot have children!");
+
+			public void RemoveChild(int childID)
+			{
+			}
 		}
 	}
 }

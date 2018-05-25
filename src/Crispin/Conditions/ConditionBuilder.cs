@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crispin.Conditions
@@ -12,6 +13,13 @@ namespace Crispin.Conditions
 		public ConditionBuilder()
 		{
 			_conditions = new List<Condition>();
+		}
+
+		public bool CanAdd(Condition child, int parentConditionID)
+		{
+			var condition = FindCondition(parentConditionID);
+
+			return condition is IParentCondition parent && parent.CanAdd(child);
 		}
 
 		public void Add(Condition condition) => _conditions.Add(condition);
