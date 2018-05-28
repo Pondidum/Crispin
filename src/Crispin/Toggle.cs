@@ -96,19 +96,19 @@ namespace Crispin
 			ApplyEvent(new ConditionAdded(editor, condition));
 		}
 
-		public void AddCondition(EditorID editor, Condition condition, int parentCondition)
+		public void AddCondition(EditorID editor, Condition condition, int parentConditionID)
 		{
-			var parent = _conditions.FindCondition(parentCondition);
+			var parent = _conditions.FindCondition(parentConditionID);
 
 			if (parent == null)
-				throw new ConditionNotFoundException(parentCondition);
+				throw new ConditionNotFoundException(parentConditionID);
 
-			if (parent.SupportsChildren == false)
+			if (parent is IParentCondition == false)
 				throw new ConditionException($"{parent.GetType().Name} does not support children.");
 
 			condition.ID = _nextConditionID++;
 
-			ApplyEvent(new ConditionAdded(editor, condition, parentCondition));
+			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
 		}
 
 		public void RemoveCondition(EditorID editor, int conditionID)

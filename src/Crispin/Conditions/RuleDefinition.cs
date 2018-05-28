@@ -6,8 +6,6 @@ namespace Crispin.Conditions
 	public abstract class Condition
 	{
 		public int ID { get; set; }
-
-		public bool SupportsChildren => this is IParentCondition;
 	}
 
 	public interface IParentCondition

@@ -177,7 +177,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
-			Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0);
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0);
 
 			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBeOfType<EnabledCondition>(),
@@ -191,7 +191,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
-			Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0);
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0);
 
 			var parent = Toggle
 				.Conditions
@@ -210,7 +210,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
 			Should.Throw<ConditionNotFoundException>(
-				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 13)
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 13)
 			);
 		}
 
@@ -220,7 +220,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(t => { t.AddCondition(Editor, new EnabledCondition()); });
 
 			Should.Throw<ConditionException>(
-				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentCondition: 0)
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0)
 			);
 		}
 
