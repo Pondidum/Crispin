@@ -6,13 +6,19 @@ using Xunit;
 
 namespace Crispin.Tests
 {
-	public abstract class IDTests<T>
+	public abstract class IDTests<T, TWrapped>
 	{
 		protected abstract T CreateOne();
 		protected abstract T CreateTwo();
 
 		protected abstract T CreateNew();
-		protected abstract T Parse(Guid input);
+		protected abstract T Parse(TWrapped input);
+		protected abstract TWrapped GenerateRandomID();
+
+		protected virtual string JsonValue(TWrapped wrapped)
+		{
+			return $"\"{wrapped}\"";
+		}
 
 		[Fact]
 		public void When_serializing_and_deserializing()
@@ -28,22 +34,22 @@ namespace Crispin.Tests
 		[Fact]
 		public void When_serializing()
 		{
-			var guid = Guid.NewGuid();
-			var toggle = Parse(guid);
+			var id = GenerateRandomID();
+			var toggle = Parse(id);
 
 			var json = JsonConvert.SerializeObject(new
 			{
 				Prop = toggle
 			});
 
-			json.ShouldBe($"{{\"Prop\":\"{guid}\"}}");
+			json.ShouldBe($"{{\"Prop\":{JsonValue(id)}}}");
 		}
 
 		[Fact]
 		public void When_deserializing_as_a_key()
 		{
-			var id = Guid.NewGuid();
-			var json = $"{{\"{id}\":\"test\"}}";
+			var id = GenerateRandomID();
+			var json = $"{{{JsonValue(id)}:\"test\"}}";
 
 			var dictionary = JsonConvert.DeserializeObject<Dictionary<T, string>>(json);
 
