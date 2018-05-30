@@ -98,7 +98,7 @@ namespace Crispin.Tests.Projections
 			Consume(new ConditionAdded(_editor, new DisabledCondition()));
 			Consume(new ConditionAdded(_editor, new AllCondition()));
 			Consume(new ConditionAdded(_editor, new EnabledCondition()));
-			Consume(new ConditionRemoved(_editor, 1));
+			Consume(new ConditionRemoved(_editor, ConditionID.Parse(1)));
 
 			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
 		}
@@ -106,8 +106,8 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_child_conditions_are_added()
 		{
-			Consume(new ConditionAdded(_editor, new AllCondition { ID = 0 }));
-			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = 1 }, 0));
+			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(0) }));
+			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(1) }, ConditionID.Parse(0)));
 
 			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
 		}

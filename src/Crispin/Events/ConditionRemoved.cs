@@ -1,13 +1,14 @@
-﻿using Crispin.Infrastructure;
+﻿using Crispin.Conditions;
+using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
 	public class ConditionRemoved : Event
 	{
 		public EditorID Editor { get; }
-		public int ConditionID { get; }
+		public ConditionID ConditionID { get; }
 
-		public ConditionRemoved(EditorID editor, int conditionID)
+		public ConditionRemoved(EditorID editor, ConditionID conditionID)
 		{
 			Editor = editor;
 			ConditionID = conditionID;

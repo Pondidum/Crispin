@@ -15,7 +15,7 @@ namespace Crispin.Conditions
 			_conditions = new List<Condition>();
 		}
 
-		public bool CanAdd(Condition child, int parentConditionID)
+		public bool CanAdd(Condition child, ConditionID parentConditionID)
 		{
 			var condition = FindCondition(parentConditionID);
 
@@ -24,7 +24,7 @@ namespace Crispin.Conditions
 
 		public void Add(Condition condition) => _conditions.Add(condition);
 
-		public void Add(Condition child, int parentConditionID)
+		public void Add(Condition child, ConditionID parentConditionID)
 		{
 			var condition = FindCondition(parentConditionID);
 
@@ -39,7 +39,7 @@ namespace Crispin.Conditions
 			parent.AddChild(child);
 		}
 
-		public void Remove(int conditionID)
+		public void Remove(ConditionID conditionID)
 		{
 			if (HasCondition(conditionID) == false)
 				throw new ConditionNotFoundException(conditionID);
@@ -47,10 +47,10 @@ namespace Crispin.Conditions
 			RemoveChild(conditionID);
 		}
 
-		public bool HasCondition(int id) => FindCondition(_conditions, id) != null;
-		public Condition FindCondition(int id) => FindCondition(_conditions, id);
+		public bool HasCondition(ConditionID id) => FindCondition(_conditions, id) != null;
+		public Condition FindCondition(ConditionID id) => FindCondition(_conditions, id);
 
-		private static Condition FindCondition(IEnumerable<Condition> conditions, int id)
+		private static Condition FindCondition(IEnumerable<Condition> conditions, ConditionID id)
 		{
 			foreach (var condition in conditions)
 			{
@@ -69,7 +69,7 @@ namespace Crispin.Conditions
 			return null;
 		}
 
-		private void RemoveChild(int childID)
+		private void RemoveChild(ConditionID childID)
 		{
 			var removed = _conditions.RemoveAll(c => c.ID == childID);
 
@@ -79,7 +79,7 @@ namespace Crispin.Conditions
 			RemoveChild(_conditions, childID);
 		}
 
-		private static void RemoveChild(IEnumerable<Condition> conditions, int id)
+		private static void RemoveChild(IEnumerable<Condition> conditions, ConditionID id)
 		{
 			foreach (var parent in conditions.OfType<IParentCondition>())
 			{

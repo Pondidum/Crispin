@@ -5,7 +5,7 @@ namespace Crispin.Conditions
 {
 	public abstract class Condition
 	{
-		public int ID { get; set; }
+		public ConditionID ID { get; set; }
 	}
 
 	public interface IParentCondition
@@ -14,7 +14,7 @@ namespace Crispin.Conditions
 
 		bool CanAdd(Condition child);
 		void AddChild(Condition child);
-		void RemoveChild(int childID);
+		void RemoveChild(ConditionID childID);
 	}
 
 	public class EnabledCondition : Condition
@@ -43,7 +43,7 @@ namespace Crispin.Conditions
 			_child = child;
 		}
 
-		public void RemoveChild(int childID)
+		public void RemoveChild(ConditionID childID)
 		{
 			if (_child?.ID == childID)
 				_child = null;
@@ -63,7 +63,7 @@ namespace Crispin.Conditions
 
 		public bool CanAdd(Condition child) => true;
 		public void AddChild(Condition child) => _children.Add(child);
-		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
+		public void RemoveChild(ConditionID childID) => _children.RemoveAll(c => c.ID == childID);
 	}
 
 	public class AllCondition : Condition, IParentCondition
@@ -79,7 +79,7 @@ namespace Crispin.Conditions
 
 		public bool CanAdd(Condition child) => true;
 		public void AddChild(Condition child) => _children.Add(child);
-		public void RemoveChild(int childID) => _children.RemoveAll(c => c.ID == childID);
+		public void RemoveChild(ConditionID childID) => _children.RemoveAll(c => c.ID == childID);
 	}
 
 	public class InGroupCondition : Condition

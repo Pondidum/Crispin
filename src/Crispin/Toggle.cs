@@ -91,12 +91,13 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, Condition condition)
 		{
-			condition.ID = _nextConditionID++;
+			condition.ID = ConditionID.Parse(_nextConditionID);
+			_nextConditionID++;
 
 			ApplyEvent(new ConditionAdded(editor, condition));
 		}
 
-		public void AddCondition(EditorID editor, Condition condition, int parentConditionID)
+		public void AddCondition(EditorID editor, Condition condition, ConditionID parentConditionID)
 		{
 			var parent = _conditions.FindCondition(parentConditionID);
 
@@ -106,12 +107,13 @@ namespace Crispin
 			if (parent is IParentCondition == false)
 				throw new ConditionException($"{parent.GetType().Name} does not support children.");
 
-			condition.ID = _nextConditionID++;
+			condition.ID = ConditionID.Parse(_nextConditionID);
+			_nextConditionID++;
 
 			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
 		}
 
-		public void RemoveCondition(EditorID editor, int conditionID)
+		public void RemoveCondition(EditorID editor, ConditionID conditionID)
 		{
 			if (_conditions.HasCondition(conditionID) == false)
 				throw new ConditionNotFoundException(conditionID);

@@ -79,7 +79,7 @@ namespace Crispin.Tests.ToggleTests
 			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBe(condition),
 				() => e.Editor.ShouldBe(Editor),
-				() => e.Condition.ID.ShouldBe(0),
+				() => e.Condition.ID.ShouldBe(ConditionID.Parse(0)),
 				() => e.ParentConditionID.ShouldBeNull()
 			));
 		}
@@ -95,8 +95,8 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.AddCondition(Editor, conditionTwo);
 
 			Events.Length.ShouldBe(2);
-			Event<ConditionAdded>(0).Condition.ID.ShouldBe(0);
-			Event<ConditionAdded>(1).Condition.ID.ShouldBe(1);
+			Event<ConditionAdded>(0).Condition.ID.ShouldBe(ConditionID.Parse(0));
+			Event<ConditionAdded>(1).Condition.ID.ShouldBe(ConditionID.Parse(1));
 		}
 
 		[Fact]
@@ -115,9 +115,9 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void Conditions_can_be_removed()
 		{
-			var one = new EnabledCondition { ID = 0 };
-			var two = new EnabledCondition { ID = 1 };
-			var three = new EnabledCondition { ID = 2 };
+			var one = new EnabledCondition { ID = ConditionID.Parse(0) };
+			var two = new EnabledCondition { ID = ConditionID.Parse(1) };
+			var three = new EnabledCondition { ID = ConditionID.Parse(2) };
 
 			CreateToggle(
 				new ConditionAdded(Editor, one),
@@ -125,10 +125,10 @@ namespace Crispin.Tests.ToggleTests
 				new ConditionAdded(Editor, three)
 			);
 
-			Toggle.RemoveCondition(Editor, 1);
+			Toggle.RemoveCondition(Editor, ConditionID.Parse(1));
 
 			SingleEvent<ConditionRemoved>(e => e.ShouldSatisfyAllConditions(
-				() => e.ConditionID.ShouldBe(1),
+				() => e.ConditionID.ShouldBe(ConditionID.Parse(1)),
 				() => e.Editor.ShouldBe(Editor)
 			));
 
@@ -145,15 +145,15 @@ namespace Crispin.Tests.ToggleTests
 			for (int i = 0; i < additions; i++)
 				Toggle.AddCondition(Editor, new EnabledCondition());
 
-			Toggle.RemoveCondition(Editor, 5);
-			Toggle.RemoveCondition(Editor, 2);
+			Toggle.RemoveCondition(Editor, ConditionID.Parse(5));
+			Toggle.RemoveCondition(Editor, ConditionID.Parse(2));
 
 			Toggle.AddCondition(Editor, new EnabledCondition());
 
 			Events
 				.OfType<ConditionAdded>()
 				.Last()
-				.Condition.ID.ShouldBe(additions);
+				.Condition.ID.ShouldBe(ConditionID.Parse(additions));
 		}
 
 		[Fact]
@@ -168,7 +168,7 @@ namespace Crispin.Tests.ToggleTests
 				Toggle.AddCondition(Editor, new EnabledCondition());
 
 			Should
-				.Throw<ConditionNotFoundException>(() => Toggle.RemoveCondition(Editor, toRemove))
+				.Throw<ConditionNotFoundException>(() => Toggle.RemoveCondition(Editor, ConditionID.Parse(toRemove)))
 				.Message.ShouldContain(toRemove.ToString());
 		}
 
@@ -177,12 +177,12 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
-			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0);
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
 
 			SingleEvent<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBeOfType<EnabledCondition>(),
 				() => e.Editor.ShouldBe(Editor),
-				() => e.ParentConditionID.ShouldBe(0)
+				() => e.ParentConditionID.ShouldBe(ConditionID.Parse(0))
 			));
 		}
 
@@ -191,7 +191,7 @@ namespace Crispin.Tests.ToggleTests
 		{
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
-			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0);
+			Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
 
 			var parent = Toggle
 				.Conditions
@@ -210,7 +210,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(t => { t.AddCondition(Editor, new AnyCondition()); });
 
 			Should.Throw<ConditionNotFoundException>(
-				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 13)
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: ConditionID.Parse(13))
 			);
 		}
 
@@ -220,7 +220,7 @@ namespace Crispin.Tests.ToggleTests
 			CreateToggle(t => { t.AddCondition(Editor, new EnabledCondition()); });
 
 			Should.Throw<ConditionException>(
-				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: 0)
+				() => Toggle.AddCondition(Editor, new EnabledCondition(), parentConditionID: ConditionID.Parse(0))
 			);
 		}
 

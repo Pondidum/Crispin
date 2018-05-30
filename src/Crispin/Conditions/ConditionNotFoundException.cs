@@ -5,7 +5,7 @@ namespace Crispin.Conditions
 {
 	public class ConditionNotFoundException : Exception
 	{
-		public ConditionNotFoundException(int conditionID)
+		public ConditionNotFoundException(ConditionID conditionID)
 			: base($"Unable to find a condition with the ID '{conditionID}'")
 		{
 		}

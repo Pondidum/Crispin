@@ -21,5 +21,13 @@ namespace Crispin.Infrastructure
 			else
 				noValue();
 		}
+
+		public static void Match<T>(this T self, Action<T> hasValue, Action noValue) where T : class
+		{
+			if (self != null)
+				hasValue(self);
+			else
+				noValue();
+		}
 	}
 }
