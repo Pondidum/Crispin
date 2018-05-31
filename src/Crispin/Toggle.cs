@@ -38,13 +38,13 @@ namespace Crispin
 
 		private readonly HashSet<string> _tags;
 		private readonly ConditionBuilder _conditions;
-		private int _nextConditionID;
+		private readonly ConditionIDGenerator _conditionID;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			_conditions = new ConditionBuilder();
-			_nextConditionID = 0;
+			_conditionID = new ConditionIDGenerator(0);
 
 			Register<ToggleCreated>(Apply);
 			Register<TagAdded>(Apply);
@@ -91,8 +91,7 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, Condition condition)
 		{
-			condition.ID = ConditionID.Parse(_nextConditionID);
-			_nextConditionID++;
+			condition.ID = _conditionID.Next();
 
 			ApplyEvent(new ConditionAdded(editor, condition));
 		}
@@ -107,8 +106,7 @@ namespace Crispin
 			if (parent is IParentCondition == false)
 				throw new ConditionException($"{parent.GetType().Name} does not support children.");
 
-			condition.ID = ConditionID.Parse(_nextConditionID);
-			_nextConditionID++;
+			condition.ID = _conditionID.Next();
 
 			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
 		}
