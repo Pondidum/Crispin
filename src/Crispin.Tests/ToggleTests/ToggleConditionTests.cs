@@ -247,5 +247,25 @@ namespace Crispin.Tests.ToggleTests
 
 			parent.Children.ShouldBe(new[] { childTwo });
 		}
+
+		[Fact]
+		public void Next_condition_id_is_correct_when_adding_a_new_condition_after_load()
+		{
+			CreateToggle(
+				new ConditionAdded(Editor, new EnabledCondition { ID = ConditionID.Parse(0) }),
+				new ConditionRemoved(Editor, ConditionID.Parse(0)),
+				new ConditionAdded(Editor, new EnabledCondition { ID = ConditionID.Parse(1) })
+			);
+
+			Toggle.AddCondition(Editor, new DisabledCondition());
+
+			var expected = ConditionID.Parse(2);
+			Toggle
+				.Conditions
+				.OfType<DisabledCondition>()
+				.Last()
+				.ID
+				.ShouldBe(expected);
+		}
 	}
 }

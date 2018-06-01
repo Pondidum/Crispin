@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using Newtonsoft.Json;
 
 namespace Crispin.Conditions
@@ -17,6 +18,11 @@ namespace Crispin.Conditions
 		{
 			_id = toggleID;
 		}
+
+		[Pure]
+		public ConditionID Next() => new ConditionID(_id + 1);
+
+		public bool IsNewerThan(ConditionID other) => _id > other._id;
 
 		public bool Equals(ConditionID other)
 		{

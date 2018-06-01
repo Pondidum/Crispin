@@ -38,13 +38,13 @@ namespace Crispin
 
 		private readonly HashSet<string> _tags;
 		private readonly ConditionBuilder _conditions;
-		private readonly ConditionIDGenerator _conditionID;
+		private ConditionID _currentConditionID;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			_conditions = new ConditionBuilder();
-			_conditionID = new ConditionIDGenerator(0);
+			_currentConditionID = ConditionID.Empty;
 
 			Register<ToggleCreated>(Apply);
 			Register<TagAdded>(Apply);
@@ -91,8 +91,7 @@ namespace Crispin
 
 		public void AddCondition(EditorID editor, Condition condition)
 		{
-			condition.ID = _conditionID.Next();
-
+			condition.ID = NextConditionID();
 			ApplyEvent(new ConditionAdded(editor, condition));
 		}
 
@@ -106,10 +105,11 @@ namespace Crispin
 			if (parent is IParentCondition == false)
 				throw new ConditionException($"{parent.GetType().Name} does not support children.");
 
-			condition.ID = _conditionID.Next();
-
+			condition.ID = NextConditionID();
 			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
 		}
+
+		private ConditionID NextConditionID() => _currentConditionID = _currentConditionID.Next();
 
 		public void RemoveCondition(EditorID editor, ConditionID conditionID)
 		{
@@ -143,11 +143,21 @@ namespace Crispin
 		private void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
 		private void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
 
-		private void Apply(ConditionAdded e) => e.ParentConditionID.Match(
-			hasValue: parent => _conditions.Add(e.Condition, parent),
-			noValue: () => _conditions.Add(e.Condition)
-		);
+		private void Apply(ConditionAdded e)
+		{
+			_currentConditionID = e.Condition.ID;
+			e.ParentConditionID.Match(
+				hasValue: parent => _conditions.Add(e.Condition, parent),
+				noValue: () => _conditions.Add(e.Condition)
+			);
+		}
 
-		private void Apply(ConditionRemoved e) => _conditions.Remove(e.ConditionID);
+		private void Apply(ConditionRemoved e)
+		{
+			if (e.ConditionID.IsNewerThan(_currentConditionID))
+				_currentConditionID = e.ConditionID;
+
+			_conditions.Remove(e.ConditionID);
+		}
 	}
 }
