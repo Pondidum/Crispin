@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using Crispin.Conditions;
+using Crispin.Conditions.ConditionTypes;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Newtonsoft.Json;

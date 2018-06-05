@@ -3,6 +3,7 @@ using Crispin.Projections;
 using Shouldly;
 using System.Linq;
 using Crispin.Conditions;
+using Crispin.Conditions.ConditionTypes;
 using Crispin.Infrastructure;
 using Newtonsoft.Json;
 using Xunit;
