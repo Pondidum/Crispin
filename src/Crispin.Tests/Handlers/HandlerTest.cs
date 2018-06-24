@@ -39,6 +39,7 @@ namespace Crispin.Tests.Handlers
 
 		protected IEnumerable<Type> EventTypes() => Events[Toggle.ID].Select(e => e.GetType());
 		protected TEvent Event<TEvent>() => Events[Toggle.ID].OfType<TEvent>().Single();
+		protected void Event<TEvent>(Action<TEvent> callback) => callback(Event<TEvent>());
 
 		protected abstract THandler CreateHandler(IStorage storage);
 
