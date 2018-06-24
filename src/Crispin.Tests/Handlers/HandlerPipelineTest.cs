@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Crispin.Infrastructure;
-using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using MediatR;
@@ -33,7 +32,6 @@ namespace Crispin.Tests.Handlers
 				_.For<IStorage>().Use(Storage);
 				_.For<ILoggerFactory>().Use(Substitute.For<ILoggerFactory>());
 				_.For(typeof(ILogger<>)).Use(typeof(Logger<>));
-				_.For<IStatisticsWriter>().Use(Substitute.For<IStatisticsWriter>());
 			});
 
 			_mediator = container.GetInstance<IMediator>();

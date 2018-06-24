@@ -1,4 +1,3 @@
-using Crispin.Infrastructure.Statistics;
 using Crispin.Infrastructure.Validation;
 using MediatR;
 using MediatR.Pipeline;
@@ -24,7 +23,6 @@ namespace Crispin.Infrastructure
 				a.ConnectImplementationsToTypesClosing(typeof(ICancellableAsyncNotificationHandler<>));
 
 				a.ConnectImplementationsToTypesClosing(typeof(IRequestValidator<>));
-				a.ConnectImplementationsToTypesClosing(typeof(IStatisticGenerator<,>));
 			});
 
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(RequestPreProcessorBehavior<,>));
@@ -32,7 +30,6 @@ namespace Crispin.Infrastructure
 
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(TimingBehavior<,>));
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
-			For(typeof(IPipelineBehavior<,>)).Add(typeof(StatisticsBehavior<,>));
 
 			For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
 			For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
