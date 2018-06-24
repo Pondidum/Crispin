@@ -89,27 +89,13 @@ namespace Crispin
 			ApplyEvent(new EnabledOnAllConditions(editor));
 		}
 
-		public void AddCondition(EditorID editor, Condition condition)
+		public void AddCondition(EditorID editor, Condition condition, ConditionID parentConditionID = null)
 		{
-			condition.ID = NextConditionID();
-			ApplyEvent(new ConditionAdded(editor, condition));
-		}
-
-		public void AddCondition(EditorID editor, Condition condition, ConditionID parentConditionID)
-		{
-			var parent = _conditions.FindCondition(parentConditionID);
-
-			if (parent == null)
-				throw new ConditionNotFoundException(parentConditionID);
-
-			if (parent is IParentCondition == false)
-				throw new ConditionException($"{parent.GetType().Name} does not support children.");
+			ValidateParentCondition(parentConditionID);
 
 			condition.ID = NextConditionID();
 			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
 		}
-
-		private ConditionID NextConditionID() => _currentConditionID = _currentConditionID.Next();
 
 		public void RemoveCondition(EditorID editor, ConditionID conditionID)
 		{
@@ -126,6 +112,22 @@ namespace Crispin
 			Description = Description,
 			Tags = new HashSet<string>(_tags)
 		};
+
+		private void ValidateParentCondition(ConditionID parentConditionID)
+		{
+			if (parentConditionID == null)
+				return;
+
+			var parent = _conditions.FindCondition(parentConditionID);
+
+			if (parent == null)
+				throw new ConditionNotFoundException(parentConditionID);
+
+			if (parent is IParentCondition == false)
+				throw new ConditionException($"{parent.GetType().Name} does not support children.");
+		}
+
+		private ConditionID NextConditionID() => _currentConditionID = _currentConditionID.Next();
 
 
 		//handlers which apply the results of the domainy things
