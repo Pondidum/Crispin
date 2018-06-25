@@ -34,7 +34,7 @@ namespace Crispin.Tests.Handlers
 		public async Task The_toggle_is_saved_into_the_session()
 		{
 			var condition = new EnabledCondition();
-			var result = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, condition));
+			await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, condition));
 
 			Event<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBe(condition),
