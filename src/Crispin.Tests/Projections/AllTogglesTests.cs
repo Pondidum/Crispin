@@ -5,6 +5,7 @@ using System.Linq;
 using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
 using Crispin.Infrastructure;
+using Crispin.Views;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -31,6 +32,8 @@ namespace Crispin.Tests.Projections
 			_projection.Consume(@event);
 		}
 
+		private ToggleView SingleToggle() => _projection.Toggles.Single();
+
 		[Fact]
 		public void When_no_events_have_been_processed()
 		{
@@ -40,7 +43,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_single_toggle_has_been_created()
 		{
-			var view = _projection.Toggles.Single();
+			var view = SingleToggle();
 
 			view.ShouldSatisfyAllConditions(
 				() => view.ID.ShouldBe(_created.ID),
@@ -72,7 +75,7 @@ namespace Crispin.Tests.Projections
 		{
 			Consume(new TagAdded(_editor, "one"));
 
-			_projection.Toggles.Single().Tags.ShouldBe(new[] { "one" });
+			SingleToggle().Tags.ShouldBe(new[] { "one" });
 		}
 
 		[Fact]
@@ -82,7 +85,7 @@ namespace Crispin.Tests.Projections
 			Consume(new TagAdded(_editor, "two"));
 			Consume(new TagRemoved(_editor, "one"));
 
-			_projection.Toggles.Single().Tags.ShouldBe(new[] { "two" });
+			SingleToggle().Tags.ShouldBe(new[] { "two" });
 		}
 
 		[Fact]
@@ -90,18 +93,18 @@ namespace Crispin.Tests.Projections
 		{
 			Consume(new ConditionAdded(_editor, new DisabledCondition()));
 
-			_projection.Toggles.Single().Conditions.Count.ShouldBe(1);
+			SingleToggle().Conditions.Count.ShouldBe(1);
 		}
 
 		[Fact]
 		public void When_conditions_are_removed()
 		{
 			Consume(new ConditionAdded(_editor, new DisabledCondition { ID = ConditionID.Parse(0) }));
-			Consume(new ConditionAdded(_editor, new AllCondition{ ID = ConditionID.Parse(1) }));
-			Consume(new ConditionAdded(_editor, new EnabledCondition{ ID = ConditionID.Parse(2) }));
+			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(1) }));
+			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(2) }));
 			Consume(new ConditionRemoved(_editor, ConditionID.Parse(1)));
 
-			_projection.Toggles.Single().Conditions.Count.ShouldBe(2);
+			SingleToggle().Conditions.Count.ShouldBe(2);
 		}
 
 		[Fact]
@@ -110,9 +113,25 @@ namespace Crispin.Tests.Projections
 			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(0) }));
 			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(1) }, ConditionID.Parse(0)));
 
-			_projection.Toggles.Single()
+			SingleToggle()
 				.Conditions.ShouldHaveSingleItem().ShouldBeOfType<AllCondition>()
 				.Children.ShouldHaveSingleItem();
+		}
+
+		[Fact]
+		public void When_setting_to_enabled_on_all_conditions()
+		{
+			Consume(new EnabledOnAllConditions(_editor));
+
+			SingleToggle().ConditionMode.ShouldBe(ConditionModes.All);
+		}
+
+		[Fact]
+		public void When_setting_to_enabled_on_any_condition()
+		{
+			Consume(new EnabledOnAnyCondition(_editor));
+
+			SingleToggle().ConditionMode.ShouldBe(ConditionModes.Any);
 		}
 
 		[Fact]

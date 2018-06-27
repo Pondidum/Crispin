@@ -11,6 +11,7 @@ namespace Crispin.Views
 		public string Description { get; set; }
 		public HashSet<string> Tags { get; set; }
 		public List<Condition> Conditions { get; set; }
+		public ConditionModes ConditionMode { get; set; }
 
 		private readonly ConditionBuilder _builder;
 
@@ -18,6 +19,7 @@ namespace Crispin.Views
 		{
 			Tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			Conditions = new List<Condition>();
+
 			_builder = new ConditionBuilder(Conditions);
 		}
 
