@@ -16,16 +16,17 @@ namespace Crispin.Projections
 		public AllTogglesProjection()
 		{
 			_toggles = new Dictionary<ToggleID, ToggleView>();
+			var find = new Func<ToggleID, ToggleView>(id => _toggles[id]);
 
 			Register<ToggleCreated>(Apply);
 
-			Register<TagAdded>(e => _toggles[e.AggregateID].Tags.Add(e.Name));
-			Register<TagRemoved>(e => _toggles[e.AggregateID].Tags.Remove(e.Name));
+			Register<TagAdded>(e => find(e.AggregateID).Tags.Add(e.Name));
+			Register<TagRemoved>(e => find(e.AggregateID).Tags.Remove(e.Name));
 
-			Register<ConditionAdded>(e => _toggles[e.AggregateID].AddCondition(e.Condition, e.ParentConditionID));
-			Register<ConditionRemoved>(e => _toggles[e.AggregateID].RemoveCondition(e.ConditionID));
-			Register<EnabledOnAllConditions>(e => _toggles[e.AggregateID].ConditionMode = ConditionModes.All);
-			Register<EnabledOnAnyCondition>(e => _toggles[e.AggregateID].ConditionMode = ConditionModes.Any);
+			Register<ConditionAdded>(e => find(e.AggregateID).AddCondition(e.Condition, e.ParentConditionID));
+			Register<ConditionRemoved>(e => find(e.AggregateID).RemoveCondition(e.ConditionID));
+			Register<EnabledOnAllConditions>(e => find(e.AggregateID).ConditionMode = ConditionModes.All);
+			Register<EnabledOnAnyCondition>(e => find(e.AggregateID).ConditionMode = ConditionModes.Any);
 		}
 
 		private void Apply(ToggleCreated e) => _toggles.Add(e.ID, new ToggleView
