@@ -10,9 +10,9 @@ namespace Crispin.Conditions
 
 		private readonly List<Condition> _conditions;
 
-		public ConditionBuilder()
+		public ConditionBuilder(List<Condition> conditions = null)
 		{
-			_conditions = new List<Condition>();
+			_conditions = conditions ?? new List<Condition>();
 		}
 
 		public bool CanAdd(Condition child, ConditionID parentConditionID)
@@ -22,10 +22,14 @@ namespace Crispin.Conditions
 			return condition is IParentCondition parent && parent.CanAdd(child);
 		}
 
-		public void Add(Condition condition) => _conditions.Add(condition);
-
-		public void Add(Condition child, ConditionID parentConditionID)
+		public void Add(Condition child, ConditionID parentConditionID = null)
 		{
+			if (parentConditionID == null)
+			{
+				_conditions.Add(child);
+				return;
+			}
+
 			var condition = FindCondition(parentConditionID);
 
 			if (condition == null)
