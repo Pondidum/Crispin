@@ -9,11 +9,13 @@ namespace Crispin.Tests.Conditions
 {
 	public class ConditionBuilderTests
 	{
+		private readonly List<Condition> _conditions;
 		private readonly ConditionBuilder _builder;
 
 		public ConditionBuilderTests()
 		{
-			_builder = new ConditionBuilder();
+			_conditions = new List<Condition>();
+			_builder = new ConditionBuilder(_conditions);
 		}
 
 		[Fact]
@@ -196,6 +198,19 @@ namespace Crispin.Tests.Conditions
 			_builder
 				.CanAdd(new EnabledCondition(), ConditionID.Parse(10))
 				.ShouldBeTrue();
+		}
+
+		[Fact]
+		public void When_manipulating_the_backing_store()
+		{
+			_conditions.Add(new AnyCondition { ID = ConditionID.Parse(14) });
+			_conditions.Add(new AllCondition { ID = ConditionID.Parse(15) });
+
+			_builder.Add(new EnabledCondition(), ConditionID.Parse(14));
+
+			_builder.All.OfType<AnyCondition>().Single().Children
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<EnabledCondition>();
 		}
 
 		private class CannotAddChildCondition : Condition, IParentCondition
