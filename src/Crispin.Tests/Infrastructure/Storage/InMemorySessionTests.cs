@@ -48,7 +48,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_there_is_a_projection_with_multiple_aggregates()
 		{
-			var projection = new AllToggles();
+			var projection = new AllTogglesProjection();
 			Projections.Add(projection);
 
 			var first = Toggle.CreateNew(Editor, "First", "yes");
@@ -68,10 +68,10 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_retrieving_a_projection_which_exists_in_the_session()
 		{
-			var projection = new AllToggles();
+			var projection = new AllTogglesProjection();
 			Projections.Add(projection);
 
-			var loadProjection = await Session.LoadProjection<AllToggles>();
+			var loadProjection = await Session.LoadProjection<AllTogglesProjection>();
 			loadProjection.ShouldBe(projection);
 		}
 
@@ -79,7 +79,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public void When_retrieving_a_projection_which_doesnt_exist_in_the_session()
 		{
 			Should.Throw<ProjectionNotRegisteredException>(
-				() => Session.LoadProjection<AllToggles>()
+				() => Session.LoadProjection<AllTogglesProjection>()
 			);
 		}
 	}

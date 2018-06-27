@@ -12,7 +12,7 @@ namespace Crispin.Tests.Handlers
 	public class GetToggleHandlerTests
 	{
 		private readonly GetToggleHandler _handler;
-		private readonly AllToggles _view;
+		private readonly AllTogglesProjection _view;
 		private readonly EditorID _creator;
 
 		public GetToggleHandlerTests()
@@ -21,8 +21,8 @@ namespace Crispin.Tests.Handlers
 			var session = Substitute.For<IStorageSession>();
 			storage.BeginSession().Returns(session);
 
-			_view = new AllToggles();
-			session.LoadProjection<AllToggles>().Returns(_view);
+			_view = new AllTogglesProjection();
+			session.LoadProjection<AllTogglesProjection>().Returns(_view);
 
 			_handler = new GetToggleHandler(storage);
 			_creator = EditorID.Parse("test editor");

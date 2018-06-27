@@ -29,7 +29,7 @@ namespace Crispin.Rest
 			fs.CreateDirectory(path).Wait();
 			
 			var store = new FileSystemStorage(fs, path);
-			store.RegisterProjection(new AllToggles());
+			store.RegisterProjection(new AllTogglesProjection());
 			store.RegisterBuilder(Toggle.LoadFrom);
 
 			return store;

@@ -36,7 +36,7 @@ namespace Crispin.Handlers.Create
 		{
 			using (var session = await _storage.BeginSession())
 			{
-				var view = await session.LoadProjection<AllToggles>();
+				var view = await session.LoadProjection<AllTogglesProjection>();
 				return view.Toggles;
 			}
 		}

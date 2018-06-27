@@ -11,15 +11,15 @@ using Xunit;
 
 namespace Crispin.Tests.Projections
 {
-	public class AllTogglesTests
+	public class AllTogglesProjectionTests
 	{
-		private readonly AllToggles _projection;
+		private readonly AllTogglesProjection _projection;
 		private readonly EditorID _editor;
 		private readonly ToggleCreated _created;
 
-		public AllTogglesTests()
+		public AllTogglesProjectionTests()
 		{
-			_projection = new AllToggles();
+			_projection = new AllTogglesProjection();
 			_editor = EditorID.Parse("test");
 
 			_created = new ToggleCreated(_editor, ToggleID.CreateNew(), "toggle-1", "");
@@ -37,7 +37,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_no_events_have_been_processed()
 		{
-			new AllToggles().Toggles.ShouldBeEmpty();
+			new AllTogglesProjection().Toggles.ShouldBeEmpty();
 		}
 
 		[Fact]

@@ -16,7 +16,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_a_projection_is_registered()
 		{
-			var projection = new AllToggles();
+			var projection = new AllTogglesProjection();
 			Storage.RegisterProjection(projection);
 
 			using (var session = await Storage.BeginSession())

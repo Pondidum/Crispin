@@ -30,7 +30,7 @@ namespace Crispin.Tests.Handlers
 		public void When_there_is_no_projection_registered()
 		{
 			_session
-				.LoadProjection<AllToggles>()
+				.LoadProjection<AllTogglesProjection>()
 				.Throws(new ProjectionNotRegisteredException("wat"));
 
 			Should.Throw<ProjectionNotRegisteredException>(
@@ -41,8 +41,8 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_there_are_no_toggles_in_the_projection()
 		{
-			var projection = new AllToggles();
-			_session.LoadProjection<AllToggles>().Returns(projection);
+			var projection = new AllTogglesProjection();
+			_session.LoadProjection<AllTogglesProjection>().Returns(projection);
 
 			var response = await _handler.Handle(new GetAllTogglesRequest());
 
@@ -52,9 +52,9 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_there_are_toggles_in_the_projection()
 		{
-			var projection = new AllToggles();
+			var projection = new AllTogglesProjection();
 			projection.Consume(new ToggleCreated(EditorID.Parse("?"), ToggleID.CreateNew(), "Test", "desc"));
-			_session.LoadProjection<AllToggles>().Returns(projection);
+			_session.LoadProjection<AllTogglesProjection>().Returns(projection);
 
 			var response = await _handler.Handle(new GetAllTogglesRequest());
 

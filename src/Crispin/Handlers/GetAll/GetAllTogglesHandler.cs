@@ -18,7 +18,7 @@ namespace Crispin.Handlers.GetAll
 		{
 			using (var session = await _storage.BeginSession())
 			{
-				var projection = await session.LoadProjection<AllToggles>();
+				var projection = await session.LoadProjection<AllTogglesProjection>();
 
 				return new GetAllTogglesResponse
 				{

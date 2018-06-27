@@ -7,13 +7,13 @@ using Crispin.Views;
 
 namespace Crispin.Projections
 {
-	public class AllToggles : Projection<AllTogglesMemento>
+	public class AllTogglesProjection : Projection<AllTogglesMemento>
 	{
 		public IEnumerable<ToggleView> Toggles => _toggles.Values;
 
 		private readonly Dictionary<ToggleID, ToggleView> _toggles;
 
-		public AllToggles()
+		public AllTogglesProjection()
 		{
 			_toggles = new Dictionary<ToggleID, ToggleView>();
 

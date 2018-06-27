@@ -22,7 +22,7 @@ namespace Crispin.Tests.Handlers
 
 			Storage = new InMemoryStorage(Events);
 			Storage.RegisterBuilder(Toggle.LoadFrom);
-			Storage.RegisterProjection(new AllToggles());
+			Storage.RegisterProjection(new AllTogglesProjection());
 
 			Handler = CreateHandler(Storage);
 

@@ -18,7 +18,7 @@ namespace Crispin
 
 		internal override async Task<ToggleView> LocateView(IStorageSession session)
 		{
-			var projection = await session.LoadProjection<AllToggles>();
+			var projection = await session.LoadProjection<AllTogglesProjection>();
 
 			return projection
 				.Toggles

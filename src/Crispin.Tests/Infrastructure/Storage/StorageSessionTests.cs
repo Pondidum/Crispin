@@ -182,16 +182,16 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_there_is_no_projection_registered()
 		{
-			Should.Throw<ProjectionNotRegisteredException>(() => Session.LoadProjection<AllToggles>());
+			Should.Throw<ProjectionNotRegisteredException>(() => Session.LoadProjection<AllTogglesProjection>());
 		}
 
 		[Fact]
 		public async Task When_the_projection_hasnt_been_written_to()
 		{
-			var allToggles = new AllToggles();
+			var allToggles = new AllTogglesProjection();
 			Projections.Add(allToggles);
 
-			var projection = await Session.LoadProjection<AllToggles>();
+			var projection = await Session.LoadProjection<AllTogglesProjection>();
 
 			projection.ShouldBe(allToggles);
 		}
@@ -199,7 +199,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_there_is_a_projection()
 		{
-			var projection = new AllToggles();
+			var projection = new AllTogglesProjection();
 			Projections.Add(projection);
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
@@ -216,7 +216,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 				() => view.Tags.ShouldBeEmpty()
 			);
 
-			var diskProjection = await ReadProjection(new AllToggles());
+			var diskProjection = await ReadProjection(new AllTogglesProjection());
 
 			diskProjection.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
 		}
@@ -224,14 +224,14 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_retrieving_a_projection_from_disk()
 		{
-			Projections.Add(new AllToggles());
+			Projections.Add(new AllTogglesProjection());
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			await Session.Save(toggle);
 			await Session.Commit();
 
-			var projection = await Session.LoadProjection<AllToggles>();
+			var projection = await Session.LoadProjection<AllTogglesProjection>();
 
 			projection.Toggles.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
 		}
