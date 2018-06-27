@@ -90,18 +90,18 @@ namespace Crispin.Tests.Projections
 		{
 			Consume(new ConditionAdded(_editor, new DisabledCondition()));
 
-			_projection.Toggles.Single().ConditionCount.ShouldBe(1);
+			_projection.Toggles.Single().Conditions.Count.ShouldBe(1);
 		}
 
 		[Fact]
 		public void When_conditions_are_removed()
 		{
-			Consume(new ConditionAdded(_editor, new DisabledCondition()));
-			Consume(new ConditionAdded(_editor, new AllCondition()));
-			Consume(new ConditionAdded(_editor, new EnabledCondition()));
+			Consume(new ConditionAdded(_editor, new DisabledCondition { ID = ConditionID.Parse(0) }));
+			Consume(new ConditionAdded(_editor, new AllCondition{ ID = ConditionID.Parse(1) }));
+			Consume(new ConditionAdded(_editor, new EnabledCondition{ ID = ConditionID.Parse(2) }));
 			Consume(new ConditionRemoved(_editor, ConditionID.Parse(1)));
 
-			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
+			_projection.Toggles.Single().Conditions.Count.ShouldBe(2);
 		}
 
 		[Fact]
@@ -110,7 +110,9 @@ namespace Crispin.Tests.Projections
 			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(0) }));
 			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(1) }, ConditionID.Parse(0)));
 
-			_projection.Toggles.Single().ConditionCount.ShouldBe(2);
+			_projection.Toggles.Single()
+				.Conditions.ShouldHaveSingleItem().ShouldBeOfType<AllCondition>()
+				.Children.ShouldHaveSingleItem();
 		}
 
 		[Fact]

@@ -21,8 +21,8 @@ namespace Crispin.Projections
 
 			Register<TagAdded>(e => _toggles[e.AggregateID].Tags.Add(e.Name));
 			Register<TagRemoved>(e => _toggles[e.AggregateID].Tags.Remove(e.Name));
-			Register<ConditionAdded>(e => _toggles[e.AggregateID].ConditionCount++);
-			Register<ConditionRemoved>(e => _toggles[e.AggregateID].ConditionCount--);
+			Register<ConditionAdded>(e => _toggles[e.AggregateID].AddCondition(e.Condition, e.ParentConditionID));
+			Register<ConditionRemoved>(e => _toggles[e.AggregateID].RemoveCondition(e.ConditionID));
 		}
 
 		private void Apply(ToggleCreated e) => _toggles.Add(e.ID, new ToggleView
