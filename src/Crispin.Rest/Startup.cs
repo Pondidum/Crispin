@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Crispin.Infrastructure;
-using Crispin.Infrastructure.Statistics;
-using Crispin.Infrastructure.Statistics.Writers;
 using Crispin.Rest.Infrastructure;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using StructureMap;
 
 namespace Crispin.Rest
@@ -39,8 +31,6 @@ namespace Crispin.Rest
 				_.Populate(services);
 				_.AddRegistry<CrispinRestRegistry>();
 				_.AddRegistry<MediatrRegistry>();
-
-				_.For<IStatisticsWriter>().Use<LoggingStatisticsWriter>();
 			});
 
 			return container.GetInstance<IServiceProvider>();
