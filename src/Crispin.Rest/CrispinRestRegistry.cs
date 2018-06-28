@@ -18,7 +18,7 @@ namespace Crispin.Rest
 			});
 
 			var store = BuildStorage();
-			For<IStorage>().Use(store);
+			For<IStorage>().UseIfNone(store);
 			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
 		}
 
