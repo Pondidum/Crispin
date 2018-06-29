@@ -54,11 +54,7 @@ namespace Crispin.Rest.Tests.Integration
 			var getResponse = await _system.Scenario(_ => _.Get.Url(location));
 			var toggle = getResponse.ResponseBody.ReadAsJson<Dictionary<string, object>>();
 
-			toggle.ShouldSatisfyAllConditions(
-				() => toggle.ShouldContainKeyAndValue("id", Regex.Match(location, Regexes.Guid).Value),
-				() => toggle.ShouldContainKeyAndValue("name", ToggleName),
-				() => toggle.ShouldContainKeyAndValue("description", ToggleDescription)
-			);
+			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
 		}
 
 		[Fact]
@@ -68,8 +64,25 @@ namespace Crispin.Rest.Tests.Integration
 			var getResponse = await _system.Scenario(_ => _.Get.Url("/toggles/name/" + ToggleName));
 			var toggle = getResponse.ResponseBody.ReadAsJson<Dictionary<string, object>>();
 
+			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+		}
+
+		[Fact]
+		public async Task Once_created_the_toggle_is_in_the_main_list()
+		{
+			var location = await CreateToggle();
+			var response = await _system.Scenario(_ => _.Get.Url("/toggles"));
+
+			var toggles = response.ResponseBody.ReadAsJson<Dictionary<string, object>[]>();
+			var toggle = toggles.Single();
+
+			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+		}
+
+		private static void ValidateToggle(Dictionary<string, object> toggle, string expectedID)
+		{
 			toggle.ShouldSatisfyAllConditions(
-				() => toggle.ShouldContainKeyAndValue("id", Regex.Match(location, Regexes.Guid).Value),
+				() => toggle.ShouldContainKeyAndValue("id", expectedID),
 				() => toggle.ShouldContainKeyAndValue("name", ToggleName),
 				() => toggle.ShouldContainKeyAndValue("description", ToggleDescription)
 			);
