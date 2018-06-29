@@ -32,12 +32,12 @@ namespace Crispin.Rest.Tests.Integration
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
 		}
 
-		private async Task<string> CreateToggle()
+		private async Task<string> CreateToggle(string name = ToggleName)
 		{
 			var response = await _system.Scenario(_ =>
 			{
 				_.Post
-					.Json(new { Name = ToggleName, Description = ToggleDescription })
+					.Json(new { Name = name, Description = ToggleDescription })
 					.ToUrl("/toggles");
 
 				_.StatusCodeShouldBe(HttpStatusCode.Created);
@@ -77,6 +77,23 @@ namespace Crispin.Rest.Tests.Integration
 			var toggle = toggles.Single();
 
 			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+		}
+
+		[Fact]
+		public async Task Creating_multiple_toggles_lists_them_separtely()
+		{
+			var one = Regex.Match(await CreateToggle("1"), Regexes.Guid).Value;
+			var two = Regex.Match(await CreateToggle("2"), Regexes.Guid).Value;
+			var three = Regex.Match(await CreateToggle("3"), Regexes.Guid).Value;
+
+			await _system.Scenario(_ =>
+			{
+				_.Get.Url("/toggles");
+
+				_.ContentShouldContain(one);
+				_.ContentShouldContain(two);
+				_.ContentShouldContain(three);
+			});
 		}
 
 		private static void ValidateToggle(Dictionary<string, object> toggle, string expectedID)
