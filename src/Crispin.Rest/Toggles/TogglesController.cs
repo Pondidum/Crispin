@@ -1,13 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Crispin.Handlers;
+﻿using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Handlers.GetSingle;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Crispin.Rest.Toggles
 {

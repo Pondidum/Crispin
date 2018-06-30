@@ -52,6 +52,9 @@ namespace Crispin.Rest.Tests.Integration
 		//
 		[InlineData("DELETE", "/toggles/id/" + ID + "/tags/" + Tag)]
 		[InlineData("DELETE", "/toggles/name/" + Name + "/tags/" + Tag)]
+		//
+		[InlineData("GET", "/toggles/id/" + ID + "/conditions")]
+		[InlineData("GET", "/toggles/name/" + Name + "/conditions")]
 		public Task Route_works(string method, string url) => _system.Scenario(_ =>
 		{
 			_.Context.HttpMethod(method);
