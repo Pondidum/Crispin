@@ -10,13 +10,17 @@ namespace Crispin
 {
 	public class Toggle : AggregateRoot
 	{
-		public static Toggle CreateNew(EditorID creator, string name, string description = "")
+		public static Toggle CreateNew(EditorID creator, string name, string description = "", ToggleID toggleID = null)
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentNullException(nameof(name), "Toggles must have a non-whitespace name.");
 
 			var toggle = new Toggle();
-			toggle.ApplyEvent(new ToggleCreated(creator, ToggleID.CreateNew(), name.Trim(), description));
+			toggle.ApplyEvent(new ToggleCreated(
+				creator,
+				toggleID ?? ToggleID.CreateNew(),
+				name.Trim(),
+				description));
 
 			return toggle;
 		}
