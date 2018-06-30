@@ -41,13 +41,13 @@ namespace Crispin
 		public IEnumerable<Condition> Conditions => _conditions.All;
 
 		private readonly HashSet<string> _tags;
-		private readonly ConditionBuilder _conditions;
+		private readonly ConditionCollection _conditions;
 		private ConditionID _currentConditionID;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			_conditions = new ConditionBuilder();
+			_conditions = new ConditionCollection();
 			_currentConditionID = ConditionID.Empty;
 
 			Register<ToggleCreated>(Apply);

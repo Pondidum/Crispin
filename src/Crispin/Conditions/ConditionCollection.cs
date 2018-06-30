@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Crispin.Conditions
 {
-	public class ConditionBuilder
+	public class ConditionCollection
 	{
 		public IEnumerable<Condition> All => _conditions;
 
 		private readonly List<Condition> _conditions;
 
-		public ConditionBuilder(List<Condition> conditions = null)
+		public ConditionCollection(List<Condition> conditions = null)
 		{
 			_conditions = conditions ?? new List<Condition>();
 		}

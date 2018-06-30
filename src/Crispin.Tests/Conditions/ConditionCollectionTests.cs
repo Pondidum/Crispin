@@ -7,15 +7,15 @@ using Xunit;
 
 namespace Crispin.Tests.Conditions
 {
-	public class ConditionBuilderTests
+	public class ConditionCollectionTests
 	{
 		private readonly List<Condition> _conditions;
-		private readonly ConditionBuilder _builder;
+		private readonly ConditionCollection _collection;
 
-		public ConditionBuilderTests()
+		public ConditionCollectionTests()
 		{
 			_conditions = new List<Condition>();
-			_builder = new ConditionBuilder(_conditions);
+			_collection = new ConditionCollection(_conditions);
 		}
 
 		[Fact]
@@ -24,10 +24,10 @@ namespace Crispin.Tests.Conditions
 			var conditionOne = new EnabledCondition();
 			var conditionTwo = new NotCondition();
 
-			_builder.Add(conditionOne);
-			_builder.Add(conditionTwo);
+			_collection.Add(conditionOne);
+			_collection.Add(conditionTwo);
 
-			_builder.All.ShouldBe(new Condition[] { conditionOne, conditionTwo });
+			_collection.All.ShouldBe(new Condition[] { conditionOne, conditionTwo });
 		}
 
 		[Fact]
@@ -37,9 +37,9 @@ namespace Crispin.Tests.Conditions
 
 
 			foreach (var condition in conditions)
-				_builder.Add(condition);
+				_collection.Add(condition);
 
-			_builder.All.ShouldBe(conditions);
+			_collection.All.ShouldBe(conditions);
 		}
 
 		[Fact]
@@ -49,12 +49,12 @@ namespace Crispin.Tests.Conditions
 			var two = new EnabledCondition { ID = ConditionID.Parse(1) };
 			var three = new EnabledCondition { ID = ConditionID.Parse(2) };
 
-			_builder.Add(one);
-			_builder.Add(two);
-			_builder.Add(three);
+			_collection.Add(one);
+			_collection.Add(two);
+			_collection.Add(three);
 
-			_builder.Remove(two.ID);
-			_builder.All.ShouldBe(new[] { one, three });
+			_collection.Remove(two.ID);
+			_collection.All.ShouldBe(new[] { one, three });
 		}
 
 		[Fact]
@@ -64,20 +64,20 @@ namespace Crispin.Tests.Conditions
 			var toRemove = additions + 3;
 
 			for (int i = 0; i < additions; i++)
-				_builder.Add(new EnabledCondition());
+				_collection.Add(new EnabledCondition());
 
 			Should
-				.Throw<ConditionNotFoundException>(() => _builder.Remove(ConditionID.Parse(toRemove)))
+				.Throw<ConditionNotFoundException>(() => _collection.Remove(ConditionID.Parse(toRemove)))
 				.Message.ShouldContain(toRemove.ToString());
 		}
 
 		[Fact]
 		public void Conditions_can_be_added_to_conditions_supporting_children()
 		{
-			_builder.Add(new AnyCondition { ID = ConditionID.Parse(0) });
-			_builder.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
+			_collection.Add(new AnyCondition { ID = ConditionID.Parse(0) });
+			_collection.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
 
-			var parent = _builder
+			var parent = _collection
 				.All
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<AnyCondition>();
@@ -91,10 +91,10 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void Conditions_can_be_added_to_conditions_supporting_a_single_child()
 		{
-			_builder.Add(new NotCondition { ID = ConditionID.Parse(0) });
-			_builder.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
+			_collection.Add(new NotCondition { ID = ConditionID.Parse(0) });
+			_collection.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
 
-			var parent = _builder
+			var parent = _collection
 				.All
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<NotCondition>();
@@ -108,12 +108,12 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void Conditions_cannot_be_added_to_conditions_supporting_a_single_child_which_have_a_child_already()
 		{
-			_builder.Add(new NotCondition { ID = ConditionID.Parse(0) });
-			_builder.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
+			_collection.Add(new NotCondition { ID = ConditionID.Parse(0) });
+			_collection.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0));
 
-			Should.Throw<ConditionException>(() => _builder.Add(new DisabledCondition(), parentConditionID: ConditionID.Parse(0)));
+			Should.Throw<ConditionException>(() => _collection.Add(new DisabledCondition(), parentConditionID: ConditionID.Parse(0)));
 
-			var parent = _builder
+			var parent = _collection
 				.All
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<NotCondition>();
@@ -127,20 +127,20 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void When_the_parent_condition_doesnt_exist()
 		{
-			_builder.Add(new AnyCondition());
+			_collection.Add(new AnyCondition());
 
 			Should.Throw<ConditionNotFoundException>(
-				() => _builder.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(13))
+				() => _collection.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(13))
 			);
 		}
 
 		[Fact]
 		public void When_adding_a_child_to_a_condition_which_doesnt_support_children()
 		{
-			_builder.Add(new EnabledCondition { ID = ConditionID.Parse(0) });
+			_collection.Add(new EnabledCondition { ID = ConditionID.Parse(0) });
 
 			Should.Throw<ConditionException>(
-				() => _builder.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0))
+				() => _collection.Add(new EnabledCondition(), parentConditionID: ConditionID.Parse(0))
 			);
 		}
 
@@ -151,13 +151,13 @@ namespace Crispin.Tests.Conditions
 			var childOne = new EnabledCondition { ID = ConditionID.Parse(1) };
 			var childTwo = new DisabledCondition { ID = ConditionID.Parse(2) };
 
-			_builder.Add(parent);
-			_builder.Add(childOne, parent.ID);
-			_builder.Add(childTwo, parent.ID);
+			_collection.Add(parent);
+			_collection.Add(childOne, parent.ID);
+			_collection.Add(childTwo, parent.ID);
 
-			_builder.Remove(conditionID: childOne.ID);
+			_collection.Remove(conditionID: childOne.ID);
 
-			_builder
+			_collection
 				.All
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<AnyCondition>();
@@ -168,7 +168,7 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void CanAdd_is_false_when_parent_condition_doesnt_exist()
 		{
-			_builder
+			_collection
 				.CanAdd(new EnabledCondition(), ConditionID.Parse(1324))
 				.ShouldBeFalse();
 		}
@@ -176,8 +176,8 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void CanAdd_is_fales_when_parent_doesnt_support_children()
 		{
-			_builder.Add(new DisabledCondition { ID = ConditionID.Parse(10) });
-			_builder
+			_collection.Add(new DisabledCondition { ID = ConditionID.Parse(10) });
+			_collection
 				.CanAdd(new EnabledCondition(), ConditionID.Parse(10))
 				.ShouldBeFalse();
 		}
@@ -185,8 +185,8 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void CanAdd_is_false_if_a_parent_cannot_add_a_child()
 		{
-			_builder.Add(new CannotAddChildCondition { ID = ConditionID.Parse(10) });
-			_builder
+			_collection.Add(new CannotAddChildCondition { ID = ConditionID.Parse(10) });
+			_collection
 				.CanAdd(new EnabledCondition(), ConditionID.Parse(10))
 				.ShouldBeFalse();
 		}
@@ -194,8 +194,8 @@ namespace Crispin.Tests.Conditions
 		[Fact]
 		public void CanAdd_is_true_if_parent_can_add_child()
 		{
-			_builder.Add(new AnyCondition { ID = ConditionID.Parse(10) });
-			_builder
+			_collection.Add(new AnyCondition { ID = ConditionID.Parse(10) });
+			_collection
 				.CanAdd(new EnabledCondition(), ConditionID.Parse(10))
 				.ShouldBeTrue();
 		}
@@ -206,9 +206,9 @@ namespace Crispin.Tests.Conditions
 			_conditions.Add(new AnyCondition { ID = ConditionID.Parse(14) });
 			_conditions.Add(new AllCondition { ID = ConditionID.Parse(15) });
 
-			_builder.Add(new EnabledCondition(), ConditionID.Parse(14));
+			_collection.Add(new EnabledCondition(), ConditionID.Parse(14));
 
-			_builder.All.OfType<AnyCondition>().Single().Children
+			_collection.All.OfType<AnyCondition>().Single().Children
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<EnabledCondition>();
 		}
