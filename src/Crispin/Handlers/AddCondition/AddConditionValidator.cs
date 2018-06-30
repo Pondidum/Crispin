@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Conditions;
 using Crispin.Infrastructure.Validation;
@@ -17,7 +18,19 @@ namespace Crispin.Handlers.AddCondition
 
 		public async Task<ICollection<string>> Validate(AddToggleConditionRequest request)
 		{
-			request.Condition = _builder.CreateCondition(request.Properties);
+			var builderMessages = _builder.CanCreateFrom(request.Properties).ToArray();
+
+			if (builderMessages.Any())
+				return builderMessages;
+
+			var condition = _builder.CreateCondition(request.Properties);
+
+			var conditionMessages = condition.Validate();
+
+			if (conditionMessages.Any())
+				return conditionMessages;
+
+			request.Condition = condition;
 			return Array.Empty<string>();
 		}
 	}

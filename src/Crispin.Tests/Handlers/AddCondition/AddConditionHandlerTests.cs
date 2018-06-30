@@ -7,7 +7,7 @@ using Crispin.Infrastructure.Storage;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Tests.Handlers
+namespace Crispin.Tests.Handlers.AddCondition
 {
 	public class AddConditionHandlerTests : HandlerTest<AddConditionHandler>
 	{

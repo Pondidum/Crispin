@@ -37,6 +37,6 @@ namespace Crispin.Tests.Handlers
 			_mediator = container.GetInstance<IMediator>();
 		}
 
-		protected async Task Send(TRequest message) => Response = await _mediator.Send(message);
+		protected async Task<TResponse> Send(TRequest message) => Response = await _mediator.Send(message);
 	}
 }
