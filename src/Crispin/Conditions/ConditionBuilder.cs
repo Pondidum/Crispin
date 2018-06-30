@@ -14,6 +14,17 @@ namespace Crispin.Conditions
 			Conditions = new Lazy<Dictionary<string, Func<Dictionary<string, object>, Condition>>>(BuildConditionsMap);
 		}
 
+		public IEnumerable<string> CanCreateFrom(Dictionary<string, object> conditionProperties)
+		{
+			if (conditionProperties.TryGetValue("type", out var type) == false)
+				return new[] { "The Type was not specified" };
+
+			if (Conditions.Value.TryGetValue(Convert.ToString(type), out var create) == false)
+				return new[] { $"Unknown condition type '{type}'" };
+
+			return Array.Empty<string>();
+		}
+
 		public Condition CreateCondition(Dictionary<string, object> conditionProperties)
 		{
 			if (conditionProperties.TryGetValue("type", out var type) == false)
