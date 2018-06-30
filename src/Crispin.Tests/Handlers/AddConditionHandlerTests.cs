@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
 using Crispin.Events;
 using Crispin.Handlers.AddCondition;
 using Crispin.Infrastructure.Storage;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -17,19 +13,21 @@ namespace Crispin.Tests.Handlers
 	{
 		protected override AddConditionHandler CreateHandler(IStorage storage)
 		{
-			var builder = Substitute.For<IConditionBuilder>();
-			builder
-				.CreateCondition(Arg.Any<Dictionary<string, object>>())
-				.Returns(new EnabledCondition());
+			return new AddConditionHandler(storage);
+		}
 
-			return new AddConditionHandler(storage, builder);
+		private async Task<AddToggleConditionResponse> HandleMessage()
+		{
+			return await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, new Dictionary<string, object>())
+			{
+				Condition = new EnabledCondition()
+			});
 		}
 
 		[Fact]
 		public async Task The_updated_conditions_collection_is_returned()
 		{
-			var condition = new Dictionary<string, object>();
-			var result = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, condition));
+			var result = await HandleMessage();
 
 			result.Conditions.ShouldHaveSingleItem().ShouldBeOfType<EnabledCondition>();
 		}
@@ -37,8 +35,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task The_updated_condition_mode_is_returned()
 		{
-			var condition = new Dictionary<string, object>();
-			var result = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, condition));
+			var result = await HandleMessage();
 
 			result.ConditionMode.ShouldBe(Toggle.ConditionMode);
 		}
@@ -46,8 +43,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task The_toggle_is_saved_into_the_session()
 		{
-			var condition = new Dictionary<string, object>();
-			await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, condition));
+			await HandleMessage();
 
 			Event<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
 				() => e.Condition.ShouldBeOfType<EnabledCondition>(),
