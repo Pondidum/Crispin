@@ -8,6 +8,6 @@ namespace Crispin.Conditions
 		public string ConditionType => GetType().Name.Replace("Condition", "");
 		public ConditionID ID { get; set; }
 
-		public virtual ICollection<string> Validate() => Array.Empty<string>();
+		public virtual IEnumerable<string> Validate() => Array.Empty<string>();
 	}
 }

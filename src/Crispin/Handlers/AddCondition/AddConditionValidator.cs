@@ -25,7 +25,7 @@ namespace Crispin.Handlers.AddCondition
 
 			var condition = _builder.CreateCondition(request.Properties);
 
-			var conditionMessages = condition.Validate();
+			var conditionMessages = condition.Validate().ToArray();
 
 			if (conditionMessages.Any())
 				return conditionMessages;
