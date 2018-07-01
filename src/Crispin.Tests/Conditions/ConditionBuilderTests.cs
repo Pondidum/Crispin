@@ -45,6 +45,16 @@ namespace Crispin.Tests.Conditions
 		}
 
 		[Fact]
+		public void When_building_and_the_type_key_is_not_lowercase()
+		{
+			_props["TyPE"] = "enabled";
+
+			_builder
+				.CreateCondition(_props)
+				.GetType().Name.ShouldStartWith("enabled", Case.Insensitive);
+		}
+
+		[Fact]
 		public void When_building_and_the_type_is_an_unknown_condition()
 		{
 			_props["type"] = "whaaaaaaat?!";
@@ -90,6 +100,17 @@ namespace Crispin.Tests.Conditions
 				.CanCreateFrom(_props)
 				.ShouldBeEmpty();
 		}
+
+		[Fact]
+		public void When_validating_and_the_type_key_is_not_lowercase()
+		{
+			_props["TyPE"] = "enabled";
+
+			_builder
+				.CanCreateFrom(_props)
+				.ShouldBeEmpty();
+		}
+
 
 		[Fact]
 		public void When_validating_and_the_type_is_an_unknown_condition()

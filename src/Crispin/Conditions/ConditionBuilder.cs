@@ -16,6 +16,8 @@ namespace Crispin.Conditions
 
 		public IEnumerable<string> CanCreateFrom(Dictionary<string, object> conditionProperties)
 		{
+			conditionProperties = new Dictionary<string, object>(conditionProperties, StringComparer.OrdinalIgnoreCase);
+
 			if (conditionProperties.TryGetValue("type", out var type) == false)
 				return new[] { "The Type was not specified" };
 
@@ -27,6 +29,8 @@ namespace Crispin.Conditions
 
 		public Condition CreateCondition(Dictionary<string, object> conditionProperties)
 		{
+			conditionProperties = new Dictionary<string, object>(conditionProperties, StringComparer.OrdinalIgnoreCase);
+
 			if (conditionProperties.TryGetValue("type", out var type) == false)
 				throw new ConditionException("The Type was not specified");
 
