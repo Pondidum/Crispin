@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Crispin.Handlers;
 using Crispin.Handlers.GetAll;
-using Crispin.Projections;
+using Crispin.Rest.Toggles;
 using Crispin.Views;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Shouldly;
@@ -11,16 +11,25 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Toggles
 {
-	public class GetAllTogglesTests : TogglesControllerTests
+	public class GetAllTogglesTests
 	{
+		private readonly IMediator _mediator;
+		private readonly TogglesController _controller;
+
+		public GetAllTogglesTests()
+		{
+			_mediator = Substitute.For<IMediator>();
+			_controller = new TogglesController(_mediator);
+		}
+
 		[Fact]
 		public async Task When_getting_all_toggles_and_there_are_none()
 		{
-			Mediator
+			_mediator
 				.Send(Arg.Any<GetAllTogglesRequest>())
 				.Returns(new GetAllTogglesResponse());
 
-			var response = await Controller.Get() as JsonResult;
+			var response = await _controller.Get() as JsonResult;
 
 			((IEnumerable<ToggleView>)response.Value).ShouldBeEmpty();
 		}
@@ -31,11 +40,11 @@ namespace Crispin.Rest.Tests.Toggles
 			var response = new GetAllTogglesResponse();
 			response.Toggles = new[] { new ToggleView(), new ToggleView(), new ToggleView() };
 
-			Mediator
+			_mediator
 				.Send(Arg.Any<GetAllTogglesRequest>())
 				.Returns(response);
 
-			var jsonResult = await Controller.Get() as JsonResult;
+			var jsonResult = await _controller.Get() as JsonResult;
 
 			jsonResult.Value.ShouldBe(response.Toggles);
 		}

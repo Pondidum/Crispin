@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using Crispin.Handlers.GetSingle;
-using Crispin.Projections;
+using Crispin.Rest.Toggles;
 using Crispin.Views;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Shouldly;
@@ -9,11 +10,16 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Toggles
 {
-	public class GetSingleToggleTests : TogglesControllerTests
+	public class GetSingleToggleTests
 	{
+		private readonly IMediator _mediator;
+		private readonly TogglesController _controller;
+
 		public GetSingleToggleTests()
 		{
-			Mediator
+			_mediator = Substitute.For<IMediator>();
+			_controller = new TogglesController(_mediator);
+			_mediator
 				.Send(Arg.Any<GetToggleRequest>())
 				.Returns(new GetToggleResponse { Toggle = new ToggleView() });
 		}
@@ -22,9 +28,9 @@ namespace Crispin.Rest.Tests.Toggles
 		public async Task When_fetching_a_single_toggle_by_id()
 		{
 			var locator = ToggleLocator.Create(ToggleID.CreateNew());
-			var response = (JsonResult)await Controller.Get(locator);
+			var response = (JsonResult)await _controller.Get(locator);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
+			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
 			response.Value.ShouldBeOfType<ToggleView>();
 		}
 
@@ -32,9 +38,9 @@ namespace Crispin.Rest.Tests.Toggles
 		public async Task When_fetching_a_single_toggle_by_name()
 		{
 			var locator = ToggleLocator.Create("toggle-name");
-			var response = (JsonResult)await Controller.Get(locator);
+			var response = (JsonResult)await _controller.Get(locator);
 
-			await Mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
+			await _mediator.Received().Send(Arg.Is<GetToggleRequest>(req => req.Locator == locator));
 			response.Value.ShouldBeOfType<ToggleView>();
 		}
 	}
