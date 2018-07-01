@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Crispin.Conditions;
@@ -31,6 +32,17 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response.Toggle?.Conditions);
+		}
+
+		[Route("id/{id}/conditions/{condition}")]
+		[Route("name/{id}/conditions/{condition}")]
+		[HttpGet]
+		public async Task<IActionResult> GetConditions(ToggleLocator id, ConditionID condition)
+		{
+			var request = new GetToggleRequest(id);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response.Toggle?.Conditions?.SingleOrDefault(c => c.ID == condition));
 		}
 
 		[Route("id/{id}/conditions")]

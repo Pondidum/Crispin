@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Alba;
+using Crispin.Conditions.ConditionTypes;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ namespace Crispin.Rest.Tests.Integration
 			);
 
 			toggle.AddTag(editor, "test");
+			toggle.AddCondition(editor, new EnabledCondition());
 
 			using (var session = storage.BeginSession().Result)
 				session.Save(toggle).Wait();
@@ -55,6 +57,9 @@ namespace Crispin.Rest.Tests.Integration
 		//
 		[InlineData("GET", "/toggles/id/" + ID + "/conditions")]
 		[InlineData("GET", "/toggles/name/" + Name + "/conditions")]
+		//
+		[InlineData("GET", "/toggles/id/" + ID + "/conditions/0")]
+		[InlineData("GET", "/toggles/name/" + Name + "/conditions/0")]
 		public Task Route_works(string method, string url) => _system.Scenario(_ =>
 		{
 			_.Context.HttpMethod(method);
