@@ -9,7 +9,6 @@ using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Crispin.Rest.Tests.TestUtils;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
 using Shouldly;
 using Xunit;
 

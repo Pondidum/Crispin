@@ -25,8 +25,8 @@ namespace Crispin.Handlers.AddCondition
 
 				return new AddToggleConditionResponse
 				{
-					ConditionMode = toggle.ConditionMode,
-					Conditions = toggle.Conditions
+					ToggleID = toggle.ID,
+					Condition = message.Condition
 				};
 			}
 		}

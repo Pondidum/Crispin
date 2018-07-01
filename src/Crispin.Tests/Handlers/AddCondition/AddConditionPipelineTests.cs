@@ -48,8 +48,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 			var response = await Send(new AddToggleConditionRequest(Editor, ToggleLocator.Create(toggle.ID), _props));
 
 			response
-				.Conditions
-				.ShouldHaveSingleItem()
+				.Condition
 				.ShouldBeOfType<EnabledCondition>();
 		}
 	}

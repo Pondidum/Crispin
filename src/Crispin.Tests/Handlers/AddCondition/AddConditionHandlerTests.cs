@@ -29,15 +29,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 		{
 			var result = await HandleMessage();
 
-			result.Conditions.ShouldHaveSingleItem().ShouldBeOfType<EnabledCondition>();
-		}
-
-		[Fact]
-		public async Task The_updated_condition_mode_is_returned()
-		{
-			var result = await HandleMessage();
-
-			result.ConditionMode.ShouldBe(Toggle.ConditionMode);
+			result.Condition.ShouldBeOfType<EnabledCondition>();
 		}
 
 		[Fact]

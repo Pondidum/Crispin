@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Crispin.Conditions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Crispin.Rest.Infrastructure
@@ -9,9 +10,9 @@ namespace Crispin.Rest.Infrastructure
 	{
 		private static readonly Dictionary<Type, Func<string, object>> Builders = new Dictionary<Type, Func<string, object>>
 		{
-			//{ typeof(ToggleID), value => ToggleID.Parse(Guid.Parse(value)) },
 			{ typeof(GroupID), value => GroupID.Parse(value) },
-			{ typeof(UserID), value => UserID.Parse(value) }
+			{ typeof(UserID), value => UserID.Parse(value) },
+			{ typeof(ConditionID), value => ConditionID.Parse(int.Parse(value))}
 		};
 
 		public IModelBinder GetBinder(ModelBinderProviderContext context)
