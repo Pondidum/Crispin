@@ -61,5 +61,14 @@ namespace Crispin.Rest.Tests.Integration
 				_.ContentShouldBe("[]");
 			});
 		}
+
+		[Fact]
+		public Task When_removing_a_non_existing_condition_from_a_toggle() => _system.Scenario(_ =>
+		{
+			_.Delete
+				.Url($"/toggles/id/{_toggle.ID}/conditions/0");
+
+			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
+		});
 	}
 }

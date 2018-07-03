@@ -79,7 +79,7 @@ namespace Crispin.Rest.Tests.Integration
 		}
 
 		[Fact]
-		public async Task Creating_multiple_toggles_lists_them_separtely()
+		public async Task Creating_multiple_toggles_lists_them_separately()
 		{
 			var one = Regex.Match(await CreateToggle("1"), Regexes.Guid).Value;
 			var two = Regex.Match(await CreateToggle("2"), Regexes.Guid).Value;

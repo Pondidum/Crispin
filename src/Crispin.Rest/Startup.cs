@@ -21,6 +21,7 @@ namespace Crispin.Rest
 			{
 				options.Filters.Add<JsonNotFoundActionFilter>();
 				options.Filters.Add<ValidationExceptionFilter>();
+				options.Filters.Add<NotFoundExceptionFilter>();
 
 				options.ModelBinderProviders.Insert(0, new ToggleLocatorBinder());
 				options.ModelBinderProviders.Insert(1, new DomainIDBinder());
