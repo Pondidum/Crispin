@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using Crispin.Rest.Infrastructure;
+using Crispin.Rest.Tests.TestUtils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -47,12 +48,12 @@ namespace Crispin.Rest.Tests.Infrastructure
 		[Fact]
 		public void When_the_exception_is_not_a_validation_exception()
 		{
-			_context.Exception = new AbandonedMutexException();
+			_context.Exception = new ExpectedException();
 
 			_filter.OnException(_context);
 
 			_context.ShouldSatisfyAllConditions(
-				() => _context.Exception.ShouldBeOfType<AbandonedMutexException>(),
+				() => _context.Exception.ShouldBeOfType<ExpectedException>(),
 				() => _context.ExceptionHandled.ShouldBeFalse(),
 				() => _context.Result.ShouldBeOfType<OkResult>()
 			);
