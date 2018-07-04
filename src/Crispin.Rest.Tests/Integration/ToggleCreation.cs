@@ -47,6 +47,22 @@ namespace Crispin.Rest.Tests.Integration
 		}
 
 		[Fact]
+		public Task Fetching_a_non_existing_toggle_by_id_returns_not_found() => _system.Scenario(_ =>
+		{
+			_.Get.Url("/toggles/id/" + Guid.NewGuid());
+
+			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
+		});
+
+		[Fact]
+		public Task Fetching_a_non_existing_toggle_by_name_returns_not_found() => _system.Scenario(_ =>
+		{
+			_.Get.Url("/toggles/name/whaaaaat");
+
+			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
+		});
+
+		[Fact]
 		public async Task Once_created_a_toggle_can_be_fetched_by_id()
 		{
 			var location = await CreateToggle();
