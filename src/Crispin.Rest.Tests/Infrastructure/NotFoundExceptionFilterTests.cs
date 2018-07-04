@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Crispin.Conditions;
+using Crispin.Infrastructure.Storage;
 using Crispin.Rest.Infrastructure;
 using Crispin.Rest.Tests.TestUtils;
 using Microsoft.AspNetCore.Http;
@@ -61,6 +63,21 @@ namespace Crispin.Rest.Tests.Infrastructure
 		public void When_the_exception_is_a_condition_not_found_exception()
 		{
 			_context.Exception = new ConditionNotFoundException(ConditionID.Parse(123));
+
+			_filter.OnException(_context);
+
+			_context.ShouldSatisfyAllConditions(
+				() => _context.ExceptionHandled.ShouldBeTrue(),
+				() => _context.Result.ShouldBeOfType<NotFoundResult>()
+			);
+		}
+
+		[Fact]
+		public void When_the_exception_is_an_aggregate_not_found_exception()
+		{
+			_context.Exception = new AggregateNotFoundException(
+				typeof(Toggle),
+				ToggleID.CreateNew());
 
 			_filter.OnException(_context);
 

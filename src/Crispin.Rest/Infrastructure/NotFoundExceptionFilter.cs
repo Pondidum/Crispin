@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Crispin.Conditions;
+using Crispin.Infrastructure.Storage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -6,11 +9,18 @@ namespace Crispin.Rest.Infrastructure
 {
 	public class NotFoundExceptionFilter : IExceptionFilter
 	{
+		private static readonly HashSet<Type> ManagedExceptions = new HashSet<Type>
+		{
+			typeof(ConditionNotFoundException),
+			typeof(AggregateNotFoundException)
+		};
+
 		public void OnException(ExceptionContext context)
 		{
-			var exception = context.Exception as ConditionNotFoundException;
+			if (context.Exception == null)
+				return;
 
-			if (exception == null)
+			if (ManagedExceptions.Contains(context.Exception.GetType()) == false)
 				return;
 
 			context.ExceptionHandled = true;
