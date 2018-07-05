@@ -33,7 +33,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 		public async Task When_the_builder_has_errors()
 		{
 			_builder.CanCreateFrom(_props).Returns(new[] { "builder validation error" });
-			_builder.CreateCondition(_props).Returns(new InvalidCondition());
+			_builder.CreateCondition(Arg.Any<ConditionID>(), _props).Returns(new InvalidCondition());
 
 			var results = await ValidateMessage();
 
@@ -44,7 +44,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 		public async Task When_the_condition_has_errors()
 		{
 			_builder.CanCreateFrom(_props).Returns(Enumerable.Empty<string>());
-			_builder.CreateCondition(_props).Returns(new InvalidCondition());
+			_builder.CreateCondition(Arg.Any<ConditionID>(), _props).Returns(new InvalidCondition());
 
 			var results = await ValidateMessage();
 
@@ -55,7 +55,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 		public async Task When_the_both_are_fine()
 		{
 			_builder.CanCreateFrom(_props).Returns(Enumerable.Empty<string>());
-			_builder.CreateCondition(_props).Returns(new ValidCondition());
+			_builder.CreateCondition(Arg.Any<ConditionID>(), _props).Returns(new ValidCondition());
 
 			var results = await ValidateMessage();
 

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Alba;
-using Crispin.Conditions.ConditionTypes;
+using Crispin.Conditions;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,10 @@ namespace Crispin.Rest.Tests.Integration
 			);
 
 			toggle.AddTag(editor, "test");
-			toggle.AddCondition(editor, new EnabledCondition());
+			toggle.AddCondition(editor, new Dictionary<string, object>
+			{
+				{ ConditionBuilder.TypeKey, "enabled" }
+			});
 
 			using (var session = storage.BeginSession().Result)
 				session.Save(toggle).Wait();

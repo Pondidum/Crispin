@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crispin.Conditions;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Views;
@@ -16,6 +17,7 @@ namespace Crispin.Projections
 		public AllTogglesProjection()
 		{
 			_toggles = new Dictionary<ToggleID, ToggleView>();
+			var conditionBuilder = new ConditionBuilder();
 			var find = new Func<ToggleID, ToggleView>(id => _toggles[id]);
 
 			Register<ToggleCreated>(Apply);
@@ -23,10 +25,17 @@ namespace Crispin.Projections
 			Register<TagAdded>(e => find(e.AggregateID).Tags.Add(e.Name));
 			Register<TagRemoved>(e => find(e.AggregateID).Tags.Remove(e.Name));
 
-			Register<ConditionAdded>(e => find(e.AggregateID).AddCondition(e.Condition, e.ParentConditionID));
-			Register<ConditionRemoved>(e => find(e.AggregateID).RemoveCondition(e.ConditionID));
 			Register<EnabledOnAllConditions>(e => find(e.AggregateID).ConditionMode = ConditionModes.All);
 			Register<EnabledOnAnyCondition>(e => find(e.AggregateID).ConditionMode = ConditionModes.Any);
+
+			Register<ConditionAdded>(e => find(e.AggregateID).AddCondition(
+				conditionBuilder.CreateCondition(e.ConditionID, e.Properties),
+				e.ParentConditionID)
+			);
+
+			Register<ConditionRemoved>(e => find(e.AggregateID).RemoveCondition(
+				e.ConditionID)
+			);
 		}
 
 		private void Apply(ToggleCreated e) => _toggles.Add(e.ID, new ToggleView

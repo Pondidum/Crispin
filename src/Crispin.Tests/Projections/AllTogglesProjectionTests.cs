@@ -1,4 +1,5 @@
-﻿using Crispin.Events;
+﻿using System.Collections.Generic;
+using Crispin.Events;
 using Crispin.Projections;
 using Shouldly;
 using System.Linq;
@@ -33,6 +34,11 @@ namespace Crispin.Tests.Projections
 		}
 
 		private ToggleView SingleToggle() => _projection.Toggles.Single();
+
+		private static Dictionary<string, object> ConditionProperties(string type) => new Dictionary<string, object>
+		{
+			{ ConditionBuilder.TypeKey, type }
+		};
 
 		[Fact]
 		public void When_no_events_have_been_processed()
@@ -91,7 +97,7 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_condition_is_added()
 		{
-			Consume(new ConditionAdded(_editor, new DisabledCondition()));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(0), null,  ConditionProperties("Disabled")));
 
 			SingleToggle().Conditions.Count.ShouldBe(1);
 		}
@@ -99,9 +105,9 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_conditions_are_removed()
 		{
-			Consume(new ConditionAdded(_editor, new DisabledCondition { ID = ConditionID.Parse(0) }));
-			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(1) }));
-			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(2) }));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(0), null,  ConditionProperties("Disabled")));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(1), null,  ConditionProperties("Disabled")));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(2), null,  ConditionProperties("Disabled")));
 			Consume(new ConditionRemoved(_editor, ConditionID.Parse(1)));
 
 			SingleToggle().Conditions.Count.ShouldBe(2);
@@ -110,8 +116,8 @@ namespace Crispin.Tests.Projections
 		[Fact]
 		public void When_a_child_conditions_are_added()
 		{
-			Consume(new ConditionAdded(_editor, new AllCondition { ID = ConditionID.Parse(0) }));
-			Consume(new ConditionAdded(_editor, new EnabledCondition { ID = ConditionID.Parse(1) }, ConditionID.Parse(0)));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(0), null, ConditionProperties("all")));
+			Consume(new ConditionAdded(_editor, ConditionID.Parse(1), ConditionID.Parse(0), ConditionProperties("enabled")));
 
 			SingleToggle()
 				.Conditions.ShouldHaveSingleItem().ShouldBeOfType<AllCondition>()

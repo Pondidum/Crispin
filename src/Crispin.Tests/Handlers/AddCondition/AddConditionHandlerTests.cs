@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
 using Crispin.Events;
 using Crispin.Handlers.AddCondition;
@@ -11,6 +12,16 @@ namespace Crispin.Tests.Handlers.AddCondition
 {
 	public class AddConditionHandlerTests : HandlerTest<AddConditionHandler>
 	{
+		private readonly Dictionary<string, object> _properties;
+
+		public AddConditionHandlerTests()
+		{
+			_properties = new Dictionary<string, object>
+			{
+				{ ConditionBuilder.TypeKey, "enabled" }
+			};
+		}
+
 		protected override AddConditionHandler CreateHandler(IStorage storage)
 		{
 			return new AddConditionHandler(storage);
@@ -18,10 +29,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 
 		private async Task<AddToggleConditionResponse> HandleMessage()
 		{
-			return await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, new Dictionary<string, object>())
-			{
-				Condition = new EnabledCondition()
-			});
+			return await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, _properties));
 		}
 
 		[Fact]
@@ -38,7 +46,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 			await HandleMessage();
 
 			Event<ConditionAdded>(e => e.ShouldSatisfyAllConditions(
-				() => e.Condition.ShouldBeOfType<EnabledCondition>(),
+				() => e.Properties.ShouldBe(_properties),
 				() => e.Editor.ShouldBe(Editor)
 			));
 		}

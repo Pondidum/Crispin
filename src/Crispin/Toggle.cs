@@ -43,11 +43,14 @@ namespace Crispin
 		private readonly HashSet<string> _tags;
 		private readonly ConditionCollection _conditions;
 		private ConditionID _currentConditionID;
+		private readonly ConditionBuilder _conditionBuilder;
 
 		private Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			_conditions = new ConditionCollection();
+			_conditionBuilder = new ConditionBuilder();
+
 			_currentConditionID = ConditionID.Empty;
 
 			Register<ToggleCreated>(Apply);
@@ -93,12 +96,20 @@ namespace Crispin
 			ApplyEvent(new EnabledOnAllConditions(editor));
 		}
 
-		public void AddCondition(EditorID editor, Condition condition, ConditionID parentConditionID = null)
+		public ConditionID AddCondition(EditorID editor, Dictionary<string, object> conditionProperties, ConditionID parentConditionID = null)
 		{
+			var messages = _conditionBuilder.CanCreateFrom(conditionProperties).ToArray();
+
+			if (messages.Any())
+				throw new ConditionException(messages.First());
+
 			ValidateParentCondition(parentConditionID);
 
-			condition.ID = NextConditionID();
-			ApplyEvent(new ConditionAdded(editor, condition, parentConditionID));
+			var conditionID = NextConditionID();
+
+			ApplyEvent(new ConditionAdded(editor, conditionID, parentConditionID, conditionProperties));
+
+			return conditionID;
 		}
 
 		public void RemoveCondition(EditorID editor, ConditionID conditionID)
@@ -108,6 +119,8 @@ namespace Crispin
 
 			ApplyEvent(new ConditionRemoved(editor, conditionID));
 		}
+
+		public Condition Condition(ConditionID added) => _conditions.FindCondition(added);
 
 		public ToggleView ToView() => new ToggleView
 		{
@@ -151,11 +164,10 @@ namespace Crispin
 
 		private void Apply(ConditionAdded e)
 		{
-			_currentConditionID = e.Condition.ID;
-			e.ParentConditionID.Match(
-				hasValue: parent => _conditions.Add(e.Condition, parent),
-				noValue: () => _conditions.Add(e.Condition)
-			);
+			var condition = _conditionBuilder.CreateCondition(e.ConditionID, e.Properties);
+
+			_currentConditionID = e.ConditionID;
+			_conditions.Add(condition, e.ParentConditionID);
 		}
 
 		private void Apply(ConditionRemoved e)

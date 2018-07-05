@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Alba;
+using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
@@ -31,6 +33,11 @@ namespace Crispin.Rest.Tests.Integration
 				session.Save(_toggle).Wait();
 		}
 
+		private static Dictionary<string, object> Condition(string type) => new Dictionary<string, object>
+		{
+			{ ConditionBuilder.TypeKey, type }
+		};
+
 		[Fact]
 		public Task When_adding_a_condition_to_a_toggle() => _system.Scenario(_ =>
 		{
@@ -48,7 +55,7 @@ namespace Crispin.Rest.Tests.Integration
 		[Fact]
 		public async Task When_removing_a_condition_from_a_toggle()
 		{
-			_toggle.AddCondition(EditorID.Parse("me"), new DisabledCondition());
+			_toggle.AddCondition(EditorID.Parse("me"), Condition("disabled"));
 			using (var session = await _storage.BeginSession())
 				await session.Save(_toggle);
 

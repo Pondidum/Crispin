@@ -18,15 +18,14 @@ namespace Crispin.Handlers.AddCondition
 			using (var session = await _storage.BeginSession())
 			{
 				var toggle = await message.Locator.LocateAggregate(session);
-
-				toggle.AddCondition(message.Editor, message.Condition);
+				var added = toggle.AddCondition(message.Editor, message.Properties);
 
 				await session.Save(toggle);
 
 				return new AddToggleConditionResponse
 				{
 					ToggleID = toggle.ID,
-					Condition = message.Condition
+					Condition = toggle.Condition(added)
 				};
 			}
 		}

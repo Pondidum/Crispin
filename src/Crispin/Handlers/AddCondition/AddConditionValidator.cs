@@ -23,14 +23,12 @@ namespace Crispin.Handlers.AddCondition
 			if (builderMessages.Any())
 				return builderMessages;
 
-			var condition = _builder.CreateCondition(request.Properties);
-
+			var condition = _builder.CreateCondition(ConditionID.Empty, request.Properties);
 			var conditionMessages = condition.Validate().ToArray();
 
 			if (conditionMessages.Any())
 				return conditionMessages;
 
-			request.Condition = condition;
 			return Array.Empty<string>();
 		}
 	}

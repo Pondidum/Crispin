@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Crispin.Conditions.ConditionTypes;
+using Crispin.Conditions;
 using Crispin.Events;
 using Crispin.Handlers.RemoveCondition;
 using Crispin.Infrastructure.Storage;
@@ -15,7 +16,10 @@ namespace Crispin.Tests.Handlers
 
 		protected override void InitialiseToggle(Toggle toggle)
 		{
-			toggle.AddCondition(Editor, new EnabledCondition());
+			toggle.AddCondition(Editor, new Dictionary<string, object>
+			{
+				{ ConditionBuilder.TypeKey, "enabled" }
+			});
 		}
 
 		[Fact]

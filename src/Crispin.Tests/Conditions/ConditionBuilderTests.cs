@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
@@ -11,11 +12,13 @@ namespace Crispin.Tests.Conditions
 	{
 		private readonly ConditionBuilder _builder;
 		private readonly Dictionary<string, object> _props;
+		private readonly ConditionID _conditionID;
 
 		public ConditionBuilderTests()
 		{
 			_builder = new ConditionBuilder();
 			_props = new Dictionary<string, object>();
+			_conditionID = ConditionID.Parse(new Random().Next(17, 2345));
 		}
 
 		public static IEnumerable<object[]> KnownConditions => typeof(Condition)
@@ -29,7 +32,7 @@ namespace Crispin.Tests.Conditions
 		public void When_building_and_the_type_is_not_specified()
 		{
 			Should
-				.Throw<ConditionException>(() => _builder.CreateCondition(_props))
+				.Throw<ConditionException>(() => _builder.CreateCondition(_conditionID, _props))
 				.Message.ShouldContain("Type was not specified");
 		}
 
@@ -40,7 +43,7 @@ namespace Crispin.Tests.Conditions
 			_props["type"] = name;
 
 			_builder
-				.CreateCondition(_props)
+				.CreateCondition(_conditionID, _props)
 				.GetType().Name.ShouldStartWith(name, Case.Insensitive);
 		}
 
@@ -50,7 +53,7 @@ namespace Crispin.Tests.Conditions
 			_props["TyPE"] = "enabled";
 
 			_builder
-				.CreateCondition(_props)
+				.CreateCondition(_conditionID, _props)
 				.GetType().Name.ShouldStartWith("enabled", Case.Insensitive);
 		}
 
@@ -60,7 +63,7 @@ namespace Crispin.Tests.Conditions
 			_props["type"] = "whaaaaaaat?!";
 
 			Should
-				.Throw<ConditionException>(() => _builder.CreateCondition(_props))
+				.Throw<ConditionException>(() => _builder.CreateCondition(_conditionID, _props))
 				.Message.ShouldBe($"Unknown condition type '{_props["type"]}'");
 		}
 
@@ -72,7 +75,7 @@ namespace Crispin.Tests.Conditions
 			_props["groupName"] = "haystack";
 
 			var condition = _builder
-				.CreateCondition(_props)
+				.CreateCondition(_conditionID, _props)
 				.ShouldBeOfType<InGroupCondition>();
 
 			condition.ShouldSatisfyAllConditions(
@@ -110,7 +113,6 @@ namespace Crispin.Tests.Conditions
 				.CanCreateFrom(_props)
 				.ShouldBeEmpty();
 		}
-
 
 		[Fact]
 		public void When_validating_and_the_type_is_an_unknown_condition()

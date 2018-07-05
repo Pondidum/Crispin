@@ -7,6 +7,8 @@ namespace Crispin.Conditions
 {
 	public class ConditionBuilder : IConditionBuilder
 	{
+		public const string TypeKey = "type";
+
 		private static readonly Lazy<Dictionary<string, Func<Dictionary<string, object>, Condition>>> Conditions;
 
 		static ConditionBuilder()
@@ -18,7 +20,7 @@ namespace Crispin.Conditions
 		{
 			conditionProperties = new Dictionary<string, object>(conditionProperties, StringComparer.OrdinalIgnoreCase);
 
-			if (conditionProperties.TryGetValue("type", out var type) == false)
+			if (conditionProperties.TryGetValue(TypeKey, out var type) == false)
 				return new[] { "The Type was not specified" };
 
 			if (Conditions.Value.TryGetValue(Convert.ToString(type), out var create) == false)
@@ -27,17 +29,20 @@ namespace Crispin.Conditions
 			return Array.Empty<string>();
 		}
 
-		public Condition CreateCondition(Dictionary<string, object> conditionProperties)
+		public Condition CreateCondition(ConditionID conditionID, Dictionary<string, object> conditionProperties)
 		{
 			conditionProperties = new Dictionary<string, object>(conditionProperties, StringComparer.OrdinalIgnoreCase);
 
-			if (conditionProperties.TryGetValue("type", out var type) == false)
+			if (conditionProperties.TryGetValue(TypeKey, out var type) == false)
 				throw new ConditionException("The Type was not specified");
 
 			if (Conditions.Value.TryGetValue(Convert.ToString(type), out var create) == false)
 				throw new ConditionException($"Unknown condition type '{type}'");
 
-			return create(conditionProperties);
+			var condition = create(conditionProperties);
+			condition.ID = conditionID;
+
+			return condition;
 		}
 
 
