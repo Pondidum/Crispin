@@ -70,5 +70,35 @@ namespace Crispin.Rest.Tests.Integration
 
 			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
 		});
+
+		[Fact]
+		public async Task When_a_condition_has_children()
+		{
+			var editor = EditorID.Parse("me");
+			_toggle.AddCondition(editor, Condition("all"));
+			_toggle.AddCondition(editor, Condition("enabled"), ConditionID.Parse(0));
+			_toggle.AddCondition(editor, Condition("disabled"), ConditionID.Parse(0));
+
+			using (var session = await _storage.BeginSession())
+				await session.Save(_toggle);
+
+			await _system.Scenario(_ =>
+			{
+				_.Get
+					.Url($"/toggles/id/{_toggle.ID}/conditions");
+
+				_.StatusCodeShouldBeOk();
+				_.ContentShouldBe(@"[
+  {
+    ""children"": [
+      { ""conditionType"": ""Enabled"", ""id"": 1 },
+      { ""conditionType"": ""Disabled"", ""id"": 2 }
+    ],
+    ""conditionType"": ""All"",
+    ""id"": 0
+  }
+]".Replace(" ", "").Replace("\r\n", ""));
+			});
+		}
 	}
 }
