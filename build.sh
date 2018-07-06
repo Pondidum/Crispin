@@ -1,16 +1,21 @@
-#!/bin/bash
+#! /bin/bash
 
 # First parameter is build mode, defaults to Debug
-
 MODE=${1:-Debug}
-NAME="Crispin"
 
-dotnet restore
+# Find the solution file in the root take it's name
+NAME=$(basename $(ls *.sln | head -n 1) .sln)
 
-dotnet build ./src/$NAME --configuration $MODE
-dotnet build ./src/$NAME.Tests --configuration $MODE
+dotnet build --configuration $MODE
 
-dotnet test ./src/$NAME.Tests/$NAME.Tests.csproj --configuration $MODE
+find ./src -iname "*.Tests.csproj" -type f -exec dotnet test \
+    --no-build \
+    --no-restore \
+    --configuration $MODE \
+    "{}" \;
 
-mkdir -p ./build/deploy
-dotnet pack ./src/$NAME --configuration $MODE --output ../../build/deploy
+dotnet pack \
+    --no-restore \
+    --no-build \
+    --configuration $MODE \
+    --output ../../build/deploy
