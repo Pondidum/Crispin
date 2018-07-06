@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleTags
+	public class ToggleTags : IAsyncLifetime
 	{
 		private readonly SystemUnderTest _system;
 		private readonly Toggle _toggle;
@@ -27,10 +27,15 @@ namespace Crispin.Rest.Tests.Integration
 			_system = SystemUnderTest.ForStartup<Startup>();
 
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
-
-			using (var session = _storage.BeginSession().Result)
-				session.Save(_toggle).Wait();
 		}
+
+		public async Task InitializeAsync()
+		{
+			using (var session = await _storage.BeginSession())
+				await session.Save(_toggle);
+		}
+
+		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		[Fact]
 		public Task When_adding_a_new_tag_to_a_toggle() => _system.Scenario(_ =>

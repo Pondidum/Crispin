@@ -10,39 +10,46 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class RouteTests
+	public class RouteTests : IAsyncLifetime
 	{
 		private const string Name = "the-toggle";
 		private const string ID = "a7fa0716-ec0e-4582-a22c-fe9673ed52ca";
 		private const string Tag = "environment:dev";
 
 		private readonly SystemUnderTest _system;
+		private readonly Toggle _toggle;
+		private readonly InMemoryStorage _storage;
 
 		public RouteTests()
 		{
-			var storage = new InMemoryStorage();
-			storage.RegisterProjection(new AllTogglesProjection());
-			storage.RegisterBuilder(Toggle.LoadFrom);
+			_storage = new InMemoryStorage();
+			_storage.RegisterProjection(new AllTogglesProjection());
+			_storage.RegisterBuilder(Toggle.LoadFrom);
 
 			_system = SystemUnderTest.ForStartup<Startup>();
-			_system.ConfigureServices(services => services.AddSingleton<IStorage>(storage));
+			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
 
 			var editor = EditorID.Parse("RouteTests");
-			var toggle = Toggle.CreateNew(
+			_toggle = Toggle.CreateNew(
 				editor,
 				Name,
 				toggleID: ToggleID.Parse(Guid.Parse(ID))
 			);
 
-			toggle.AddTag(editor, "test");
-			toggle.AddCondition(editor, new Dictionary<string, object>
+			_toggle.AddTag(editor, "test");
+			_toggle.AddCondition(editor, new Dictionary<string, object>
 			{
 				{ ConditionBuilder.TypeKey, "enabled" }
 			});
-
-			using (var session = storage.BeginSession().Result)
-				session.Save(toggle).Wait();
 		}
+
+		public async Task InitializeAsync()
+		{
+			using (var session = await _storage.BeginSession())
+				await session.Save(_toggle);
+		}
+
+		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		[Theory]
 		[InlineData("GET", "/toggles")]

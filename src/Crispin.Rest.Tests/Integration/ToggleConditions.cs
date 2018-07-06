@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Alba;
 using Crispin.Conditions;
-using Crispin.Conditions.ConditionTypes;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +10,7 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleConditions
+	public class ToggleConditions : IAsyncLifetime
 	{
 		private readonly SystemUnderTest _system;
 		private readonly Toggle _toggle;
@@ -28,10 +26,15 @@ namespace Crispin.Rest.Tests.Integration
 			_system = SystemUnderTest.ForStartup<Startup>();
 
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
-
-			using (var session = _storage.BeginSession().Result)
-				session.Save(_toggle).Wait();
 		}
+
+		public async Task InitializeAsync()
+		{
+			using (var session = await _storage.BeginSession())
+				await session.Save(_toggle);
+		}
+
+		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		private static Dictionary<string, object> Condition(string type) => new Dictionary<string, object>
 		{

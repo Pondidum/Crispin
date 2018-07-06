@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleCreation : IDisposable
+	public class ToggleCreation : IAsyncLifetime
 	{
 		private const string ToggleName = "toggle-1";
 		private const string ToggleDescription = "a test toggle";
@@ -30,6 +30,9 @@ namespace Crispin.Rest.Tests.Integration
 			_system = SystemUnderTest.ForStartup<Startup>();
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
 		}
+
+		public Task InitializeAsync() => Task.CompletedTask;
+		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		private async Task<string> CreateToggle(string name = ToggleName)
 		{
@@ -118,11 +121,6 @@ namespace Crispin.Rest.Tests.Integration
 				() => toggle.ShouldContainKeyAndValue("name", ToggleName),
 				() => toggle.ShouldContainKeyAndValue("description", ToggleDescription)
 			);
-		}
-
-		public void Dispose()
-		{
-			_system.Dispose();
 		}
 	}
 }
