@@ -1,7 +1,6 @@
 using System;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
-using Crispin.Rest.Infrastructure;
 using FileSystem;
 using StructureMap;
 
@@ -17,9 +16,10 @@ namespace Crispin.Rest
 				a.WithDefaultConventions();
 			});
 
-			var store = BuildStorage();
-			For<IStorage>().UseIfNone(store);
 			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
+
+			For<IStorage>().UseIfNone(() => BuildStorage());
+			For<IStorageSession>().Use(c => c.GetInstance<IStorage>().BeginSession().Result);
 		}
 
 		private static IStorage BuildStorage()
@@ -27,7 +27,7 @@ namespace Crispin.Rest
 			var path = "../../storage";
 			var fs = new PhysicalFileSystem();
 			fs.CreateDirectory(path).Wait();
-			
+
 			var store = new FileSystemStorage(fs, path);
 			store.RegisterProjection(new AllTogglesProjection());
 			store.RegisterBuilder(Toggle.LoadFrom);
