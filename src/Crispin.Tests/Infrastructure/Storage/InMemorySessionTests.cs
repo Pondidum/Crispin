@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Crispin.Events;
 using Crispin.Projections;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -19,10 +17,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public InMemorySessionTests()
 		{
 			_eventStore = new Dictionary<ToggleID, List<Event>>();
-
-			Session = new InMemorySession(Builders, Projections, _eventStore);
 		}
 
+		protected override Task<IStorageSession> CreateSession()
+		{
+			return Task.FromResult((IStorageSession)new InMemorySession(Builders, Projections, _eventStore));
+		}
 
 		protected override Task<bool> AggregateExists(ToggleID toggleID)
 		{

@@ -11,9 +11,9 @@ using Xunit;
 
 namespace Crispin.Tests.Infrastructure.Storage
 {
-	public abstract class StorageSessionTests
+	public abstract class StorageSessionTests : IAsyncLifetime
 	{
-		protected IStorageSession Session { get; set; }
+		protected IStorageSession Session { get; private set; }
 		protected Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> Builders { get; }
 		protected List<IProjection> Projections { get; }
 		protected EditorID Editor { get; }
@@ -28,6 +28,10 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			Editor = EditorID.Parse("wat");
 		}
+
+		public async Task InitializeAsync() => Session = await CreateSession();
+
+		protected abstract Task<IStorageSession> CreateSession();
 
 		protected abstract Task<bool> AggregateExists(ToggleID toggleID);
 		protected abstract Task WriteEvents(ToggleID toggleID, params object[] events);
@@ -235,5 +239,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			projection.Toggles.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
 		}
+
+		public async Task DisposeAsync() => await Task.CompletedTask;
 	}
 }

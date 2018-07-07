@@ -26,9 +26,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public FileSystemSessionTests()
 		{
 			_fs = new InMemoryFileSystem();
-			_fs.CreateDirectory(Root).Wait();
+		}
 
-			Session = new FileSystemSession(_fs, Builders, Projections, Root);
+		protected override async Task<IStorageSession> CreateSession()
+		{
+			await _fs.CreateDirectory(Root);
+			return new FileSystemSession(_fs, Builders, Projections, Root);
 		}
 
 		protected override async Task<bool> AggregateExists(ToggleID toggleID)
