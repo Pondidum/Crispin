@@ -37,10 +37,10 @@ namespace Crispin.Tests.Handlers
 		{
 			InitialiseToggle(Toggle);
 
-			using (var session = Storage.BeginSession())
+			using (var session = Storage.CreateSession())
 				await session.Save(Toggle);
 
-			Session = Storage.BeginSession();
+			Session = Storage.CreateSession();
 			Handler = CreateHandler(Session);
 		}
 

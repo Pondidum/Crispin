@@ -28,7 +28,7 @@ namespace Crispin.Infrastructure.Storage
 			_projections.Add(projection);
 		}
 
-		public IStorageSession BeginSession() => new InMemorySession(
+		public IStorageSession CreateSession() => new InMemorySession(
 			_builders,
 			_projections,
 			_events);

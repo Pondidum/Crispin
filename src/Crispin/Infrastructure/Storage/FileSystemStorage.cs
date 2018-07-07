@@ -30,7 +30,7 @@ namespace Crispin.Infrastructure.Storage
 			_projections.Add(projection);
 		}
 
-		public IStorageSession BeginSession() => new FileSystemSession(
+		public IStorageSession CreateSession() => new FileSystemSession(
 			_fileSystem,
 			_builders,
 			_projections,

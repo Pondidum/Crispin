@@ -40,7 +40,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 		public async Task When_adding_a_condition()
 		{
 			var toggle = Toggle.CreateNew(Editor, "Toggle", "original");
-			using (var session = Storage.BeginSession())
+			using (var session = Storage.CreateSession())
 				await session.Save(toggle);
 
 			_props["type"] = "enabled";

@@ -28,7 +28,7 @@ namespace Crispin.Tests.Handlers.CreateToggle
 		public async Task When_creating_toggle_with_a_name_already_in_use()
 		{
 			var name = "test-name";
-			using (var session = Storage.BeginSession())
+			using (var session = Storage.CreateSession())
 				await session.Save(Toggle.CreateNew(Editor, name, "original"));
 
 			Should

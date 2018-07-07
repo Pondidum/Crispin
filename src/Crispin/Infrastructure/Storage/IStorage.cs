@@ -10,6 +10,6 @@ namespace Crispin.Infrastructure.Storage
 
 		void RegisterProjection(IProjection projection);
 
-		IStorageSession BeginSession();
+		IStorageSession CreateSession();
 	}
 }
