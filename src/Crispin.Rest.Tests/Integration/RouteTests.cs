@@ -45,7 +45,7 @@ namespace Crispin.Rest.Tests.Integration
 
 		public async Task InitializeAsync()
 		{
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 				await session.Save(_toggle);
 		}
 

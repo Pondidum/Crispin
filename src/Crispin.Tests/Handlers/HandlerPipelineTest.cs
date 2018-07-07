@@ -30,7 +30,7 @@ namespace Crispin.Tests.Handlers
 				_.AddRegistry<MediatrRegistry>();
 
 				_.For<IStorage>().Use(Storage);
-				_.For<IStorageSession>().Use(c => c.GetInstance<IStorage>().BeginSession().Result);
+				_.For<IStorageSession>().Use(c => c.GetInstance<IStorage>().BeginSession());
 				_.For<ILoggerFactory>().Use(Substitute.For<ILoggerFactory>());
 				_.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 			});

@@ -30,7 +30,7 @@ namespace Crispin.Rest.Tests.Integration
 
 		public async Task InitializeAsync()
 		{
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 				await session.Save(_toggle);
 		}
 
@@ -59,7 +59,7 @@ namespace Crispin.Rest.Tests.Integration
 		public async Task When_removing_a_condition_from_a_toggle()
 		{
 			_toggle.AddCondition(EditorID.Parse("me"), Condition("disabled"));
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 				await session.Save(_toggle);
 
 			await _system.Scenario(_ =>
@@ -89,7 +89,7 @@ namespace Crispin.Rest.Tests.Integration
 			_toggle.AddCondition(editor, Condition("enabled"), ConditionID.Parse(0));
 			_toggle.AddCondition(editor, Condition("disabled"), ConditionID.Parse(0));
 
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 				await session.Save(_toggle);
 
 			await _system.Scenario(_ =>

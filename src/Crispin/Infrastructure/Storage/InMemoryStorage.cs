@@ -28,12 +28,9 @@ namespace Crispin.Infrastructure.Storage
 			_projections.Add(projection);
 		}
 
-		public async Task<IStorageSession> BeginSession()
-		{
-			var session = new InMemorySession(_builders, _projections, _events);
-			await session.Open();
-
-			return session;
-		}
+		public IStorageSession BeginSession() => new InMemorySession(
+			_builders,
+			_projections,
+			_events);
 	}
 }

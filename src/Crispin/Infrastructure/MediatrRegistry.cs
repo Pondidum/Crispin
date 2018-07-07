@@ -30,8 +30,8 @@ namespace Crispin.Infrastructure
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(RequestPostProcessorBehavior<,>));
 
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(TimingBehavior<,>));
-			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(StorageBehavior<,>));
+			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
 
 			For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
 			For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));

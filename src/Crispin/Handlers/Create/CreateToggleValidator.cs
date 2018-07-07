@@ -12,11 +12,11 @@ namespace Crispin.Handlers.Create
 {
 	public class CreateToggleValidator : IRequestValidator<CreateToggleRequest>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public CreateToggleValidator(IStorage storage)
+		public CreateToggleValidator(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<ICollection<string>> Validate(CreateToggleRequest request)
@@ -34,11 +34,8 @@ namespace Crispin.Handlers.Create
 
 		private async Task<IEnumerable<ToggleView>> GetExistingToggles()
 		{
-			using (var session = await _storage.BeginSession())
-			{
-				var view = await session.LoadProjection<AllTogglesProjection>();
-				return view.Toggles;
-			}
+			var view = await _session.LoadProjection<AllTogglesProjection>();
+			return view.Toggles;
 		}
 	}
 }

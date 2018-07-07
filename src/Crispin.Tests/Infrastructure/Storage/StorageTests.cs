@@ -20,16 +20,16 @@ namespace Crispin.Tests.Infrastructure.Storage
 			var projection = new AllTogglesProjection();
 			_storage.RegisterProjection(projection);
 
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 				await session.Save(Toggle.CreateNew(EditorID.Parse("test"), "Test", "no"));
 
 			projection.Toggles.Count().ShouldBe(1);
 		}
 
 		[Fact]
-		public async Task When_there_isnt_an_aggregates_registered()
+		public void When_there_isnt_an_aggregates_registered()
 		{
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 			{
 				Should.Throw<BuilderNotFoundException>(
 					() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
@@ -37,11 +37,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
-		public async Task When_an_aggregate_is_registered()
+		public void When_an_aggregate_is_registered()
 		{
 			_storage.RegisterBuilder(Toggle.LoadFrom);
 
-			using (var session = await _storage.BeginSession())
+			using (var session = _storage.BeginSession())
 			{
 				Should.Throw<AggregateNotFoundException>(
 					() => session.LoadAggregate<Toggle>(ToggleID.CreateNew()));
