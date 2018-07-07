@@ -22,14 +22,16 @@ namespace Crispin.Tests.Handlers.AddCondition
 			};
 		}
 
-		protected override AddConditionHandler CreateHandler(IStorage storage)
+		protected override AddConditionHandler CreateHandler(IStorageSession session)
 		{
-			return new AddConditionHandler(storage);
+			return new AddConditionHandler(session);
 		}
 
 		private async Task<AddToggleConditionResponse> HandleMessage()
 		{
-			return await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, _properties));
+			var response = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, _properties));
+			await Session.Commit();
+			return response;
 		}
 
 		[Fact]

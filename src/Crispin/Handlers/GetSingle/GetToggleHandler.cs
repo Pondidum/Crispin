@@ -6,24 +6,21 @@ namespace Crispin.Handlers.GetSingle
 {
 	public class GetToggleHandler : IAsyncRequestHandler<GetToggleRequest, GetToggleResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public GetToggleHandler(IStorage storage)
+		public GetToggleHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<GetToggleResponse> Handle(GetToggleRequest message)
 		{
-			using (var session = await _storage.BeginSession())
-			{
-				var view = await message.Locator.LocateView(session);
+			var view = await message.Locator.LocateView(_session);
 
-				return new GetToggleResponse
-				{
-					Toggle = view
-				};
-			}
+			return new GetToggleResponse
+			{
+				Toggle = view
+			};
 		}
 	}
 }

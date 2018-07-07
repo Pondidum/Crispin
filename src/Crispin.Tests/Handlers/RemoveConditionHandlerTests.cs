@@ -12,7 +12,7 @@ namespace Crispin.Tests.Handlers
 {
 	public class RemoveConditionHandlerTests : HandlerTest<RemoveConditionHandler>
 	{
-		protected override RemoveConditionHandler CreateHandler(IStorage storage) => new RemoveConditionHandler(storage);
+		protected override RemoveConditionHandler CreateHandler(IStorageSession session) => new RemoveConditionHandler(session);
 
 		protected override void InitialiseToggle(Toggle toggle)
 		{
@@ -27,6 +27,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
 			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			await Session.Commit();
 
 			result.Conditions.ShouldBeEmpty();
 		}
@@ -36,6 +37,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
 			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			await Session.Commit();
 
 			result.ConditionMode.ShouldBe(Toggle.ConditionMode);
 		}
@@ -45,6 +47,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
 			await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			await Session.Commit();
 
 			Event<ConditionRemoved>(e => e.ShouldSatisfyAllConditions(
 				() => e.ConditionID.ShouldBe(conditionID),

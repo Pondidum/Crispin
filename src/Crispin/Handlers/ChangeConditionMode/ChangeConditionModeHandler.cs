@@ -6,32 +6,29 @@ namespace Crispin.Handlers.ChangeConditionMode
 {
 	public class ChangeConditionModeHandler : IAsyncRequestHandler<ChangeConditionModeRequest, ChangeConditionModeResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public ChangeConditionModeHandler(IStorage storage)
+		public ChangeConditionModeHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<ChangeConditionModeResponse> Handle(ChangeConditionModeRequest message)
 		{
-			using (var session = await _storage.BeginSession())
+			var toggle = await message.Locator.LocateAggregate(_session);
+
+			if (message.Mode == ConditionModes.All)
+				toggle.EnableOnAllConditions(message.Editor);
+			else
+				toggle.EnableOnAnyCondition(message.Editor);
+
+			await _session.Save(toggle);
+
+			return new ChangeConditionModeResponse
 			{
-				var toggle = await message.Locator.LocateAggregate(session);
-
-				if (message.Mode == ConditionModes.All)
-					toggle.EnableOnAllConditions(message.Editor);
-				else
-					toggle.EnableOnAnyCondition(message.Editor);
-
-				await session.Save(toggle);
-
-				return new ChangeConditionModeResponse
-				{
-					ConditionMode = toggle.ConditionMode,
-					Conditions = toggle.Conditions
-				};
-			}
+				ConditionMode = toggle.ConditionMode,
+				Conditions = toggle.Conditions
+			};
 		}
 	}
 }

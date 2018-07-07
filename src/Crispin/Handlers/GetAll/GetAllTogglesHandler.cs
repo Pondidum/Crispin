@@ -7,24 +7,21 @@ namespace Crispin.Handlers.GetAll
 {
 	public class GetAllTogglesHandler : IAsyncRequestHandler<GetAllTogglesRequest, GetAllTogglesResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public GetAllTogglesHandler(IStorage storage)
+		public GetAllTogglesHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
 		{
-			using (var session = await _storage.BeginSession())
-			{
-				var projection = await session.LoadProjection<AllTogglesProjection>();
+			var projection = await _session.LoadProjection<AllTogglesProjection>();
 
-				return new GetAllTogglesResponse
-				{
-					Toggles = projection.Toggles
-				};
-			}
+			return new GetAllTogglesResponse
+			{
+				Toggles = projection.Toggles
+			};
 		}
 	}
 }

@@ -6,29 +6,26 @@ namespace Crispin.Handlers.RemoveCondition
 {
 	public class RemoveConditionHandler : IAsyncRequestHandler<RemoveToggleConditionRequest, RemoveToggleConditionResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public RemoveConditionHandler(IStorage storage)
+		public RemoveConditionHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<RemoveToggleConditionResponse> Handle(RemoveToggleConditionRequest message)
 		{
-			using (var session = await _storage.BeginSession())
+			var toggle = await message.Locator.LocateAggregate(_session);
+
+			toggle.RemoveCondition(message.Editor, message.ConditionId);
+
+			await _session.Save(toggle);
+
+			return new RemoveToggleConditionResponse
 			{
-				var toggle = await message.Locator.LocateAggregate(session);
-
-				toggle.RemoveCondition(message.Editor, message.ConditionId);
-
-				await session.Save(toggle);
-
-				return new RemoveToggleConditionResponse
-				{
-					ConditionMode = toggle.ConditionMode,
-					Conditions = toggle.Conditions
-				};
-			}
+				ConditionMode = toggle.ConditionMode,
+				Conditions = toggle.Conditions
+			};
 		}
 	}
 }

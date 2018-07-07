@@ -45,9 +45,9 @@ namespace Crispin.Tests.Handlers.AddCondition
 
 			_props["type"] = "enabled";
 
-			var response = await Send(new AddToggleConditionRequest(Editor, ToggleLocator.Create(toggle.ID), _props));
+			await Send(new AddToggleConditionRequest(Editor, ToggleLocator.Create(toggle.ID), _props));
 
-			response
+			Response
 				.Condition
 				.ShouldBeOfType<EnabledCondition>();
 		}

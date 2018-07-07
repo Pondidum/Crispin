@@ -6,29 +6,26 @@ namespace Crispin.Handlers.Create
 {
 	public class CreateToggleHandler : IAsyncRequestHandler<CreateToggleRequest, CreateTogglesResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public CreateToggleHandler(IStorage storage)
+		public CreateToggleHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public async Task<CreateTogglesResponse> Handle(CreateToggleRequest message)
 		{
-			using (var session = await _storage.BeginSession())
+			var newToggle = Toggle.CreateNew(
+				message.Creator,
+				message.Name,
+				message.Description);
+
+			await _session.Save(newToggle);
+
+			return new CreateTogglesResponse
 			{
-				var newToggle = Toggle.CreateNew(
-					message.Creator,
-					message.Name,
-					message.Description);
-
-				await session.Save(newToggle);
-
-				return new CreateTogglesResponse
-				{
-					Toggle = newToggle.ToView()
-				};
-			}
+				Toggle = newToggle.ToView()
+			};
 		}
 	}
 }

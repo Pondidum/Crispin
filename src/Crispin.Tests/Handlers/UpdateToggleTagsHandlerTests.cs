@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Crispin.Handlers.UpdateTags;
 using Crispin.Infrastructure.Storage;
@@ -10,9 +9,9 @@ namespace Crispin.Tests.Handlers
 {
 	public class UpdateToggleTagsHandlerTests : HandlerTest<UpdateToggleTagsHandler>
 	{
-		protected override UpdateToggleTagsHandler CreateHandler(IStorage storage)
+		protected override UpdateToggleTagsHandler CreateHandler(IStorageSession session)
 		{
-			return new UpdateToggleTagsHandler(storage);
+			return new UpdateToggleTagsHandler(session);
 		}
 
 		protected override void InitialiseToggle(Toggle toggle)

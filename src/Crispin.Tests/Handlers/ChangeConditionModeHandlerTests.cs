@@ -9,9 +9,9 @@ namespace Crispin.Tests.Handlers
 {
 	public class ChangeConditionModeHandlerTests : HandlerTest<ChangeConditionModeHandler>
 	{
-		protected override ChangeConditionModeHandler CreateHandler(IStorage storage)
+		protected override ChangeConditionModeHandler CreateHandler(IStorageSession session)
 		{
-			return new ChangeConditionModeHandler(storage);
+			return new ChangeConditionModeHandler(session);
 		}
 
 		[Fact]
@@ -19,10 +19,11 @@ namespace Crispin.Tests.Handlers
 		{
 			Toggle.EnableOnAllConditions(Editor);
 
-			using (var session = await Storage.BeginSession())
-				await session.Save(Toggle);
+			await Session.Save(Toggle);
+			await Session.Commit();
 
 			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.Any));
+			await Session.Commit();
 
 			Event<EnabledOnAnyCondition>();
 		}
@@ -32,10 +33,11 @@ namespace Crispin.Tests.Handlers
 		{
 			Toggle.EnableOnAnyCondition(Editor);
 
-			using (var session = await Storage.BeginSession())
-				await session.Save(Toggle);
+			await Session.Save(Toggle);
+			await Session.Commit();
 
 			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.All));
+			await Session.Commit();
 
 			Event<EnabledOnAllConditions>();
 		}

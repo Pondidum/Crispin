@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Events;
-using Crispin.Handlers;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure.Storage;
 using Crispin.Projections;
@@ -20,10 +18,7 @@ namespace Crispin.Tests.Handlers
 		public GetAllTogglesHandlerTests()
 		{
 			_session = Substitute.For<IStorageSession>();
-			var storage = Substitute.For<IStorage>();
-			storage.BeginSession().Returns(_session);
-
-			_handler = new GetAllTogglesHandler(storage);
+			_handler = new GetAllTogglesHandler(_session);
 		}
 
 		[Fact]

@@ -15,10 +15,7 @@ namespace Crispin.Tests.Handlers.CreateToggle
 		public CreateToggleHandlerTests()
 		{
 			_session = Substitute.For<IStorageSession>();
-			var store = Substitute.For<IStorage>();
-			store.BeginSession().Returns(_session);
-
-			_handler = new CreateToggleHandler(store);
+			_handler = new CreateToggleHandler(_session);
 		}
 
 		[Fact]

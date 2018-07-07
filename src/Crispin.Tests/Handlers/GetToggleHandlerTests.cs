@@ -17,14 +17,12 @@ namespace Crispin.Tests.Handlers
 
 		public GetToggleHandlerTests()
 		{
-			var storage = Substitute.For<IStorage>();
-			var session = Substitute.For<IStorageSession>();
-			storage.BeginSession().Returns(session);
-
 			_view = new AllTogglesProjection();
+
+			var session = Substitute.For<IStorageSession>();
 			session.LoadProjection<AllTogglesProjection>().Returns(_view);
 
-			_handler = new GetToggleHandler(storage);
+			_handler = new GetToggleHandler(session);
 			_creator = EditorID.Parse("test editor");
 		}
 
@@ -63,7 +61,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_name()
 		{
 			var toggleName = "name";
-			_view.Consume(new ToggleCreated(_creator,ToggleID.CreateNew(), toggleName, "desc"));
+			_view.Consume(new ToggleCreated(_creator, ToggleID.CreateNew(), toggleName, "desc"));
 
 			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
 

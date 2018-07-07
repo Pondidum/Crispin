@@ -10,11 +10,11 @@ namespace Crispin.Handlers.UpdateTags
 		IAsyncRequestHandler<AddToggleTagRequest, UpdateToggleTagsResponse>,
 		IAsyncRequestHandler<RemoveToggleTagRequest, UpdateToggleTagsResponse>
 	{
-		private readonly IStorage _storage;
+		private readonly IStorageSession _session;
 
-		public UpdateToggleTagsHandler(IStorage storage)
+		public UpdateToggleTagsHandler(IStorageSession session)
 		{
-			_storage = storage;
+			_session = session;
 		}
 
 		public Task<UpdateToggleTagsResponse> Handle(AddToggleTagRequest message)
@@ -35,18 +35,15 @@ namespace Crispin.Handlers.UpdateTags
 
 		private async Task<UpdateToggleTagsResponse> ModifyTags(ToggleLocator locator, Action<Toggle> modify)
 		{
-			using (var session = await _storage.BeginSession())
+			var toggle = await locator.LocateAggregate(_session);
+
+			modify(toggle);
+			await _session.Save(toggle);
+
+			return new UpdateToggleTagsResponse
 			{
-				var toggle = await locator.LocateAggregate(session);
-
-				modify(toggle);
-				await session.Save(toggle);
-
-				return new UpdateToggleTagsResponse
-				{
-					Tags = toggle.Tags.ToArray()
-				};
-			}
+				Tags = toggle.Tags.ToArray()
+			};
 		}
 	}
 }
