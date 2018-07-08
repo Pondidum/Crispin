@@ -79,6 +79,13 @@ namespace Crispin.Infrastructure.Storage
 
 		public Task Commit()
 		{
+			PerformCommit();
+
+			return Task.CompletedTask;
+		}
+
+		private void PerformCommit()
+		{
 			foreach (var pair in _pendingEvents)
 			{
 				if (_storeEvents.ContainsKey(pair.Key) == false)
@@ -96,8 +103,6 @@ namespace Crispin.Infrastructure.Storage
 				projection.Consume(@event);
 
 			_pendingEvents.Clear();
-
-			return Task.CompletedTask;
 		}
 
 		public void Dispose()
@@ -105,7 +110,7 @@ namespace Crispin.Infrastructure.Storage
 			if (_pendingEvents.Any() == false)
 				return;
 
-			Commit().Wait();
+			PerformCommit();
 		}
 	}
 }
