@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Crispin.Events;
 using FileSystem;
 using Newtonsoft.Json;
 
@@ -39,7 +38,8 @@ namespace Crispin.Infrastructure.Storage
 
 		public void Dispose()
 		{
-			Commit().Wait();
+			if (_pending.Any())
+				Commit().Wait();
 		}
 
 		public async Task Open()
