@@ -151,5 +151,11 @@ namespace Crispin.Infrastructure.Storage
 
 			_pending.Clear();
 		}
+
+		public Task Abort()
+		{
+			_pending.Clear();
+			return Task.CompletedTask;
+		}
 	}
 }

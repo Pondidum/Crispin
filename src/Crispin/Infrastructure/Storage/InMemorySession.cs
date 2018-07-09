@@ -84,6 +84,12 @@ namespace Crispin.Infrastructure.Storage
 			return Task.CompletedTask;
 		}
 
+		public Task Abort()
+		{
+			_pendingEvents.Clear();
+			return Task.CompletedTask;
+		}
+
 		private void PerformCommit()
 		{
 			foreach (var pair in _pendingEvents)

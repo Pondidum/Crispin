@@ -17,5 +17,6 @@ namespace Crispin.Infrastructure.Storage
 			where TAggregate: AggregateRoot, IEvented;
 
 		Task Commit();
+		Task Abort();
 	}
 }
