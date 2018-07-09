@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using MediatR;
 
@@ -17,11 +18,17 @@ namespace Crispin.Infrastructure.Storage
 			try
 			{
 				await _session.Open();
-				return await next();
-			}
-			finally
-			{
+
+				var result = await next();
+
 				await _session.Commit();
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				await _session.Abort();
+				throw;
 			}
 		}
 	}
