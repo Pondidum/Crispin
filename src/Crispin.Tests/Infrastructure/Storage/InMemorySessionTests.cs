@@ -37,6 +37,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected override Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID)
 		{
+			if (_eventStore.ContainsKey(toggleID) == false)
+				return Task.FromResult(Enumerable.Empty<Type>());
+
 			return Task.FromResult(_eventStore[toggleID].Select(e => e.GetType()));
 		}
 

@@ -184,6 +184,21 @@ namespace Crispin.Tests.Infrastructure.Storage
 		}
 
 		[Fact]
+		public async Task When_commit_is_called_after_abort()
+		{
+			var toggle = Toggle.CreateNew(Editor, "First", "hi");
+			toggle.AddTag(Editor, "one");
+
+			await Session.Save(toggle);
+			await Session.Abort();
+
+			await Session.Commit();
+
+			var events = await ReadEvents(toggle.ID);
+			events.ShouldBeEmpty();
+		}
+
+		[Fact]
 		public void When_there_is_no_projection_registered()
 		{
 			Should.Throw<ProjectionNotRegisteredException>(() => Session.LoadProjection<AllTogglesProjection>());
