@@ -32,7 +32,10 @@ namespace Crispin.Rest
 				.AddJsonFile($"appsettings.{host.HostingEnvironment.EnvironmentName}.json", optional: true)
 				.Build();
 
-			services.AddSingleton(builder.Get<CrispinConfiguration>() ?? new CrispinConfiguration());
+			var config = builder.Get<CrispinConfiguration>() ?? new CrispinConfiguration();
+
+			services.AddSingleton(StorageBuilder.Build(config));
+			services.AddSingleton(config);
 		}
 	}
 }

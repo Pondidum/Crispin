@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure;
+using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
 using Crispin.Rest.Configuration;
 using MediatR;
@@ -26,6 +27,7 @@ namespace Crispin.Rest.Tests
 				_.AddRegistry<MediatrRegistry>();
 
 				_.For(typeof(ILogger<>)).Use(typeof(FakeLogger<>));
+				_.For<IStorage>().Use(StorageBuilder.Configure(new InMemoryStorage()));
 			});
 		}
 

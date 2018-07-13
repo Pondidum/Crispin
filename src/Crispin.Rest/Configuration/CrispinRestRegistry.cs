@@ -15,8 +15,6 @@ namespace Crispin.Rest.Configuration
 			});
 
 			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
-
-			For<IStorage>().UseIfNone(() => StorageBuilder.Build());
 			For<IStorageSession>().Use(c => c.GetInstance<IStorage>().CreateSession());
 		}
 	}
