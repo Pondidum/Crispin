@@ -4,6 +4,7 @@ using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Validation;
+using Crispin.Rest.Configuration;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

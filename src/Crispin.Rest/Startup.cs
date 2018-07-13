@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Crispin.Infrastructure;
+using Crispin.Rest.Configuration;
 using Crispin.Rest.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

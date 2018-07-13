@@ -1,10 +1,8 @@
 using System;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
-using FileSystem;
 using StructureMap;
 
-namespace Crispin.Rest
+namespace Crispin.Rest.Configuration
 {
 	public class CrispinRestRegistry : Registry
 	{
