@@ -25,7 +25,7 @@ namespace Crispin.Infrastructure.Storage
 
 				return result;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				await _session.Abort();
 				throw;
