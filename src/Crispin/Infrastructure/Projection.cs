@@ -3,14 +3,6 @@ using System.Collections.Generic;
 
 namespace Crispin.Infrastructure
 {
-	public interface IProjection
-	{
-		void Consume(Event @event);
-
-		object ToMemento();
-		void FromMemento(object memento);
-	}
-
 	public abstract class Projection<TMemento> : IProjection
 	{
 		private readonly Dictionary<Type, Action<object>> _handlers;
@@ -27,8 +19,7 @@ namespace Crispin.Infrastructure
 
 		public void Consume(Event @event)
 		{
-			Action<object> apply;
-			if (_handlers.TryGetValue(@event.GetType(), out apply))
+			if (_handlers.TryGetValue(@event.GetType(), out var apply))
 				apply(@event);
 
 			_catchAll.ForEach(handle => handle(@event));
