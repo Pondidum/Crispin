@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruler", "src\Ruler\Ruler.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ruler.Tests", "src\Ruler.Tests\Ruler.Tests.csproj", "{3E3973AD-33E3-41B0-AB59-2CD49160556D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{51031869-5BAE-4E30-9B39-D8860408BA8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrispinClient", "src\CrispinClient\CrispinClient.csproj", "{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrispinClient.Tests", "src\CrispinClient.Tests\CrispinClient.Tests.csproj", "{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,8 +51,20 @@ Global
 		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E3973AD-33E3-41B0-AB59-2CD49160556D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{89BEA573-E829-4AD6-BAEC-1E0A8F4FCC39} = {51031869-5BAE-4E30-9B39-D8860408BA8F}
+		{4F8EB47C-0C0D-454E-B501-BB6FB9FC4FBE} = {51031869-5BAE-4E30-9B39-D8860408BA8F}
 	EndGlobalSection
 EndGlobal
