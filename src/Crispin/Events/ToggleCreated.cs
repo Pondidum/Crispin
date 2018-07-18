@@ -6,21 +6,20 @@ namespace Crispin.Events
 	public class ToggleCreated : Event
 	{
 		public EditorID Creator { get; }
-		public ToggleID ID { get; }
 		public string Name { get; }
 		public string Description { get; }
 
 		public ToggleCreated(EditorID creator, ToggleID id, string name, string description)
 		{
+			AggregateID = id;
 			Creator = creator;
-			ID = id;
 			Name = name;
 			Description = description;
 		}
 
 		public override string ToString()
 		{
-			return $"Creating Toggle '{ID}' called '{Name}' with description '{Description}'";
+			return $"Creating Toggle '{AggregateID}' called '{Name}' with description '{Description}'";
 		}
 	}
 }

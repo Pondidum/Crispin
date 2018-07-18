@@ -9,9 +9,10 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_loading_from_an_event_stream()
 		{
+			var toggleID = ToggleID.CreateNew();
 			var toggleCreated = new ToggleCreated(
 				Editor,
-				ToggleID.CreateNew(),
+				toggleID,
 				"toggle name",
 				"toggle desc");
 
@@ -19,7 +20,7 @@ namespace Crispin.Tests.ToggleTests
 				new object[] { toggleCreated });
 
 			Toggle.ShouldSatisfyAllConditions(
-				() => Toggle.ID.ShouldBe(toggleCreated.ID),
+				() => Toggle.ID.ShouldBe(toggleID),
 				() => Toggle.Name.ShouldBe(toggleCreated.Name),
 				() => Toggle.Description.ShouldBe(toggleCreated.Description)
 			);

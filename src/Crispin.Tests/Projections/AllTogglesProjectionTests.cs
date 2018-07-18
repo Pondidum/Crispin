@@ -29,7 +29,7 @@ namespace Crispin.Tests.Projections
 
 		private void Consume(Event @event)
 		{
-			@event.AggregateID = _created.ID;
+			@event.AggregateID = _created.AggregateID;
 			_projection.Consume(@event);
 		}
 
@@ -52,7 +52,7 @@ namespace Crispin.Tests.Projections
 			var view = SingleToggle();
 
 			view.ShouldSatisfyAllConditions(
-				() => view.ID.ShouldBe(_created.ID),
+				() => view.ID.ShouldBe(_created.AggregateID),
 				() => view.Name.ShouldBe(_created.Name),
 				() => view.Description.ShouldBe(_created.Description),
 				() => view.Tags.ShouldBeEmpty()
@@ -70,9 +70,9 @@ namespace Crispin.Tests.Projections
 
 			_projection.Toggles.Select(v => v.ID).ShouldBe(new[]
 			{
-				_created.ID,
-				second.ID,
-				third.ID
+				_created.AggregateID,
+				second.AggregateID,
+				third.AggregateID
 			}, ignoreOrder: true);
 		}
 

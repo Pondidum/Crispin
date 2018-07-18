@@ -22,7 +22,7 @@ namespace Crispin.Projections
 			{
 				var view = new ToggleView();
 				view.Apply(e);
-				_toggles.Add(e.ID, view);
+				_toggles.Add(e.AggregateID, view);
 			});
 
 			Register<TagAdded>(e => find(e.AggregateID).Apply(e));

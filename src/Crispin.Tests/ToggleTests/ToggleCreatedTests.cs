@@ -22,7 +22,6 @@ namespace Crispin.Tests.ToggleTests
 
 			var created = SingleEvent<ToggleCreated>();
 			created.ShouldSatisfyAllConditions(
-				() => created.ID.ShouldBe(Toggle.ID),
 				() => created.AggregateID.ShouldBe(Toggle.ID),
 				() => created.Name.ShouldBe("first-toggle"),
 				() => created.Description.ShouldBe(string.Empty)
@@ -45,7 +44,6 @@ namespace Crispin.Tests.ToggleTests
 
 			var created = SingleEvent<ToggleCreated>();
 			created.ShouldSatisfyAllConditions(
-				() => created.ID.ShouldBe(Toggle.ID),
 				() => created.AggregateID.ShouldBe(Toggle.ID),
 				() => created.Name.ShouldBe("first-toggle"),
 				() => created.Description.ShouldBe("my cool description")
