@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Crispin.Conditions;
+using Crispin.Events;
 
 namespace Crispin.Views
 {
@@ -14,6 +15,7 @@ namespace Crispin.Views
 		public ConditionModes ConditionMode { get; set; }
 
 		private readonly ConditionCollection _collection;
+		private readonly ConditionBuilder _conditionBuilder;
 
 		public ToggleView()
 		{
@@ -21,9 +23,29 @@ namespace Crispin.Views
 			Conditions = new List<Condition>();
 
 			_collection = new ConditionCollection(Conditions);
+			_conditionBuilder = new ConditionBuilder();
 		}
 
-		public void AddCondition(Condition condition, ConditionID parent) => _collection.Add(condition, parent);
-		public void RemoveCondition(ConditionID conditionID) => _collection.Remove(conditionID);
+		private void AddCondition(Condition condition, ConditionID parent) => _collection.Add(condition, parent);
+		private void RemoveCondition(ConditionID conditionID) => _collection.Remove(conditionID);
+
+		public void Apply(ToggleCreated e)
+		{
+			ID = e.ID;
+			Name = e.Name;
+			Description = e.Description;
+		}
+
+		public void Apply(TagAdded e) => Tags.Add(e.Name);
+		public void Apply(TagRemoved e) => Tags.Remove(e.Name);
+
+		public void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
+		public void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
+
+		public void Apply(ConditionAdded e) => AddCondition(
+			_conditionBuilder.CreateCondition(e.ConditionID, e.Properties),
+			e.ParentConditionID);
+
+		public void Apply(ConditionRemoved e) => RemoveCondition(e.ConditionID);
 	}
 }
