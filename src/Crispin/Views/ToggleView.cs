@@ -14,7 +14,7 @@ namespace Crispin.Views
 		public List<Condition> Conditions { get; set; }
 		public ConditionModes ConditionMode { get; set; }
 
-		private readonly ConditionCollection _collection;
+		private readonly ConditionCollection _conditions;
 		private readonly ConditionBuilder _conditionBuilder;
 
 		public ToggleView()
@@ -22,12 +22,9 @@ namespace Crispin.Views
 			Tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			Conditions = new List<Condition>();
 
-			_collection = new ConditionCollection(Conditions);
+			_conditions = new ConditionCollection(Conditions);
 			_conditionBuilder = new ConditionBuilder();
 		}
-
-		private void AddCondition(Condition condition, ConditionID parent) => _collection.Add(condition, parent);
-		private void RemoveCondition(ConditionID conditionID) => _collection.Remove(conditionID);
 
 		public void Apply(ToggleCreated e)
 		{
@@ -42,10 +39,10 @@ namespace Crispin.Views
 		public void Apply(EnabledOnAllConditions e) => ConditionMode = ConditionModes.All;
 		public void Apply(EnabledOnAnyCondition e) => ConditionMode = ConditionModes.Any;
 
-		public void Apply(ConditionAdded e) => AddCondition(
+		public void Apply(ConditionAdded e) => _conditions.Add(
 			_conditionBuilder.CreateCondition(e.ConditionID, e.Properties),
 			e.ParentConditionID);
 
-		public void Apply(ConditionRemoved e) => RemoveCondition(e.ConditionID);
+		public void Apply(ConditionRemoved e) => _conditions.Remove(e.ConditionID);
 	}
 }
