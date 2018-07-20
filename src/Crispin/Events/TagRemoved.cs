@@ -15,7 +15,7 @@ namespace Crispin.Events
 
 		public override string ToString()
 		{
-			return $"Removed Tag '{Name}' from Toggle '{AggregateID}'";
+			return $"Removed Tag '{Name}'";
 		}
 	}
 }

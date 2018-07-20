@@ -14,6 +14,6 @@ namespace Crispin.Events
 			ConditionID = conditionID;
 		}
 
-		public override string ToString() => $"Removed Condition '{ConditionID}' from Toggle '{AggregateID}'";
+		public override string ToString() => $"Removed Condition '{ConditionID}'";
 	}
 }

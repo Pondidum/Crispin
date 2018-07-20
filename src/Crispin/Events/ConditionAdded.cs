@@ -20,7 +20,7 @@ namespace Crispin.Events
 		}
 
 		public override string ToString() => ParentConditionID != null
-			? $"Added Condition '{Properties[ConditionBuilder.TypeKey]}' as a child of Condition {ParentConditionID} to Toggle '{AggregateID}'"
-			: $"Added Condition '{Properties[ConditionBuilder.TypeKey]}' to Toggle '{AggregateID}'";
+			? $"Added Condition '{Properties[ConditionBuilder.TypeKey]}' as a child of Condition {ParentConditionID}"
+			: $"Added Condition '{Properties[ConditionBuilder.TypeKey]}'";
 	}
 }

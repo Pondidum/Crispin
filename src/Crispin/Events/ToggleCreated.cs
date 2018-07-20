@@ -19,7 +19,7 @@ namespace Crispin.Events
 
 		public override string ToString()
 		{
-			return $"Creating Toggle '{AggregateID}' called '{Name}' with description '{Description}'";
+			return $"Creating Toggle called '{Name}' with description '{Description}'";
 		}
 	}
 }

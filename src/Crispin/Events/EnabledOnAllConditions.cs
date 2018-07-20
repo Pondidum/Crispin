@@ -11,6 +11,6 @@ namespace Crispin.Events
 			Editor = editor;
 		}
 
-		public override string ToString() => $"Toggle {AggregateID} change to require all conditions to be Enabled to be active";
+		public override string ToString() => $"Changed to require all conditions to be Enabled to be active";
 	}
 }

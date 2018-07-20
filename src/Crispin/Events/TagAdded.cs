@@ -15,7 +15,7 @@ namespace Crispin.Events
 
 		public override string ToString()
 		{
-			return $"Added Tag '{Name}' to Toggle '{AggregateID}'";
+			return $"Added Tag '{Name}'";
 		}
 	}
 }
