@@ -17,9 +17,10 @@ namespace Crispin.Tests.ToggleTests
 				"toggle name",
 				"toggle desc");
 
-			Toggle = Toggle.LoadFrom(
-				new Event[] { toggleCreated }
-			);
+			Toggle = new Toggle();
+
+			var loader = new Aggregator(Toggle);
+			loader.Apply(Toggle, toggleCreated);
 
 			Toggle.ShouldSatisfyAllConditions(
 				() => Toggle.ID.ShouldBe(toggleID),

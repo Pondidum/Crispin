@@ -24,7 +24,10 @@ namespace Crispin.Tests.ToggleTests
 				"Test Toggle",
 				"");
 
-			Toggle = Toggle.LoadFrom(new[] { create }.Concat(events));
+			Toggle = new Toggle();
+
+			var loader = new Aggregator(Toggle);
+			loader.Apply(Toggle, new[] { create }.Concat(events));
 		}
 
 		protected void CreateToggle(Action<Toggle> setup)

@@ -17,10 +17,20 @@ namespace Crispin.Infrastructure.Storage
 			_projections = new List<IProjection>();
 		}
 
-		public void RegisterBuilder<TAggregate>(Func<IEnumerable<Event>, TAggregate> builder)
-			where TAggregate : AggregateRoot
+		public void RegisterAggregate<TAggregate>() where TAggregate : AggregateRoot, new()
 		{
-			_builders.Add(typeof(TAggregate), builder);
+			RegisterAggregate(() => new TAggregate());
+		}
+
+		public void RegisterAggregate<TAggregate>(Func<TAggregate> createBlank) where TAggregate : AggregateRoot
+		{
+			_builders[typeof(TAggregate)] = events =>
+			{
+				var instance = createBlank();
+				var applicator = new Aggregator(instance);
+				applicator.Apply(instance, events);
+				return instance;
+			};
 		}
 
 		public void RegisterProjection(IProjection projection)

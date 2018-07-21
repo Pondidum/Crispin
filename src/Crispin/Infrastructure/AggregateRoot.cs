@@ -39,8 +39,7 @@ namespace Crispin.Infrastructure
 
 		void IEvented.LoadFromEvents(IEnumerable<Event> events)
 		{
-			foreach (var @event in events)
-				_applicator.Apply(this, @event);
+			_applicator.Apply(this, @events);
 		}
 	}
 }

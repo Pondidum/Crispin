@@ -20,13 +20,17 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected StorageSessionTests()
 		{
-			Builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>
-			{
-				{ typeof(Toggle), Toggle.LoadFrom }
-			};
+			Builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>();
 			Projections = new List<IProjection>();
-
 			Editor = EditorID.Parse("wat");
+
+			Builders[typeof(Toggle)] = events =>
+			{
+				var instance = new Toggle();
+				var applicator = new Aggregator(instance);
+				applicator.Apply(instance, events);
+				return instance;
+			};
 		}
 
 		public async Task InitializeAsync() => Session = await CreateSession();

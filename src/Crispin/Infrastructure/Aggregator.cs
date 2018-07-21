@@ -24,6 +24,11 @@ namespace Crispin.Infrastructure
 			}
 		}
 
+		public void Apply(object aggregate, IEnumerable<Event> @events)
+		{
+			@events.Each(e => Apply(aggregate, e));
+		}
+
 		public void Apply<TEvent>(object aggregate, TEvent @event) where TEvent : Event
 		{
 			if (_handlers.TryGetValue(@event.GetType(), out var handler))

@@ -42,7 +42,7 @@ namespace Crispin.Rest.Configuration
 		public static TStore Configure<TStore>(TStore store) where TStore : IStorage
 		{
 			store.RegisterProjection(new AllTogglesProjection());
-			store.RegisterBuilder(Toggle.LoadFrom);
+			store.RegisterAggregate<Toggle>();
 
 			return store;
 		}

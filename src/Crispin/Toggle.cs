@@ -25,15 +25,6 @@ namespace Crispin
 			return toggle;
 		}
 
-		public static Toggle LoadFrom(IEnumerable<Event> events)
-		{
-			var toggle = new Toggle();
-			((IEvented)toggle).LoadFromEvents(events);
-
-			return toggle;
-		}
-
-
 		public string Name { get; private set; }
 		public string Description { get; private set; }
 		public IEnumerable<string> Tags => _tags;
@@ -45,7 +36,7 @@ namespace Crispin
 		private ConditionID _currentConditionID;
 		private readonly ConditionBuilder _conditionBuilder;
 
-		private Toggle()
+		public Toggle()
 		{
 			_tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			_conditions = new ConditionCollection();

@@ -20,7 +20,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_storage = new InMemoryStorage();
 			_storage.RegisterProjection(new AllTogglesProjection());
-			_storage.RegisterBuilder(Toggle.LoadFrom);
+			_storage.RegisterAggregate<Toggle>();
 
 			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");
 			_system = SystemUnderTest.ForStartup<Startup>();

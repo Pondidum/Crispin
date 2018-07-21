@@ -15,7 +15,7 @@ namespace Crispin.Infrastructure.Storage
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine($"No builder for type {aggregate.Name} found.");
-			sb.AppendLine($"Did you forget to call Storage.{nameof(IStorage.RegisterBuilder)}()?");
+			sb.AppendLine($"Did you forget to call Storage.{nameof(IStorage.RegisterAggregate)}()?");
 			sb.AppendLine();
 
 			sb.Append("Builders for the following types were registered:");
