@@ -5,22 +5,16 @@ namespace Crispin.Infrastructure
 {
 	public abstract class AggregateRoot : IEvented
 	{
-		private readonly Dictionary<Type, Action<Event>> _handlers;
 		private readonly List<Event> _pendingEvents;
+		private readonly Aggregator _applicator;
 
 		protected AggregateRoot()
 		{
-			_handlers = new Dictionary<Type, Action<Event>>();
+			_applicator = new Aggregator(this);
 			_pendingEvents = new List<Event>();
 		}
 
 		public ToggleID ID { get; protected set; }
-
-		protected void Register<TEvent>(Action<TEvent> handler) 
-			where TEvent : Event
-		{
-			_handlers.Add(typeof(TEvent), e => handler((TEvent)e));
-		}
 
 		protected void ApplyEvent<TEvent>(TEvent @event)
 			where TEvent : Event
@@ -28,13 +22,8 @@ namespace Crispin.Infrastructure
 			@event.TimeStamp = DateTime.Now;
 
 			_pendingEvents.Add(@event);
-			_handlers[@event.GetType()](@event);
+			_applicator.Apply(this, @event);
 
-			PopulateExtraEventData(@event);
-		}
-
-		protected virtual void PopulateExtraEventData(Event @event)
-		{
 			@event.AggregateID = ID;
 		}
 
@@ -51,7 +40,7 @@ namespace Crispin.Infrastructure
 		void IEvented.LoadFromEvents(IEnumerable<Event> events)
 		{
 			foreach (var @event in events)
-				_handlers[@event.GetType()](@event);
+				_applicator.Apply(this, @event);
 		}
 	}
 }

@@ -52,15 +52,6 @@ namespace Crispin
 			_conditionBuilder = new ConditionBuilder();
 
 			_currentConditionID = ConditionID.Empty;
-
-			Register<ToggleCreated>(Apply);
-			Register<TagAdded>(Apply);
-			Register<TagRemoved>(Apply);
-
-			Register<EnabledOnAllConditions>(Apply);
-			Register<EnabledOnAnyCondition>(Apply);
-			Register<ConditionAdded>(Apply);
-			Register<ConditionRemoved>(Apply);
 		}
 
 		//public methods which do domainy things

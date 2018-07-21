@@ -113,13 +113,15 @@ namespace Crispin.Tests.Infrastructure
 			public TestAggregate()
 			{
 				SeenEvents = new List<Event>();
-				Register<TestEventOne>(SeenEvents.Add);
-				Register<Stamped>(SeenEvents.Add);
-				Register<TestAggregateCreated>(e =>
-				{
-					ID = e.ID;
-					SeenEvents.Add(e);
-				});
+			}
+
+			private void Apply(TestEventOne e) => SeenEvents.Add(e);
+			private void Apply(Stamped e) => SeenEvents.Add(e);
+
+			private void Apply(TestAggregateCreated e)
+			{
+				ID = e.ID;
+				SeenEvents.Add(e);
 			}
 
 			public void LoadFrom(params Event[] events)
