@@ -25,7 +25,7 @@ namespace Crispin
 			return toggle;
 		}
 
-		public static Toggle LoadFrom(IEnumerable<object> events)
+		public static Toggle LoadFrom(IEnumerable<Event> events)
 		{
 			var toggle = new Toggle();
 			((IEvented)toggle).LoadFromEvents(events);

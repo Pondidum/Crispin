@@ -122,7 +122,7 @@ namespace Crispin.Tests.Infrastructure
 				});
 			}
 
-			public void LoadFrom(params object[] events)
+			public void LoadFrom(params Event[] events)
 			{
 				((IEvented)this).LoadFromEvents(events);
 			}

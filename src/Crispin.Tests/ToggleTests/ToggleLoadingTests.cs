@@ -1,4 +1,5 @@
 ﻿using Crispin.Events;
+using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
 
@@ -17,7 +18,8 @@ namespace Crispin.Tests.ToggleTests
 				"toggle desc");
 
 			Toggle = Toggle.LoadFrom(
-				new object[] { toggleCreated });
+				new Event[] { toggleCreated }
+			);
 
 			Toggle.ShouldSatisfyAllConditions(
 				() => Toggle.ID.ShouldBe(toggleID),
