@@ -59,13 +59,15 @@ namespace Crispin.Tests.Infrastructure
 		[Fact]
 		public void When_loading_from_events()
 		{
-			var events = new[]
+			var events = new Event[]
 			{
 				new TestEventOne(),
 				new TestEventOne(),
 				new TestEventOne()
 			};
-			((IEvented)_aggregate).LoadFromEvents(events);
+
+			var loader = new Aggregator(_aggregate);
+			loader.Apply(_aggregate, events.AsEnumerable());
 
 			_aggregate.ShouldSatisfyAllConditions(
 				() => ((IEvented)_aggregate).GetPendingEvents().ShouldBeEmpty(),
@@ -91,7 +93,8 @@ namespace Crispin.Tests.Infrastructure
 		{
 			var stamp = new DateTime(2017, 2, 3);
 
-			_aggregate.LoadFrom(new Stamped { TimeStamp = stamp });
+			var loader = new Aggregator(_aggregate);
+			loader.Apply(_aggregate, new Stamped { TimeStamp = stamp });
 
 			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);
 		}
@@ -124,16 +127,16 @@ namespace Crispin.Tests.Infrastructure
 				SeenEvents.Add(e);
 			}
 
-			public void LoadFrom(params Event[] events)
-			{
-				((IEvented)this).LoadFromEvents(events);
-			}
-
 			public void Raise(Event e) => ApplyEvent(e);
 		}
 
-		private class TestEventOne : Event {}
-		private class Stamped : Event {}
+		private class TestEventOne : Event
+		{
+		}
+
+		private class Stamped : Event
+		{
+		}
 
 		private class TestAggregateCreated : Event
 		{

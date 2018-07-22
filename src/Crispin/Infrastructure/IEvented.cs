@@ -6,6 +6,5 @@ namespace Crispin.Infrastructure
 	{
 		IEnumerable<Event> GetPendingEvents();
 		void ClearPendingEvents();
-		void LoadFromEvents(IEnumerable<Event> events);
 	}
 }

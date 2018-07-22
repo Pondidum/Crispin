@@ -16,8 +16,7 @@ namespace Crispin.Infrastructure
 
 		public ToggleID ID { get; protected set; }
 
-		protected void ApplyEvent<TEvent>(TEvent @event)
-			where TEvent : Event
+		protected void ApplyEvent<TEvent>(TEvent @event) where TEvent : Event
 		{
 			@event.TimeStamp = DateTime.Now;
 
@@ -27,19 +26,7 @@ namespace Crispin.Infrastructure
 			@event.AggregateID = ID;
 		}
 
-		IEnumerable<Event> IEvented.GetPendingEvents()
-		{
-			return _pendingEvents;
-		}
-
-		void IEvented.ClearPendingEvents()
-		{
-			_pendingEvents.Clear();
-		}
-
-		void IEvented.LoadFromEvents(IEnumerable<Event> events)
-		{
-			_applicator.Apply(this, @events);
-		}
+		IEnumerable<Event> IEvented.GetPendingEvents() => _pendingEvents;
+		void IEvented.ClearPendingEvents() => _pendingEvents.Clear();
 	}
 }
