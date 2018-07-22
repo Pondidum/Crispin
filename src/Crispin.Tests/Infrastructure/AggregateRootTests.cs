@@ -66,7 +66,7 @@ namespace Crispin.Tests.Infrastructure
 				new TestEventOne()
 			};
 
-			var loader = new Aggregator(_aggregate);
+			var loader = new Aggregator(_aggregate.GetType());
 			loader.Apply(_aggregate, events.AsEnumerable());
 
 			_aggregate.ShouldSatisfyAllConditions(
@@ -93,7 +93,7 @@ namespace Crispin.Tests.Infrastructure
 		{
 			var stamp = new DateTime(2017, 2, 3);
 
-			var loader = new Aggregator(_aggregate);
+			var loader = new Aggregator(_aggregate.GetType());
 			loader.Apply(_aggregate, new Stamped { TimeStamp = stamp });
 
 			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);

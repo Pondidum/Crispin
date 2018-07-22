@@ -26,7 +26,7 @@ namespace Crispin.Tests.ToggleTests
 
 			Toggle = new Toggle();
 
-			var loader = new Aggregator(Toggle);
+			var loader = new Aggregator(Toggle.GetType());
 			loader.Apply(Toggle, new[] { create }.Concat(events));
 		}
 

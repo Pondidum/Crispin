@@ -27,7 +27,7 @@ namespace Crispin.Infrastructure.Storage
 			_builders[typeof(TAggregate)] = events =>
 			{
 				var instance = createBlank();
-				var applicator = new Aggregator(instance);
+				var applicator = new Aggregator(typeof(TAggregate));
 				applicator.Apply(instance, events);
 				return instance;
 			};

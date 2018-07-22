@@ -9,7 +9,7 @@ namespace Crispin.Infrastructure
 	{
 		private readonly Dictionary<Type, Action<object, Event>> _handlers;
 
-		public Aggregator(object aggregate) : this(MethodsFor(aggregate.GetType()))
+		public Aggregator(Type aggregate) : this(MethodsFor(aggregate))
 		{
 		}
 

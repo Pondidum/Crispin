@@ -10,7 +10,7 @@ namespace Crispin.Infrastructure
 
 		protected AggregateRoot()
 		{
-			_applicator = new Aggregator(this);
+			_applicator = new Aggregator(GetType());
 			_pendingEvents = new List<Event>();
 		}
 

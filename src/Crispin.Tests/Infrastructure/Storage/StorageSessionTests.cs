@@ -27,7 +27,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			Builders[typeof(Toggle)] = events =>
 			{
 				var instance = new Toggle();
-				var applicator = new Aggregator(instance);
+				var applicator = new Aggregator(instance.GetType());
 				applicator.Apply(instance, events);
 				return instance;
 			};
