@@ -9,14 +9,14 @@ namespace Crispin.Infrastructure.Storage
 		private readonly IFileSystem _fileSystem;
 		private readonly string _root;
 		private readonly List<IProjection> _projections;
-		private readonly Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> _builders;
+		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
 
 		public FileSystemStorage(IFileSystem fileSystem, string root)
 		{
 			_fileSystem = fileSystem;
 			_root = root;
 
-			_builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>();
+			_builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
 			_projections = new List<IProjection>();
 		}
 

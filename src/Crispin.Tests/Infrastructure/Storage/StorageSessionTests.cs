@@ -14,13 +14,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 	public abstract class StorageSessionTests : IAsyncLifetime
 	{
 		protected IStorageSession Session { get; private set; }
-		protected Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>> Builders { get; }
+		protected Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> Builders { get; }
 		protected List<IProjection> Projections { get; }
 		protected EditorID Editor { get; }
 
 		protected StorageSessionTests()
 		{
-			Builders = new Dictionary<Type, Func<IEnumerable<Event>, AggregateRoot>>();
+			Builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
 			Projections = new List<IProjection>();
 			Editor = EditorID.Parse("wat");
 

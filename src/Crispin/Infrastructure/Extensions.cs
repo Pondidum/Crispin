@@ -29,5 +29,10 @@ namespace Crispin.Infrastructure
 			else
 				noValue();
 		}
+		
+		public static T As<T>(this object target)
+		{
+			return (T) target;
+		}
 	}
 }

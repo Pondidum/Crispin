@@ -59,7 +59,7 @@ namespace Crispin.Tests.Infrastructure
 		[Fact]
 		public void When_loading_from_events()
 		{
-			var events = new Event[]
+			var events = new IEvent[]
 			{
 				new TestEventOne(),
 				new TestEventOne(),
@@ -127,7 +127,7 @@ namespace Crispin.Tests.Infrastructure
 				SeenEvents.Add(e);
 			}
 
-			public void Raise(Event e) => ApplyEvent(e);
+			public void Raise<TEvent>(TEvent e) where TEvent : Event => ApplyEvent(e);
 		}
 
 		private class TestEventOne : Event

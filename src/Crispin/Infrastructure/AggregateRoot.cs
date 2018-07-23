@@ -5,18 +5,18 @@ namespace Crispin.Infrastructure
 {
 	public abstract class AggregateRoot : IEvented
 	{
-		private readonly List<Event> _pendingEvents;
+		private readonly List<IEvent> _pendingEvents;
 		private readonly Aggregator _applicator;
 
 		protected AggregateRoot()
 		{
 			_applicator = new Aggregator(GetType());
-			_pendingEvents = new List<Event>();
+			_pendingEvents = new List<IEvent>();
 		}
 
 		public ToggleID ID { get; protected set; }
 
-		protected void ApplyEvent<TEvent>(TEvent @event) where TEvent : Event
+		protected void ApplyEvent<TEvent>(TEvent @event) where TEvent : IEvent
 		{
 			@event.TimeStamp = DateTime.Now;
 
@@ -26,7 +26,7 @@ namespace Crispin.Infrastructure
 			@event.AggregateID = ID;
 		}
 
-		IEnumerable<Event> IEvented.GetPendingEvents() => _pendingEvents;
+		IEnumerable<IEvent> IEvented.GetPendingEvents() => _pendingEvents;
 		void IEvented.ClearPendingEvents() => _pendingEvents.Clear();
 	}
 }
