@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using StructureMap.TypeRules;
 
 namespace Crispin.Infrastructure
 {
@@ -20,10 +19,18 @@ namespace Crispin.Infrastructure
 			foreach (var method in methods)
 			{
 				var eventType = method.GetParameters().Single().ParameterType;
+				object applicator;
 
-				var applicator = eventType.Closes(typeof(Act<>))
-					? typeof(MetadataApplicator<>).CloseAndBuildAs<object>(method, eventType)
-					: typeof(DirectApplicator<>).CloseAndBuildAs<object>(method, eventType);
+				if (eventType.Closes(typeof(Act<>)))
+				{
+					eventType = eventType.GetGenericArguments().Single();
+					applicator = typeof(MetadataApplicator<>).CloseAndBuildAs<object>(method, eventType);
+				}
+				else
+				{
+					applicator = typeof(DirectApplicator<>).CloseAndBuildAs<object>(method, eventType);
+				}
+
 
 				_handlers[eventType] = applicator;
 			}
