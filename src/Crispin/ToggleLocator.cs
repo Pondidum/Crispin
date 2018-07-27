@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
 using Crispin.Views;
 
 namespace Crispin

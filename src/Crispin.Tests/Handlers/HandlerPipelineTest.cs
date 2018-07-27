@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -23,7 +23,7 @@ namespace Crispin.Tests.Handlers
 			Editor = EditorID.Parse("me");
 			Storage = new InMemoryStorage();
 			Storage.RegisterAggregate<Toggle>();
-			Storage.RegisterProjection(new AllTogglesProjection());
+			Storage.RegisterProjection<ToggleView>();
 
 			var container = new Container(_ =>
 			{

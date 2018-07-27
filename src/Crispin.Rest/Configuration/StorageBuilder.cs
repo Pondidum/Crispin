@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using FileSystem;
 
 namespace Crispin.Rest.Configuration
@@ -41,7 +41,7 @@ namespace Crispin.Rest.Configuration
 
 		public static TStore Configure<TStore>(TStore store) where TStore : IStorage
 		{
-			store.RegisterProjection(new AllTogglesProjection());
+			store.RegisterProjection<ToggleView>();
 			store.RegisterAggregate<Toggle>();
 
 			return store;

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Alba;
 using Crispin.Conditions;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -23,7 +23,7 @@ namespace Crispin.Rest.Tests.Integration
 		public RouteTests()
 		{
 			_storage = new InMemoryStorage();
-			_storage.RegisterProjection(new AllTogglesProjection());
+			_storage.RegisterProjection<ToggleView>();
 			_storage.RegisterAggregate<Toggle>();
 
 			_system = SystemUnderTest.ForStartup<Startup>();

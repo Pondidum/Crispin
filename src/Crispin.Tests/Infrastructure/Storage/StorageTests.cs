@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using Shouldly;
 using Xunit;
 
@@ -17,13 +16,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_a_projection_is_registered()
 		{
-			var projection = new AllTogglesProjection();
-			_storage.RegisterProjection(projection);
+			_storage.RegisterProjection<ToggleView>();
 
 			using (var session = _storage.CreateSession())
 				await session.Save(Toggle.CreateNew(EditorID.Parse("test"), "Test", "no"));
 
-			projection.Toggles.Count().ShouldBe(1);
+			using (var session = _storage.CreateSession())
+				(await session.QueryProjection<ToggleView>()).ShouldHaveSingleItem();
 		}
 
 		[Fact]

@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using Crispin.Events;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
@@ -25,7 +25,7 @@ namespace Crispin.Tests.Handlers
 		public void When_there_is_no_projection_registered()
 		{
 			_session
-				.LoadProjection<AllTogglesProjection>()
+				.QueryProjection<ToggleView>()
 				.Throws(new ProjectionNotRegisteredException("wat"));
 
 			Should.Throw<ProjectionNotRegisteredException>(
@@ -36,8 +36,7 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_there_are_no_toggles_in_the_projection()
 		{
-			var projection = new AllTogglesProjection();
-			_session.LoadProjection<AllTogglesProjection>().Returns(projection);
+			_session.QueryProjection<ToggleView>().Returns(new List<ToggleView>());
 
 			var response = await _handler.Handle(new GetAllTogglesRequest());
 
@@ -47,9 +46,12 @@ namespace Crispin.Tests.Handlers
 		[Fact]
 		public async Task When_there_are_toggles_in_the_projection()
 		{
-			var projection = new AllTogglesProjection();
-			projection.Consume(new ToggleCreated(EditorID.Parse("?"), ToggleID.CreateNew(), "Test", "desc"));
-			_session.LoadProjection<AllTogglesProjection>().Returns(projection);
+			var projections = new List<ToggleView>
+			{
+				new ToggleView { ID = ToggleID.CreateNew(), Name = "Test", Description = "desc" }
+			};
+
+			_session.QueryProjection<ToggleView>().Returns(projections);
 
 			var response = await _handler.Handle(new GetAllTogglesRequest());
 

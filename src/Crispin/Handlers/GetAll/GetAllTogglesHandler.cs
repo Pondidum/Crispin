@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using MediatR;
 
 namespace Crispin.Handlers.GetAll
@@ -16,11 +16,11 @@ namespace Crispin.Handlers.GetAll
 
 		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
 		{
-			var projection = await _session.LoadProjection<AllTogglesProjection>();
+			var projection = await _session.QueryProjection<ToggleView>();
 
 			return new GetAllTogglesResponse
 			{
-				Toggles = projection.Toggles
+				Toggles = projection
 			};
 		}
 	}

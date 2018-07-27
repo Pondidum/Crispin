@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using Xunit;
 
 namespace Crispin.Tests.Handlers
@@ -17,16 +17,16 @@ namespace Crispin.Tests.Handlers
 		protected Toggle Toggle { get; }
 		protected ToggleLocator Locator { get; }
 		protected THandler Handler { get; private set; }
-		protected Dictionary<ToggleID, List<Event>> Events { get; }
+		protected Dictionary<ToggleID, List<IEvent>> Events { get; }
 		protected EditorID Editor { get; }
 
 		protected HandlerTest()
 		{
-			Events = new Dictionary<ToggleID, List<Event>>();
+			Events = new Dictionary<ToggleID, List<IEvent>>();
 
 			Storage = new InMemoryStorage(Events);
 			Storage.RegisterAggregate<Toggle>();
-			Storage.RegisterProjection(new AllTogglesProjection());
+			Storage.RegisterProjection<ToggleView>();
 
 			Toggle = Toggle.CreateNew(EditorID.Parse("editor"), "name", "desc");
 			Locator = ToggleLocator.Create(Toggle.ID);

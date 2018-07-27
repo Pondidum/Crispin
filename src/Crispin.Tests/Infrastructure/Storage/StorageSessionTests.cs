@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using Shouldly;
 using Xunit;
 
@@ -15,13 +15,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 	{
 		protected IStorageSession Session { get; private set; }
 		protected Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> Builders { get; }
-		protected List<IProjection> Projections { get; }
+		protected List<Projector> Projections { get; }
 		protected EditorID Editor { get; }
 
 		protected StorageSessionTests()
 		{
 			Builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
-			Projections = new List<IProjection>();
+			Projections = new List<Projector>();
 			Editor = EditorID.Parse("wat");
 
 			Builders[typeof(Toggle)] = events =>
@@ -40,7 +40,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 		protected abstract Task<bool> AggregateExists(ToggleID toggleID);
 		protected abstract Task WriteEvents(ToggleID toggleID, params object[] events);
 		protected abstract Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID);
-		protected abstract Task<TProjection> ReadProjection<TProjection>(TProjection projection) where TProjection : IProjection;
+		protected abstract Task<IEnumerable<TProjection>> ReadProjection<TProjection>();
+
+		protected void AddDefaultProjection()
+		{
+			Projections.Add(new Projector(typeof(ToggleView), () => new ToggleView()));
+		}
 
 		[Fact]
 		public void When_there_is_no_builder_for_an_aggregate()
@@ -205,58 +210,47 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_there_is_no_projection_registered()
 		{
-			Should.Throw<ProjectionNotRegisteredException>(() => Session.LoadProjection<AllTogglesProjection>());
+			Should.Throw<ProjectionNotRegisteredException>(() => Session.QueryProjection<ToggleView>());
 		}
 
 		[Fact]
 		public async Task When_the_projection_hasnt_been_written_to()
 		{
-			var allToggles = new AllTogglesProjection();
-			Projections.Add(allToggles);
+			AddDefaultProjection();
 
-			var projection = await Session.LoadProjection<AllTogglesProjection>();
+			var projection = await Session.QueryProjection<ToggleView>();
 
-			projection.ShouldBe(allToggles);
+			projection.ShouldBeEmpty();
 		}
 
 		[Fact]
 		public async Task When_there_is_a_projection()
 		{
-			var projection = new AllTogglesProjection();
-			Projections.Add(projection);
+			AddDefaultProjection();
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			await Session.Save(toggle);
 			await Session.Commit();
 
-			var view = projection.Toggles.Single();
+			var diskProjection = await ReadProjection<ToggleView>();
 
-			view.ShouldSatisfyAllConditions(
-				() => view.ID.ShouldBe(toggle.ID),
-				() => view.Name.ShouldBe(toggle.Name),
-				() => view.Description.ShouldBe(toggle.Description),
-				() => view.Tags.ShouldBeEmpty()
-			);
-
-			var diskProjection = await ReadProjection(new AllTogglesProjection());
-
-			diskProjection.Toggles.Select(t => t.ID).ShouldBe(projection.Toggles.Select(t => t.ID));
+			diskProjection.Select(t => t.ID).ShouldBe(new[] { toggle.ID });
 		}
 
 		[Fact]
 		public async Task When_retrieving_a_projection_from_disk()
 		{
-			Projections.Add(new AllTogglesProjection());
+			AddDefaultProjection();
 
 			var toggle = Toggle.CreateNew(Editor, "Projected", "yes");
 
 			await Session.Save(toggle);
 			await Session.Commit();
 
-			var projection = await Session.LoadProjection<AllTogglesProjection>();
+			var projection = await Session.QueryProjection<ToggleView>();
 
-			projection.Toggles.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
+			projection.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
 		}
 
 		public async Task DisposeAsync() => await Task.CompletedTask;

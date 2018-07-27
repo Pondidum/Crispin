@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
 using Crispin.Views;
 
 namespace Crispin
@@ -17,10 +16,9 @@ namespace Crispin
 
 		internal override async Task<ToggleView> LocateView(IStorageSession session)
 		{
-			var projection = await session.LoadProjection<AllTogglesProjection>();
+			var projection = await session.QueryProjection<ToggleView>();
 
 			return projection
-				.Toggles
 				.SingleOrDefault(view => view.ID == _toggleID);
 		}
 

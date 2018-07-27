@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
@@ -9,32 +8,30 @@ namespace Crispin.Infrastructure.Storage
 	public class InMemorySession : IStorageSession
 	{
 		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
-		private readonly List<IProjection> _projections;
-		private readonly IDictionary<ToggleID, List<Event>> _storeEvents;
-		private readonly Dictionary<ToggleID, List<Event>> _pendingEvents;
+		private readonly IEnumerable<Projector> _projections;
+		private readonly IDictionary<ToggleID, List<IEvent>> _storeEvents;
+		private readonly Dictionary<ToggleID, List<IEvent>> _pendingEvents;
 
 		public InMemorySession(
 			IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
-			List<IProjection> projections,
-			IDictionary<ToggleID, List<Event>> storeEvents)
+			IEnumerable<Projector> projections,
+			IDictionary<ToggleID, List<IEvent>> storeEvents)
 		{
 			_builders = builders;
 			_projections = projections;
 			_storeEvents = storeEvents;
-			_pendingEvents = new Dictionary<ToggleID, List<Event>>();
+			_pendingEvents = new Dictionary<ToggleID, List<IEvent>>();
 		}
 
 		public Task Open() => Task.CompletedTask;
 
-		public Task<TProjection> LoadProjection<TProjection>()
-			where TProjection : IProjection
+		public Task<IEnumerable<TProjection>> QueryProjection<TProjection>()
 		{
 			var projection = _projections
-				.OfType<TProjection>()
-				.FirstOrDefault();
+				.FirstOrDefault(p => p.For == typeof(TProjection));
 
 			if (projection != null)
-				return Task.FromResult(projection);
+				return Task.FromResult(projection.ToMemento().Values.Cast<TProjection>());
 
 			throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
 		}
@@ -47,7 +44,7 @@ namespace Crispin.Infrastructure.Storage
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
 
-			var eventsToLoad = new List<Event>();
+			var eventsToLoad = new List<IEvent>();
 
 			if (_storeEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_storeEvents[aggregateID]);
@@ -68,9 +65,9 @@ namespace Crispin.Infrastructure.Storage
 			where TAggregate : AggregateRoot, IEvented
 		{
 			if (_pendingEvents.ContainsKey(aggregate.ID) == false)
-				_pendingEvents.Add(aggregate.ID, new List<Event>());
+				_pendingEvents.Add(aggregate.ID, new List<IEvent>());
 
-			_pendingEvents[aggregate.ID].AddRange(aggregate.GetPendingEvents().Cast<Event>());
+			_pendingEvents[aggregate.ID].AddRange(aggregate.GetPendingEvents());
 
 			aggregate.ClearPendingEvents();
 
@@ -95,7 +92,7 @@ namespace Crispin.Infrastructure.Storage
 			foreach (var pair in _pendingEvents)
 			{
 				if (_storeEvents.ContainsKey(pair.Key) == false)
-					_storeEvents.Add(pair.Key, new List<Event>());
+					_storeEvents.Add(pair.Key, new List<IEvent>());
 
 				_storeEvents[pair.Key].AddRange(pair.Value);
 			}
@@ -106,7 +103,7 @@ namespace Crispin.Infrastructure.Storage
 
 			foreach (var projection in _projections)
 			foreach (var @event in eventsForProjection)
-				projection.Consume(@event);
+				projection.Apply(@event);
 
 			_pendingEvents.Clear();
 		}

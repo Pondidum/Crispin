@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Crispin.Handlers;
 using Crispin.Handlers.GetSingle;
-using Crispin.Projections;
 using Crispin.Rest.Toggles;
 using Crispin.Views;
 using MediatR;

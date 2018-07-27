@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Alba;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -18,7 +18,7 @@ namespace Crispin.Rest.Tests.Integration
 		public ToggleTags()
 		{
 			_storage = new InMemoryStorage();
-			_storage.RegisterProjection(new AllTogglesProjection());
+			_storage.RegisterProjection<ToggleView>();
 			_storage.RegisterAggregate<Toggle>();
 
 			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");

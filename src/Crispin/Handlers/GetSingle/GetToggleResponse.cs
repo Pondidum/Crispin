@@ -1,4 +1,3 @@
-using Crispin.Projections;
 using Crispin.Views;
 
 namespace Crispin.Handlers.GetSingle

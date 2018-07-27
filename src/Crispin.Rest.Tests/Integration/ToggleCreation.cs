@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Alba;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
 using Crispin.Rest.Tests.TestUtils;
+using Crispin.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
@@ -24,7 +24,7 @@ namespace Crispin.Rest.Tests.Integration
 		public ToggleCreation()
 		{
 			_storage = new InMemoryStorage();
-			_storage.RegisterProjection(new AllTogglesProjection());
+			_storage.RegisterProjection<ToggleView>();
 			_storage.RegisterAggregate<Toggle>();
 
 			_system = SystemUnderTest.ForStartup<Startup>();

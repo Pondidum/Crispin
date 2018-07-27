@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Crispin.Projections;
+using Crispin.Views;
 using Shouldly;
 using Xunit;
 
@@ -12,11 +12,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 {
 	public class InMemorySessionTests : StorageSessionTests
 	{
-		private readonly Dictionary<ToggleID, List<Event>> _eventStore;
+		private readonly Dictionary<ToggleID, List<IEvent>> _eventStore;
 
 		public InMemorySessionTests()
 		{
-			_eventStore = new Dictionary<ToggleID, List<Event>>();
+			_eventStore = new Dictionary<ToggleID, List<IEvent>>();
 		}
 
 		protected override Task<IStorageSession> CreateSession()
@@ -31,7 +31,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected override Task WriteEvents(ToggleID toggleID, params object[] events)
 		{
-			_eventStore[toggleID] = events.Cast<Event>().ToList();
+			_eventStore[toggleID] = events.Cast<IEvent>().ToList();
 			return Task.CompletedTask;
 		}
 
@@ -43,16 +43,15 @@ namespace Crispin.Tests.Infrastructure.Storage
 			return Task.FromResult(_eventStore[toggleID].Select(e => e.GetType()));
 		}
 
-		protected override Task<TProjection> ReadProjection<TProjection>(TProjection projection)
+		protected override Task<IEnumerable<TProjection>> ReadProjection<TProjection>()
 		{
-			return Task.FromResult(Projections.OfType<TProjection>().SingleOrDefault());
+			return Task.FromResult(Projections.SingleOrDefault(p => p.For == typeof(TProjection))?.ToMemento().Values.Cast<TProjection>());
 		}
 
 		[Fact]
 		public async Task When_there_is_a_projection_with_multiple_aggregates()
 		{
-			var projection = new AllTogglesProjection();
-			Projections.Add(projection);
+			AddDefaultProjection();
 
 			var first = Toggle.CreateNew(Editor, "First", "yes");
 			var second = Toggle.CreateNew(Editor, "Second", "yes");
@@ -61,7 +60,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 			await Session.Save(second);
 			await Session.Commit();
 
-			projection.Toggles.Select(v => v.ID).ShouldBe(new[]
+			var projection = await Session.QueryProjection<ToggleView>();
+			projection.Select(v => v.ID).ShouldBe(new[]
 			{
 				first.ID,
 				second.ID
@@ -71,18 +71,18 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task When_retrieving_a_projection_which_exists_in_the_session()
 		{
-			var projection = new AllTogglesProjection();
-			Projections.Add(projection);
+			AddDefaultProjection();
 
-			var loadProjection = await Session.LoadProjection<AllTogglesProjection>();
-			loadProjection.ShouldBe(projection);
+			var loadProjection = await Session.QueryProjection<ToggleView>();
+
+			loadProjection.ShouldNotBeNull();
 		}
 
 		[Fact]
 		public void When_retrieving_a_projection_which_doesnt_exist_in_the_session()
 		{
 			Should.Throw<ProjectionNotRegisteredException>(
-				() => Session.LoadProjection<AllTogglesProjection>()
+				() => Session.QueryProjection<ToggleView>()
 			);
 		}
 	}

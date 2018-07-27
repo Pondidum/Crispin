@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
@@ -7,8 +8,7 @@ namespace Crispin.Infrastructure.Storage
 	{
 		Task Open();
 
-		Task<TProjection> LoadProjection<TProjection>()
-			where TProjection : IProjection;
+		Task<IEnumerable<TProjection>> QueryProjection<TProjection>();
 
 		Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot;

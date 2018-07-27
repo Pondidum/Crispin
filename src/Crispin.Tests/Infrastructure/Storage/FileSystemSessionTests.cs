@@ -66,7 +66,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 				.Select(e => e.GetType());
 		}
 
-		protected override async Task<TProjection> ReadProjection<TProjection>(TProjection projection)
+		protected override async Task<IEnumerable<TProjection>> ReadProjection<TProjection>()
 		{
 			var path = Path.Combine(Root, typeof(TProjection).Name + ".json");
 
@@ -74,12 +74,10 @@ namespace Crispin.Tests.Infrastructure.Storage
 			using (var reader = new StreamReader(stream))
 			{
 				var json = await reader.ReadToEndAsync();
-				var memento = JsonConvert.DeserializeObject(json, JsonSettings);
+				var memento = JsonConvert.DeserializeObject<Dictionary<ToggleID, object>>(json, JsonSettings);
 
-				projection.FromMemento(memento);
+				return memento.Values.Cast<TProjection>();
 			}
-
-			return projection;
 		}
 
 		[Fact]

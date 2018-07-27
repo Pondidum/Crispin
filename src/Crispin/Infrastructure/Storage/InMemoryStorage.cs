@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Crispin.Infrastructure.Storage
 {
 	public class InMemoryStorage : IStorage
 	{
 		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
-		private readonly IDictionary<ToggleID, List<Event>> _events;
-		private readonly List<IProjection> _projections;
+		private readonly IDictionary<ToggleID, List<IEvent>> _events;
+		private readonly Dictionary<Type, Projector> _projections;
 
-		public InMemoryStorage(Dictionary<ToggleID, List<Event>> events = null)
+		public InMemoryStorage(Dictionary<ToggleID, List<IEvent>> events = null)
 		{
 			_builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
-			_events = events ?? new Dictionary<ToggleID, List<Event>>();
-			_projections = new List<IProjection>();
+			_events = events ?? new Dictionary<ToggleID, List<IEvent>>();
+			_projections = new Dictionary<Type, Projector>();
 		}
 
 		public void RegisterAggregate<TAggregate>() where TAggregate : AggregateRoot, new()
@@ -33,14 +32,19 @@ namespace Crispin.Infrastructure.Storage
 			};
 		}
 
-		public void RegisterProjection(IProjection projection)
+		public void RegisterProjection<TProjection>() where TProjection : new()
 		{
-			_projections.Add(projection);
+			RegisterProjection(() => new TProjection());
+		}
+
+		public void RegisterProjection<TProjection>(Func<TProjection> createBlank)
+		{
+			_projections.Add(typeof(TProjection), new Projector(typeof(TProjection), () => createBlank()));
 		}
 
 		public IStorageSession CreateSession() => new InMemorySession(
 			_builders,
-			_projections,
+			_projections.Values,
 			_events);
 	}
 }

@@ -7,7 +7,8 @@ namespace Crispin.Infrastructure.Storage
 		void RegisterAggregate<TAggregate>() where TAggregate : AggregateRoot, new();
 		void RegisterAggregate<TAggregate>(Func<TAggregate> createBlank) where TAggregate : AggregateRoot;
 
-		void RegisterProjection(IProjection projection);
+		void RegisterProjection<TProjection>() where TProjection : new();
+		void RegisterProjection<TProjection>(Func<TProjection> createBlank);
 
 		IStorageSession CreateSession();
 	}

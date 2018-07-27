@@ -32,6 +32,6 @@ namespace Crispin.Infrastructure
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
-		public object Data => this;
+		object IEvent.Data => this;
 	}
 }

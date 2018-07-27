@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using Crispin.Events;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Crispin.Handlers.GetSingle;
 using Crispin.Infrastructure.Storage;
-using Crispin.Projections;
+using Crispin.Views;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -12,15 +12,15 @@ namespace Crispin.Tests.Handlers
 	public class GetToggleHandlerTests
 	{
 		private readonly GetToggleHandler _handler;
-		private readonly AllTogglesProjection _view;
+		private readonly List<ToggleView> _view;
 		private readonly EditorID _creator;
 
 		public GetToggleHandlerTests()
 		{
-			_view = new AllTogglesProjection();
+			_view = new List<ToggleView>();
 
 			var session = Substitute.For<IStorageSession>();
-			session.LoadProjection<AllTogglesProjection>().Returns(_view);
+			session.QueryProjection<ToggleView>().Returns(_view);
 
 			_handler = new GetToggleHandler(session);
 			_creator = EditorID.Parse("test editor");
@@ -40,7 +40,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_id()
 		{
 			var toggleID = ToggleID.CreateNew();
-			_view.Consume(new ToggleCreated(_creator, toggleID, "name", "desc"));
+			_view.Add(new ToggleView { ID = toggleID, Name = "name", Description = "desc" });
 
 			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
 
@@ -61,7 +61,7 @@ namespace Crispin.Tests.Handlers
 		public async Task When_the_requested_toggle_exists_by_name()
 		{
 			var toggleName = "name";
-			_view.Consume(new ToggleCreated(_creator, ToggleID.CreateNew(), toggleName, "desc"));
+			_view.Add(new ToggleView { ID = ToggleID.CreateNew(), Name = toggleName, Description = "desc" });
 
 			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
 

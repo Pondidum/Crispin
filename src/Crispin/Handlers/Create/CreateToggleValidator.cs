@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Crispin.Infrastructure;
 using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
-using Crispin.Projections;
 using Crispin.Views;
 
 namespace Crispin.Handlers.Create
@@ -34,8 +33,7 @@ namespace Crispin.Handlers.Create
 
 		private async Task<IEnumerable<ToggleView>> GetExistingToggles()
 		{
-			var view = await _session.LoadProjection<AllTogglesProjection>();
-			return view.Toggles;
+			return await _session.QueryProjection<ToggleView>();
 		}
 	}
 }

@@ -18,14 +18,14 @@ namespace Crispin.Infrastructure.Storage
 
 		private readonly IFileSystem _fileSystem;
 		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
-		private readonly List<IProjection> _projections;
+		private readonly IEnumerable<Projector> _projections;
 		private readonly string _root;
-		private readonly Dictionary<ToggleID, List<Event>> _pending;
+		private readonly Dictionary<ToggleID, List<IEvent>> _pending;
 
 		public FileSystemSession(
 			IFileSystem fileSystem,
 			Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
-			List<IProjection> projections,
+			IEnumerable<Projector> projections,
 			string root)
 		{
 			_fileSystem = fileSystem;
@@ -33,7 +33,7 @@ namespace Crispin.Infrastructure.Storage
 			_projections = projections;
 			_root = root;
 
-			_pending = new Dictionary<ToggleID, List<Event>>();
+			_pending = new Dictionary<ToggleID, List<IEvent>>();
 		}
 
 		public void Dispose()
@@ -47,9 +47,9 @@ namespace Crispin.Infrastructure.Storage
 			await _fileSystem.CreateDirectory(_root);
 		}
 
-		public async Task<TProjection> LoadProjection<TProjection>() where TProjection : IProjection
+		public async Task<IEnumerable<TProjection>> QueryProjection<TProjection>()
 		{
-			var projection = _projections.OfType<TProjection>().FirstOrDefault();
+			var projection = _projections.FirstOrDefault(p => p.For == typeof(TProjection));
 
 			if (projection == null)
 				throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
@@ -57,18 +57,18 @@ namespace Crispin.Infrastructure.Storage
 			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
 
 			if (await _fileSystem.FileExists(projectionPath) == false)
-				return projection;
+				return projection.ToMemento().Values.Cast<TProjection>();
 
 			using (var stream = await _fileSystem.ReadFile(projectionPath))
 			using (var reader = new StreamReader(stream))
 			{
 				var json = await reader.ReadToEndAsync();
-				var memento = JsonConvert.DeserializeObject(json, JsonSerializerSettings);
+				var memento = JsonConvert.DeserializeObject<Dictionary<ToggleID, object>>(json, JsonSerializerSettings);
 
 				projection.FromMemento(memento);
 			}
 
-			return projection;
+			return projection.ToMemento().Values.Cast<TProjection>();
 		}
 
 		public async Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
@@ -88,7 +88,7 @@ namespace Crispin.Infrastructure.Storage
 
 			var sessionEvents = _pending.ContainsKey(aggregateID)
 				? _pending[aggregateID]
-				: Enumerable.Empty<Event>();
+				: Enumerable.Empty<IEvent>();
 
 			var events = fsEvents
 				.Concat(sessionEvents)
@@ -104,10 +104,10 @@ namespace Crispin.Infrastructure.Storage
 
 		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
 		{
-			var pending = aggregate.GetPendingEvents().Cast<Event>();
+			var pending = aggregate.GetPendingEvents();
 
 			if (_pending.ContainsKey(aggregate.ID) == false)
-				_pending[aggregate.ID] = new List<Event>();
+				_pending[aggregate.ID] = new List<IEvent>();
 
 			_pending[aggregate.ID].AddRange(pending);
 			aggregate.ClearPendingEvents();
@@ -137,9 +137,9 @@ namespace Crispin.Infrastructure.Storage
 			foreach (var projection in _projections)
 			foreach (var @event in eventsForProjection)
 			{
-				projection.Consume(@event);
+				projection.Apply(@event);
 
-				var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
+				var projectionPath = Path.Combine(_root, projection.For.Name + ".json");
 				var projectionJson = JsonConvert.SerializeObject(projection.ToMemento(), JsonSerializerSettings);
 
 				await _fileSystem.WriteFile(projectionPath, async stream =>
