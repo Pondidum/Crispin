@@ -28,7 +28,7 @@ namespace Crispin.Views
 
 		public void Apply(ToggleCreated e)
 		{
-			ID = e.AggregateID;
+			ID = e.NewToggleID;
 			Name = e.Name;
 			Description = e.Description;
 		}

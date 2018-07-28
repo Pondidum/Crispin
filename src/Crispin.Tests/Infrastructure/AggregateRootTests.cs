@@ -80,10 +80,9 @@ namespace Crispin.Tests.Infrastructure
 		{
 			_aggregate.Raise(new Stamped());
 
-			_aggregate
-				.SeenEvents
-				.Cast<Stamped>()
-				.Single()
+			((IEvented)_aggregate)
+				.GetPendingEvents()
+				.ShouldHaveSingleItem()
 				.TimeStamp
 				.ShouldNotBeNull();
 		}
@@ -92,10 +91,17 @@ namespace Crispin.Tests.Infrastructure
 		public void When_a_timestampable_event_is_loaded()
 		{
 			var stamp = new DateTime(2017, 2, 3);
-			
-			AggregateBuilder.Build(_aggregate, new[] { new Stamped { TimeStamp = stamp }.AsAct() });
 
-			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);
+			var act = new Act<Stamped>
+			{
+				AggregateID = _aggregate.ID,
+				TimeStamp = stamp,
+				Data = new Stamped()
+			};
+
+			AggregateBuilder.Build(_aggregate, new[] { act });
+
+			_aggregate.LastEvent.ShouldBe(stamp);
 		}
 
 		[Fact]
@@ -105,20 +111,28 @@ namespace Crispin.Tests.Infrastructure
 			_aggregate.Raise(new TestAggregateCreated(id));
 			_aggregate.Raise(new TestEventOne());
 
-			_aggregate.SeenEvents.Last().AggregateID.ShouldBe(id);
+			((IEvented)_aggregate)
+				.GetPendingEvents()
+				.ShouldAllBe(e => e.AggregateID == id);
 		}
 
 		private class TestAggregate : AggregateRoot
 		{
-			public List<Event> SeenEvents { get; private set; }
+			public DateTime LastEvent { get; set; }
+			public List<object> SeenEvents { get; private set; }
 
 			public TestAggregate()
 			{
-				SeenEvents = new List<Event>();
+				SeenEvents = new List<object>();
 			}
 
 			private void Apply(TestEventOne e) => SeenEvents.Add(e);
-			private void Apply(Stamped e) => SeenEvents.Add(e);
+
+			private void Apply(Act<Stamped> e)
+			{
+				LastEvent = e.TimeStamp;
+				SeenEvents.Add(e.Data);
+			}
 
 			private void Apply(TestAggregateCreated e)
 			{
@@ -126,18 +140,18 @@ namespace Crispin.Tests.Infrastructure
 				SeenEvents.Add(e);
 			}
 
-			public void Raise<TEvent>(TEvent e) where TEvent : Event => ApplyEvent(e);
+			public void Raise<TEvent>(TEvent e) => ApplyEvent(e);
 		}
 
-		private class TestEventOne : Event
+		private class TestEventOne
 		{
 		}
 
-		private class Stamped : Event
+		private class Stamped
 		{
 		}
 
-		private class TestAggregateCreated : Event
+		private class TestAggregateCreated
 		{
 			public ToggleID ID { get; }
 

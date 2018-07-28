@@ -2,7 +2,7 @@
 
 namespace Crispin.Events
 {
-	public class EnabledOnAnyCondition : Event
+	public class EnabledOnAnyCondition
 	{
 		public EditorID Editor { get; }
 

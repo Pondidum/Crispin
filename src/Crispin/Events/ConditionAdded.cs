@@ -4,7 +4,7 @@ using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
-	public class ConditionAdded : Event
+	public class ConditionAdded
 	{
 		public EditorID Editor { get; }
 		public ConditionID ConditionID { get; }

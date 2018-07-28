@@ -2,7 +2,7 @@
 
 namespace Crispin.Events
 {
-	public class TagAdded : Event
+	public class TagAdded
 	{
 		public EditorID Editor { get; }
 		public string Name { get; }

@@ -132,7 +132,7 @@ namespace Crispin
 		//handlers which apply the results of the domainy things
 		private void Apply(ToggleCreated e)
 		{
-			ID = e.AggregateID;
+			ID = e.NewToggleID;
 			Name = e.Name;
 			Description = e.Description;
 			ConditionMode = ConditionModes.All;

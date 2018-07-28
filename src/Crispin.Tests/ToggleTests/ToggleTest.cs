@@ -27,7 +27,7 @@ namespace Crispin.Tests.ToggleTests
 
 			Toggle = new Toggle();
 
-			AggregateBuilder.Build(Toggle, new[] { create.AsAct(create.AggregateID) }.Concat(events));
+			AggregateBuilder.Build(Toggle, new[] { create.AsAct(create.NewToggleID) }.Concat(events));
 		}
 
 		protected void CreateToggle(Action<Toggle> setup)

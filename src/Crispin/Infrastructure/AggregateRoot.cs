@@ -16,10 +16,8 @@ namespace Crispin.Infrastructure
 
 		public ToggleID ID { get; protected set; }
 
-		protected void ApplyEvent<TEvent>(TEvent @event) where TEvent : IEvent
+		protected void ApplyEvent<TEvent>(TEvent @event)
 		{
-			@event.TimeStamp = DateTime.Now;
-
 			var act = new Act<TEvent>
 			{
 				AggregateID = ID,
@@ -28,11 +26,8 @@ namespace Crispin.Infrastructure
 			};
 
 			act.Apply(this, _applicator);
+			act.AggregateID = ID; // the handler might have set the ID (e.g. createdEvents)
 
-			act.AggregateID = ID;
-			@event.AggregateID = ID;
-			
-			
 			_pendingEvents.Add(act);
 		}
 

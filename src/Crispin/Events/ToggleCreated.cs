@@ -1,17 +1,15 @@
-﻿using System;
-using Crispin.Infrastructure;
-
-namespace Crispin.Events
+﻿namespace Crispin.Events
 {
-	public class ToggleCreated : Event
+	public class ToggleCreated
 	{
+		public ToggleID NewToggleID { get; }
 		public EditorID Creator { get; }
 		public string Name { get; }
 		public string Description { get; }
 
-		public ToggleCreated(EditorID creator, ToggleID id, string name, string description)
+		public ToggleCreated(EditorID creator, ToggleID newToggleID, string name, string description)
 		{
-			AggregateID = id;
+			NewToggleID = newToggleID;
 			Creator = creator;
 			Name = name;
 			Description = description;

@@ -2,12 +2,6 @@
 
 namespace Crispin.Infrastructure
 {
-	public interface IEvent
-	{
-		ToggleID AggregateID { get; set; }
-		DateTime TimeStamp { get; set; }
-	}
-
 	public interface IAct
 	{
 		ToggleID AggregateID { get; set; }
@@ -17,7 +11,7 @@ namespace Crispin.Infrastructure
 		void Apply(object aggregate, Aggregator applicator);
 	}
 
-	public class Act<TData> : IEvent, IAct
+	public class Act<TData> : IAct
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
@@ -34,11 +28,5 @@ namespace Crispin.Infrastructure
 			else
 				handler.Apply(aggregate, this);
 		}
-	}
-
-	public abstract class Event : IEvent
-	{
-		public ToggleID AggregateID { get; set; }
-		public DateTime TimeStamp { get; set; }
 	}
 }

@@ -3,7 +3,7 @@ using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
-	public class ConditionRemoved : Event
+	public class ConditionRemoved
 	{
 		public EditorID Editor { get; }
 		public ConditionID ConditionID { get; }

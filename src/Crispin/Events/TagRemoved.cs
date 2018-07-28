@@ -2,7 +2,7 @@ using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {
-	public class TagRemoved : Event
+	public class TagRemoved
 	{
 		public EditorID Editor { get; }
 		public string Name { get; }
