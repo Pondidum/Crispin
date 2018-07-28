@@ -20,7 +20,7 @@ namespace Crispin.Tests.ToggleTests
 			Toggle = new Toggle();
 
 			var loader = new Aggregator(Toggle.GetType());
-			loader.Apply(Toggle, toggleCreated);
+			toggleCreated.AsAct().Apply(Toggle, loader);
 
 			Toggle.ShouldSatisfyAllConditions(
 				() => Toggle.ID.ShouldBe(toggleID),

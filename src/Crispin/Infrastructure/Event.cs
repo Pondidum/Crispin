@@ -8,13 +8,24 @@ namespace Crispin.Infrastructure
 		DateTime TimeStamp { get; set; }
 	}
 
-	public class Act<TData> : IEvent
+	public interface IAct
+	{
+		ToggleID AggregateID { get; set; }
+		DateTime TimeStamp { get; set; }
+		object Data { get; }
+
+		void Apply(object aggregate, Aggregator applicator);
+	}
+
+	public class Act<TData> : IEvent, IAct
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public TData Data { get; set; }
 
-		public void Apply(AggregateRoot aggregate, Aggregator applicator)
+		object IAct.Data => Data;
+
+		public void Apply(object aggregate, Aggregator applicator)
 		{
 			var handler = applicator.For<TData>();
 

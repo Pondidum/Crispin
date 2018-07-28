@@ -3,6 +3,7 @@ using System.Linq;
 using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
 using Crispin.Events;
+using Crispin.Infrastructure;
 using Shouldly;
 using Xunit;
 
@@ -37,7 +38,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_switching_to_all_conditions()
 		{
-			CreateToggle(new EnabledOnAnyCondition(Editor));
+			CreateToggle(new EnabledOnAnyCondition(Editor).AsAct());
 
 			Toggle.EnableOnAllConditions(Editor);
 
@@ -48,7 +49,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_switching_from_all_to_all()
 		{
-			CreateToggle(new EnabledOnAnyCondition(Editor));
+			CreateToggle(new EnabledOnAnyCondition(Editor).AsAct());
 
 			Toggle.EnableOnAllConditions(Editor);
 			Toggle.EnableOnAllConditions(Editor);
@@ -59,7 +60,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_switching_from_any_to_any()
 		{
-			CreateToggle(new EnabledOnAllConditions(Editor));
+			CreateToggle(new EnabledOnAllConditions(Editor).AsAct());
 
 			Toggle.EnableOnAnyCondition(Editor);
 			Toggle.EnableOnAnyCondition(Editor);
@@ -99,8 +100,8 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.AddCondition(Editor, conditionTwo);
 
 			Events.Length.ShouldBe(2);
-			Event<ConditionAdded>(0).ConditionID.ShouldBe(ConditionID.Parse(0));
-			Event<ConditionAdded>(1).ConditionID.ShouldBe(ConditionID.Parse(1));
+			Event<ConditionAdded>(0).Data.ConditionID.ShouldBe(ConditionID.Parse(0));
+			Event<ConditionAdded>(1).Data.ConditionID.ShouldBe(ConditionID.Parse(1));
 		}
 
 		[Fact]
@@ -124,9 +125,9 @@ namespace Crispin.Tests.ToggleTests
 			var three = ConditionProperties("Enabled");
 
 			CreateToggle(
-				new ConditionAdded(Editor, ConditionID.Parse(0), null, one),
-				new ConditionAdded(Editor, ConditionID.Parse(1), null, two),
-				new ConditionAdded(Editor, ConditionID.Parse(2), null, three)
+				new ConditionAdded(Editor, ConditionID.Parse(0), null, one).AsAct(),
+				new ConditionAdded(Editor, ConditionID.Parse(1), null, two).AsAct(),
+				new ConditionAdded(Editor, ConditionID.Parse(2), null, three).AsAct()
 			);
 
 			Toggle.RemoveCondition(Editor, ConditionID.Parse(1));
@@ -155,8 +156,9 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.AddCondition(Editor, ConditionProperties("enabled"));
 
 			Events
-				.OfType<ConditionAdded>()
+				.OfType<Act<ConditionAdded>>()
 				.Last()
+				.Data
 				.ConditionID.ShouldBe(ConditionID.Parse(additions));
 		}
 
@@ -256,9 +258,9 @@ namespace Crispin.Tests.ToggleTests
 		public void Next_condition_id_is_correct_when_adding_a_new_condition_after_load()
 		{
 			CreateToggle(
-				new ConditionAdded(Editor, ConditionID.Parse(0), null, ConditionProperties("enabled")),
-				new ConditionRemoved(Editor, ConditionID.Parse(0)),
-				new ConditionAdded(Editor, ConditionID.Parse(1), null, ConditionProperties("enabled"))
+				new ConditionAdded(Editor, ConditionID.Parse(0), null, ConditionProperties("enabled")).AsAct(),
+				new ConditionRemoved(Editor, ConditionID.Parse(0)).AsAct(),
+				new ConditionAdded(Editor, ConditionID.Parse(1), null, ConditionProperties("enabled")).AsAct()
 			);
 
 			Toggle.AddCondition(Editor, ConditionProperties("disabled"));

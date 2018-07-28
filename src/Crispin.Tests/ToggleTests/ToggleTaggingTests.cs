@@ -23,7 +23,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_adding_an_existing_tag_to_a_toggle()
 		{
-			CreateToggle(new TagAdded(Editor, "first-tag"));
+			CreateToggle(new TagAdded(Editor, "first-tag").AsAct());
 			Toggle.AddTag(Editor, "first-tag");
 
 			EventTypes.ShouldBeEmpty();
@@ -43,7 +43,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_removing_an_existing_tag_to_a_toggle()
 		{
-			CreateToggle(new TagAdded(Editor, "something"));
+			CreateToggle(new TagAdded(Editor, "something").AsAct());
 			Toggle.RemoveTag(Editor, "something");
 
 			SingleEvent<TagRemoved>().Name.ShouldBe("something");
@@ -53,7 +53,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_adding_a_toggle_which_differs_by_case()
 		{
-			CreateToggle(new TagAdded(Editor, "testing"));
+			CreateToggle(new TagAdded(Editor, "testing").AsAct());
 			Toggle.AddTag(Editor, "TESTING");
 
 			EventTypes.ShouldBeEmpty();
@@ -63,7 +63,7 @@ namespace Crispin.Tests.ToggleTests
 		[Fact]
 		public void When_removing_a_toggle_which_differs_by_case()
 		{
-			CreateToggle(new TagAdded(Editor, "testing"));
+			CreateToggle(new TagAdded(Editor, "testing").AsAct());
 			Toggle.RemoveTag(Editor, "TESTING");
 
 			SingleEvent<TagRemoved>().Name.ShouldBe("TESTING");

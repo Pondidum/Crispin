@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Crispin.Events;
 using Crispin.Infrastructure;
+using Crispin.Infrastructure.Storage;
 
 namespace Crispin.Tests.ToggleTests
 {
@@ -16,7 +17,7 @@ namespace Crispin.Tests.ToggleTests
 			Editor = EditorID.Parse("Testing");
 		}
 
-		protected void CreateToggle(params IEvent[] events)
+		protected void CreateToggle(params IAct[] events)
 		{
 			var create = new ToggleCreated(
 				Editor,
@@ -26,8 +27,7 @@ namespace Crispin.Tests.ToggleTests
 
 			Toggle = new Toggle();
 
-			var loader = new Aggregator(Toggle.GetType());
-			loader.Apply(Toggle, new[] { create }.Concat(events));
+			AggregateBuilder.Build(Toggle, new[] { create.AsAct(create.AggregateID) }.Concat(events));
 		}
 
 		protected void CreateToggle(Action<Toggle> setup)
@@ -38,11 +38,11 @@ namespace Crispin.Tests.ToggleTests
 		}
 
 		protected IEnumerable<Type> EventTypes => Events.Select(e => e.GetType());
-		protected IEvent[] Events => ((IEvented)Toggle).GetPendingEvents().ToArray();
+		protected IAct[] Events => ((IEvented)Toggle).GetPendingEvents().ToArray();
 
-		protected TEvent Event<TEvent>(int index) => Events.Skip(index).Cast<TEvent>().First();
+		protected Act<TEvent> Event<TEvent>(int index) => Events.Skip(index).Cast<Act<TEvent>>().First();
 
-		protected TEvent SingleEvent<TEvent>() where TEvent : Event => (TEvent)((IEvented)Toggle).GetPendingEvents().Single();
-		protected void SingleEvent<TEvent>(Action<TEvent> callback) where TEvent : Event => callback(SingleEvent<TEvent>());
+		protected TEvent SingleEvent<TEvent>() => ((IEvented)Toggle).GetPendingEvents().Select(e => e.Data).Cast<TEvent>().Single();
+		protected void SingleEvent<TEvent>(Action<TEvent> callback) => callback(SingleEvent<TEvent>());
 	}
 }

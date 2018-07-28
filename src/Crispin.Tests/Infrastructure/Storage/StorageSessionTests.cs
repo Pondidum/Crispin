@@ -14,23 +14,17 @@ namespace Crispin.Tests.Infrastructure.Storage
 	public abstract class StorageSessionTests : IAsyncLifetime
 	{
 		protected IStorageSession Session { get; private set; }
-		protected Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> Builders { get; }
+		protected Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> Builders { get; }
 		protected List<Projector> Projections { get; }
 		protected EditorID Editor { get; }
 
 		protected StorageSessionTests()
 		{
-			Builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
+			Builders = new Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>>();
 			Projections = new List<Projector>();
 			Editor = EditorID.Parse("wat");
 
-			Builders[typeof(Toggle)] = events =>
-			{
-				var instance = new Toggle();
-				var applicator = new Aggregator(instance.GetType());
-				applicator.Apply(instance, events);
-				return instance;
-			};
+			Builders[typeof(Toggle)] = events => AggregateBuilder.Build(new Toggle(), events);
 		}
 
 		public async Task InitializeAsync() => Session = await CreateSession();
@@ -38,7 +32,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		protected abstract Task<IStorageSession> CreateSession();
 
 		protected abstract Task<bool> AggregateExists(ToggleID toggleID);
-		protected abstract Task WriteEvents(ToggleID toggleID, params object[] events);
+		protected abstract Task WriteEvents(ToggleID toggleID, params IAct[] events);
 		protected abstract Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID);
 		protected abstract Task<IEnumerable<TProjection>> ReadProjection<TProjection>();
 
@@ -77,8 +71,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			await WriteEvents(
 				toggleID,
-				new ToggleCreated(Editor, toggleID, "First", "hi"),
-				new TagAdded(Editor, "one")
+				new ToggleCreated(Editor, toggleID, "First", "hi").AsAct(toggleID),
+				new TagAdded(Editor, "one").AsAct(toggleID)
 			);
 
 			var toggle = await Session.LoadAggregate<Toggle>(toggleID);
@@ -115,8 +109,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			events.ShouldBe(new[]
 			{
-				typeof(ToggleCreated),
-				typeof(TagAdded),
+				typeof(Act<ToggleCreated>),
+				typeof(Act<TagAdded>),
 			});
 		}
 
@@ -169,8 +163,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			events.ShouldBe(new[]
 			{
-				typeof(ToggleCreated),
-				typeof(TagAdded)
+				typeof(Act<ToggleCreated>),
+				typeof(Act<TagAdded>)
 			});
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Crispin.Infrastructure;
+using Crispin.Infrastructure.Storage;
 using Shouldly;
 using Xunit;
 
@@ -28,7 +29,7 @@ namespace Crispin.Tests.Infrastructure
 			var testEvent = new TestEventOne();
 			_aggregate.Raise(testEvent);
 
-			((IEvented)_aggregate).GetPendingEvents().ShouldHaveSingleItem().ShouldBe(testEvent);
+			((IEvented)_aggregate).GetPendingEvents().ShouldHaveSingleItem().Data.ShouldBe(testEvent);
 		}
 
 		[Fact]
@@ -53,25 +54,24 @@ namespace Crispin.Tests.Infrastructure
 			foreach (var e in events)
 				_aggregate.Raise(e);
 
-			((IEvented)_aggregate).GetPendingEvents().ShouldBe(events);
+			((IEvented)_aggregate).GetPendingEvents().Select(e => e.Data).ShouldBe(events);
 		}
 
 		[Fact]
 		public void When_loading_from_events()
 		{
-			var events = new IEvent[]
+			var events = new IAct[]
 			{
-				new TestEventOne(),
-				new TestEventOne(),
-				new TestEventOne()
+				new TestEventOne().AsAct(),
+				new TestEventOne().AsAct(),
+				new TestEventOne().AsAct()
 			};
 
-			var loader = new Aggregator(_aggregate.GetType());
-			loader.Apply(_aggregate, events.AsEnumerable());
+			AggregateBuilder.Build(_aggregate, events);
 
 			_aggregate.ShouldSatisfyAllConditions(
 				() => ((IEvented)_aggregate).GetPendingEvents().ShouldBeEmpty(),
-				() => _aggregate.SeenEvents.ShouldBe(events)
+				() => _aggregate.SeenEvents.ShouldBe(events.Select(e => e.Data))
 			);
 		}
 
@@ -92,9 +92,8 @@ namespace Crispin.Tests.Infrastructure
 		public void When_a_timestampable_event_is_loaded()
 		{
 			var stamp = new DateTime(2017, 2, 3);
-
-			var loader = new Aggregator(_aggregate.GetType());
-			loader.Apply(_aggregate, new Stamped { TimeStamp = stamp });
+			
+			AggregateBuilder.Build(_aggregate, new[] { new Stamped { TimeStamp = stamp }.AsAct() });
 
 			_aggregate.SeenEvents.Cast<Stamped>().Single().TimeStamp.ShouldBe(stamp);
 		}

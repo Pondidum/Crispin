@@ -12,11 +12,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 {
 	public class InMemorySessionTests : StorageSessionTests
 	{
-		private readonly Dictionary<ToggleID, List<IEvent>> _eventStore;
+		private readonly Dictionary<ToggleID, List<IAct>> _eventStore;
 
 		public InMemorySessionTests()
 		{
-			_eventStore = new Dictionary<ToggleID, List<IEvent>>();
+			_eventStore = new Dictionary<ToggleID, List<IAct>>();
 		}
 
 		protected override Task<IStorageSession> CreateSession()
@@ -29,9 +29,9 @@ namespace Crispin.Tests.Infrastructure.Storage
 			return Task.FromResult(_eventStore.ContainsKey(toggleID));
 		}
 
-		protected override Task WriteEvents(ToggleID toggleID, params object[] events)
+		protected override Task WriteEvents(ToggleID toggleID, params IAct[] events)
 		{
-			_eventStore[toggleID] = events.Cast<IEvent>().ToList();
+			_eventStore[toggleID] = events.ToList();
 			return Task.CompletedTask;
 		}
 

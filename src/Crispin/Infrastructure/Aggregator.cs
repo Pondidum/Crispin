@@ -40,26 +40,6 @@ namespace Crispin.Infrastructure
 			? handler as IApplicator<TEvent>
 			: null;
 
-		public void Apply(object aggregate, IEnumerable<IEvent> @events)
-		{
-			var apply = GetType()
-				.GetMethods()
-				.Where(m => m.Name == nameof(Apply))
-				.Where(m => m.IsGenericMethod)
-				.Select(method => new Action<object>(e => method
-					.MakeGenericMethod(e.GetType())
-					.Invoke(this, new[] { aggregate, e })))
-				.Single();
-
-			events.Each(apply);
-		}
-
-		public void Apply<TEvent>(object aggregate, TEvent @event) where TEvent : IEvent
-		{
-			if (_handlers.TryGetValue(@event.GetType(), out var handler))
-				handler.As<IApplicator<TEvent>>().Apply(aggregate, @event);
-		}
-
 		private static IEnumerable<MethodInfo> MethodsFor(Type aggregate) => aggregate
 			.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 			.Where(m => m.Name == "Apply")
