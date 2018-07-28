@@ -1,5 +1,4 @@
 ﻿using Crispin.Conditions;
-using Crispin.Infrastructure;
 
 namespace Crispin.Events
 {

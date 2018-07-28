@@ -31,7 +31,6 @@ namespace Crispin.Infrastructure
 					applicator = typeof(DirectApplicator<>).CloseAndBuildAs<object>(method, eventType);
 				}
 
-
 				_handlers[eventType] = applicator;
 			}
 		}
@@ -44,37 +43,5 @@ namespace Crispin.Infrastructure
 			.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 			.Where(m => m.Name == "Apply")
 			.Where(m => m.GetParameters().Length == 1);
-	}
-
-	public interface IApplicator<TEvent>
-	{
-		void Apply(object aggregate, TEvent @event);
-		void Apply(object aggregate, Act<TEvent> @event);
-	}
-
-	public class DirectApplicator<TEvent> : IApplicator<TEvent>
-	{
-		private readonly Action<object, TEvent> _apply;
-
-		public DirectApplicator(MethodInfo method)
-		{
-			_apply = (a, e) => method.Invoke(a, new object[] { e });
-		}
-
-		public void Apply(object aggregate, TEvent @event) => _apply(aggregate, @event);
-		public void Apply(object aggregate, Act<TEvent> @event) => _apply(aggregate, @event.Data);
-	}
-
-	public class MetadataApplicator<TEvent> : IApplicator<TEvent>
-	{
-		private readonly Action<object, Act<TEvent>> _apply;
-
-		public MetadataApplicator(MethodInfo method)
-		{
-			_apply = (a, e) => method.Invoke(a, new object[] { e });
-		}
-
-		public void Apply(object aggregate, TEvent @event) => throw new NotSupportedException("should never be called");
-		public void Apply(object aggregate, Act<TEvent> @event) => _apply(aggregate, @event);
 	}
 }

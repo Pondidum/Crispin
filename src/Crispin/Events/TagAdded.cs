@@ -1,6 +1,4 @@
-﻿using Crispin.Infrastructure;
-
-namespace Crispin.Events
+﻿namespace Crispin.Events
 {
 	public class TagAdded
 	{

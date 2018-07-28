@@ -1,5 +1,3 @@
-using Crispin.Infrastructure;
-
 namespace Crispin.Events
 {
 	public class TagRemoved
