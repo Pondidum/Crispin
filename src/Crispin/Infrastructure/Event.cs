@@ -6,15 +6,12 @@ namespace Crispin.Infrastructure
 	{
 		ToggleID AggregateID { get; set; }
 		DateTime TimeStamp { get; set; }
-		object Data { get; }
 	}
 
 	public class Act<TData> : IEvent
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
-		object IEvent.Data => Data;
-
 		public TData Data { get; set; }
 
 		public void Apply(AggregateRoot aggregate, Aggregator applicator)
@@ -32,6 +29,5 @@ namespace Crispin.Infrastructure
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
-		object IEvent.Data => this;
 	}
 }
