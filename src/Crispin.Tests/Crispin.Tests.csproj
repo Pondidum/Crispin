@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.5.0" />
     <PackageReference Include="Castle.Core" Version="4.1.1" />
     <PackageReference Include="FileSystem" Version="0.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />

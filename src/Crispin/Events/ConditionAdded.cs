@@ -10,12 +10,12 @@ namespace Crispin.Events
 		public ConditionID ParentConditionID { get; }
 		public Dictionary<string, object> Properties { get; }
 
-		public ConditionAdded(EditorID editor, ConditionID conditionID, ConditionID parentConditionID, Dictionary<string, object> conditionProperties)
+		public ConditionAdded(EditorID editor, ConditionID conditionID, ConditionID parentConditionID, Dictionary<string, object> properties)
 		{
 			Editor = editor;
 			ConditionID = conditionID;
 			ParentConditionID = parentConditionID;
-			Properties = conditionProperties;
+			Properties = properties;
 		}
 
 		public override string ToString() => ParentConditionID != null
