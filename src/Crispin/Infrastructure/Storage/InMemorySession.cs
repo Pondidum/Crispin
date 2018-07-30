@@ -10,7 +10,7 @@ namespace Crispin.Infrastructure.Storage
 		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
 		private readonly IEnumerable<Projector> _projections;
 		private readonly IDictionary<ToggleID, List<IEvent>> _storeEvents;
-		private readonly Dictionary<ToggleID, List<IEvent>> _pendingEvents;
+		private readonly PendingEventsStore _pendingEvents;
 
 		public InMemorySession(
 			IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
@@ -20,7 +20,7 @@ namespace Crispin.Infrastructure.Storage
 			_builders = builders;
 			_projections = projections;
 			_storeEvents = storeEvents;
-			_pendingEvents = new Dictionary<ToggleID, List<IEvent>>();
+			_pendingEvents = new PendingEventsStore();
 		}
 
 		public Task Open() => Task.CompletedTask;
@@ -49,8 +49,7 @@ namespace Crispin.Infrastructure.Storage
 			if (_storeEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_storeEvents[aggregateID]);
 
-			if (_pendingEvents.ContainsKey(aggregateID))
-				eventsToLoad.AddRange(_pendingEvents[aggregateID]);
+			eventsToLoad.AddRange(_pendingEvents.EventsFor(aggregateID));
 
 			if (eventsToLoad.Any() == false)
 				throw new AggregateNotFoundException(typeof(TAggregate), aggregateID);
@@ -61,13 +60,9 @@ namespace Crispin.Infrastructure.Storage
 		}
 
 
-		public Task Save<TAggregate>(TAggregate aggregate)
-			where TAggregate : AggregateRoot, IEvented
+		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
 		{
-			if (_pendingEvents.ContainsKey(aggregate.ID) == false)
-				_pendingEvents.Add(aggregate.ID, new List<IEvent>());
-
-			_pendingEvents[aggregate.ID].AddRange(aggregate.GetPendingEvents());
+			_pendingEvents.AddEvents(aggregate.ID, aggregate.GetPendingEvents());
 
 			aggregate.ClearPendingEvents();
 
@@ -89,21 +84,16 @@ namespace Crispin.Infrastructure.Storage
 
 		private void PerformCommit()
 		{
-			foreach (var pair in _pendingEvents)
+			foreach (var @event in _pendingEvents.AllEvents)
 			{
-				if (_storeEvents.ContainsKey(pair.Key) == false)
-					_storeEvents.Add(pair.Key, new List<IEvent>());
+				if (_storeEvents.ContainsKey(@event.AggregateID) == false)
+					_storeEvents.Add(@event.AggregateID, new List<IEvent>());
 
-				_storeEvents[pair.Key].AddRange(pair.Value);
+				_storeEvents[@event.AggregateID].Add(@event);
+
+				foreach (var projection in _projections)
+					projection.Apply(@event);
 			}
-
-			var eventsForProjection = _pendingEvents
-				.SelectMany(p => p.Value)
-				.ToArray();
-
-			foreach (var projection in _projections)
-			foreach (var @event in eventsForProjection)
-				projection.Apply(@event);
 
 			_pendingEvents.Clear();
 		}
