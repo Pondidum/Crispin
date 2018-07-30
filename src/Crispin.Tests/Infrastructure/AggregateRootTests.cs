@@ -60,7 +60,7 @@ namespace Crispin.Tests.Infrastructure
 		[Fact]
 		public void When_loading_from_events()
 		{
-			var events = new IAct[]
+			var events = new IEvent[]
 			{
 				new TestEventOne().AsAct(),
 				new TestEventOne().AsAct(),
@@ -92,7 +92,7 @@ namespace Crispin.Tests.Infrastructure
 		{
 			var stamp = new DateTime(2017, 2, 3);
 
-			var act = new Act<Stamped>
+			var act = new Event<Stamped>
 			{
 				AggregateID = _aggregate.ID,
 				TimeStamp = stamp,
@@ -128,7 +128,7 @@ namespace Crispin.Tests.Infrastructure
 
 			private void Apply(TestEventOne e) => SeenEvents.Add(e);
 
-			private void Apply(Act<Stamped> e)
+			private void Apply(Event<Stamped> e)
 			{
 				LastEvent = e.TimeStamp;
 				SeenEvents.Add(e.Data);

@@ -39,7 +39,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 			return await _fs.FileExists(Path.Combine(Root, toggleID.ToString()));
 		}
 
-		protected override async Task WriteEvents(ToggleID toggleID, params IAct[] events)
+		protected override async Task WriteEvents(ToggleID toggleID, params IEvent[] events)
 		{
 			await _fs.WriteFile(Path.Combine(Root, toggleID.ToString()), stream =>
 			{

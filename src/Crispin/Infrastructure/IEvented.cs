@@ -4,7 +4,7 @@ namespace Crispin.Infrastructure
 {
 	public interface IEvented
 	{
-		IEnumerable<IAct> GetPendingEvents();
+		IEnumerable<IEvent> GetPendingEvents();
 		void ClearPendingEvents();
 	}
 }

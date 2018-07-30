@@ -7,20 +7,20 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class InMemorySession : IStorageSession
 	{
-		private readonly IDictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> _builders;
+		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
 		private readonly IEnumerable<Projector> _projections;
-		private readonly IDictionary<ToggleID, List<IAct>> _storeEvents;
-		private readonly Dictionary<ToggleID, List<IAct>> _pendingEvents;
+		private readonly IDictionary<ToggleID, List<IEvent>> _storeEvents;
+		private readonly Dictionary<ToggleID, List<IEvent>> _pendingEvents;
 
 		public InMemorySession(
-			IDictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> builders,
+			IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
 			IEnumerable<Projector> projections,
-			IDictionary<ToggleID, List<IAct>> storeEvents)
+			IDictionary<ToggleID, List<IEvent>> storeEvents)
 		{
 			_builders = builders;
 			_projections = projections;
 			_storeEvents = storeEvents;
-			_pendingEvents = new Dictionary<ToggleID, List<IAct>>();
+			_pendingEvents = new Dictionary<ToggleID, List<IEvent>>();
 		}
 
 		public Task Open() => Task.CompletedTask;
@@ -39,12 +39,12 @@ namespace Crispin.Infrastructure.Storage
 		public Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
 			where TAggregate : AggregateRoot
 		{
-			Func<IEnumerable<IAct>, AggregateRoot> builder;
+			Func<IEnumerable<IEvent>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
 
-			var eventsToLoad = new List<IAct>();
+			var eventsToLoad = new List<IEvent>();
 
 			if (_storeEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_storeEvents[aggregateID]);
@@ -65,7 +65,7 @@ namespace Crispin.Infrastructure.Storage
 			where TAggregate : AggregateRoot, IEvented
 		{
 			if (_pendingEvents.ContainsKey(aggregate.ID) == false)
-				_pendingEvents.Add(aggregate.ID, new List<IAct>());
+				_pendingEvents.Add(aggregate.ID, new List<IEvent>());
 
 			_pendingEvents[aggregate.ID].AddRange(aggregate.GetPendingEvents());
 
@@ -92,7 +92,7 @@ namespace Crispin.Infrastructure.Storage
 			foreach (var pair in _pendingEvents)
 			{
 				if (_storeEvents.ContainsKey(pair.Key) == false)
-					_storeEvents.Add(pair.Key, new List<IAct>());
+					_storeEvents.Add(pair.Key, new List<IEvent>());
 
 				_storeEvents[pair.Key].AddRange(pair.Value);
 			}

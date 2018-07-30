@@ -156,7 +156,7 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.AddCondition(Editor, ConditionProperties("enabled"));
 
 			Events
-				.OfType<Act<ConditionAdded>>()
+				.OfType<Event<ConditionAdded>>()
 				.Last()
 				.Data
 				.ConditionID.ShouldBe(ConditionID.Parse(additions));

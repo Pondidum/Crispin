@@ -5,13 +5,13 @@ namespace Crispin.Tests
 {
 	public static class Utils
 	{
-		public static Act<T> AsAct<T>(this T self) => new Act<T>
+		public static Event<T> AsAct<T>(this T self) => new Event<T>
 		{
 			TimeStamp = DateTime.Now,
 			Data = self
 		};
 		
-		public static Act<T> AsAct<T>(this T self, ToggleID id) => new Act<T>
+		public static Event<T> AsAct<T>(this T self, ToggleID id) => new Event<T>
 		{
 			AggregateID = id,
 			TimeStamp = DateTime.Now,

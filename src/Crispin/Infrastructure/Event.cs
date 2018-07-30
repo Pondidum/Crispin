@@ -2,22 +2,13 @@
 
 namespace Crispin.Infrastructure
 {
-	public interface IAct
-	{
-		ToggleID AggregateID { get; set; }
-		DateTime TimeStamp { get; set; }
-		object Data { get; }
-
-		void Apply(object aggregate, Aggregator applicator);
-	}
-
-	public class Act<TData> : IAct
+	public class Event<TData> : IEvent
 	{
 		public ToggleID AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public TData Data { get; set; }
 
-		object IAct.Data => Data;
+		object IEvent.Data => Data;
 
 		public void Apply(object aggregate, Aggregator applicator)
 		{

@@ -13,6 +13,6 @@ namespace Crispin.Infrastructure
 		}
 
 		public void Apply(object aggregate, TEvent @event) => _apply(aggregate, @event);
-		public void Apply(object aggregate, Act<TEvent> @event) => _apply(aggregate, @event.Data);
+		public void Apply(object aggregate, Event<TEvent> @event) => _apply(aggregate, @event.Data);
 	}
 }

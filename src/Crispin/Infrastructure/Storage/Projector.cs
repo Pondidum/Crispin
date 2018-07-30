@@ -19,7 +19,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public Type For { get; }
 
-		public void Apply(IAct @event)
+		public void Apply(IEvent @event)
 		{
 			object aggregate;
 

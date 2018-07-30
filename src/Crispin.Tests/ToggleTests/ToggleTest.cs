@@ -17,7 +17,7 @@ namespace Crispin.Tests.ToggleTests
 			Editor = EditorID.Parse("Testing");
 		}
 
-		protected void CreateToggle(params IAct[] events)
+		protected void CreateToggle(params IEvent[] events)
 		{
 			var create = new ToggleCreated(
 				Editor,
@@ -38,9 +38,9 @@ namespace Crispin.Tests.ToggleTests
 		}
 
 		protected IEnumerable<Type> EventTypes => Events.Select(e => e.GetType());
-		protected IAct[] Events => ((IEvented)Toggle).GetPendingEvents().ToArray();
+		protected IEvent[] Events => ((IEvented)Toggle).GetPendingEvents().ToArray();
 
-		protected Act<TEvent> Event<TEvent>(int index) => Events.Skip(index).Cast<Act<TEvent>>().First();
+		protected Event<TEvent> Event<TEvent>(int index) => Events.Skip(index).Cast<Event<TEvent>>().First();
 
 		protected TEvent SingleEvent<TEvent>() => ((IEvented)Toggle).GetPendingEvents().Select(e => e.Data).Cast<TEvent>().Single();
 		protected void SingleEvent<TEvent>(Action<TEvent> callback) => callback(SingleEvent<TEvent>());

@@ -17,14 +17,14 @@ namespace Crispin.Infrastructure.Storage
 		};
 
 		private readonly IFileSystem _fileSystem;
-		private readonly Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> _builders;
+		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
 		private readonly IEnumerable<Projector> _projections;
 		private readonly string _root;
-		private readonly Dictionary<ToggleID, List<IAct>> _pending;
+		private readonly Dictionary<ToggleID, List<IEvent>> _pending;
 
 		public FileSystemSession(
 			IFileSystem fileSystem,
-			Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> builders,
+			Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
 			IEnumerable<Projector> projections,
 			string root)
 		{
@@ -33,7 +33,7 @@ namespace Crispin.Infrastructure.Storage
 			_projections = projections;
 			_root = root;
 
-			_pending = new Dictionary<ToggleID, List<IAct>>();
+			_pending = new Dictionary<ToggleID, List<IEvent>>();
 		}
 
 		public void Dispose()
@@ -73,7 +73,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public async Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
 		{
-			Func<IEnumerable<IAct>, AggregateRoot> builder;
+			Func<IEnumerable<IEvent>, AggregateRoot> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
@@ -83,12 +83,12 @@ namespace Crispin.Infrastructure.Storage
 			var fsEvents = await _fileSystem.FileExists(aggregatePath)
 				? (await _fileSystem.ReadFileLines(aggregatePath))
 				.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
-				.Cast<IAct>()
-				: Enumerable.Empty<IAct>();
+				.Cast<IEvent>()
+				: Enumerable.Empty<IEvent>();
 
 			var sessionEvents = _pending.ContainsKey(aggregateID)
 				? _pending[aggregateID]
-				: Enumerable.Empty<IAct>();
+				: Enumerable.Empty<IEvent>();
 
 			var events = fsEvents
 				.Concat(sessionEvents)
@@ -107,7 +107,7 @@ namespace Crispin.Infrastructure.Storage
 			var pending = aggregate.GetPendingEvents();
 
 			if (_pending.ContainsKey(aggregate.ID) == false)
-				_pending[aggregate.ID] = new List<IAct>();
+				_pending[aggregate.ID] = new List<IEvent>();
 
 			_pending[aggregate.ID].AddRange(pending);
 			aggregate.ClearPendingEvents();

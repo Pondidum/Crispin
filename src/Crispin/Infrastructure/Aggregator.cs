@@ -21,7 +21,7 @@ namespace Crispin.Infrastructure
 				var eventType = method.GetParameters().Single().ParameterType;
 				object applicator;
 
-				if (eventType.Closes(typeof(Act<>)))
+				if (eventType.Closes(typeof(Event<>)))
 				{
 					eventType = eventType.GetGenericArguments().Single();
 					applicator = typeof(MetadataApplicator<>).CloseAndBuildAs<object>(method, eventType);

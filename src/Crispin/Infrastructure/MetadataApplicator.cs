@@ -5,7 +5,7 @@ namespace Crispin.Infrastructure
 {
 	public class MetadataApplicator<TEvent> : IApplicator<TEvent>
 	{
-		private readonly Action<object, Act<TEvent>> _apply;
+		private readonly Action<object, Event<TEvent>> _apply;
 
 		public MetadataApplicator(MethodInfo method)
 		{
@@ -13,6 +13,6 @@ namespace Crispin.Infrastructure
 		}
 
 		public void Apply(object aggregate, TEvent @event) => throw new NotSupportedException("should never be called");
-		public void Apply(object aggregate, Act<TEvent> @event) => _apply(aggregate, @event);
+		public void Apply(object aggregate, Event<TEvent> @event) => _apply(aggregate, @event);
 	}
 }

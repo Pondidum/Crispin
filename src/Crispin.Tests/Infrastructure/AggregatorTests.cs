@@ -34,7 +34,7 @@ namespace Crispin.Tests.Infrastructure
 			{
 			}
 
-			public void Apply(Act<WrappedEvent> e)
+			public void Apply(Event<WrappedEvent> e)
 			{
 			}
 		}

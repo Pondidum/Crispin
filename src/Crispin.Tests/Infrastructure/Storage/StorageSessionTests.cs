@@ -14,13 +14,13 @@ namespace Crispin.Tests.Infrastructure.Storage
 	public abstract class StorageSessionTests : IAsyncLifetime
 	{
 		protected IStorageSession Session { get; private set; }
-		protected Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>> Builders { get; }
+		protected Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> Builders { get; }
 		protected List<Projector> Projections { get; }
 		protected EditorID Editor { get; }
 
 		protected StorageSessionTests()
 		{
-			Builders = new Dictionary<Type, Func<IEnumerable<IAct>, AggregateRoot>>();
+			Builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
 			Projections = new List<Projector>();
 			Editor = EditorID.Parse("wat");
 
@@ -32,7 +32,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		protected abstract Task<IStorageSession> CreateSession();
 
 		protected abstract Task<bool> AggregateExists(ToggleID toggleID);
-		protected abstract Task WriteEvents(ToggleID toggleID, params IAct[] events);
+		protected abstract Task WriteEvents(ToggleID toggleID, params IEvent[] events);
 		protected abstract Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID);
 		protected abstract Task<IEnumerable<TProjection>> ReadProjection<TProjection>();
 
@@ -109,8 +109,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			events.ShouldBe(new[]
 			{
-				typeof(Act<ToggleCreated>),
-				typeof(Act<TagAdded>),
+				typeof(Event<ToggleCreated>),
+				typeof(Event<TagAdded>),
 			});
 		}
 
@@ -163,8 +163,8 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			events.ShouldBe(new[]
 			{
-				typeof(Act<ToggleCreated>),
-				typeof(Act<TagAdded>)
+				typeof(Event<ToggleCreated>),
+				typeof(Event<TagAdded>)
 			});
 		}
 

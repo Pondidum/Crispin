@@ -5,20 +5,20 @@ namespace Crispin.Infrastructure
 {
 	public abstract class AggregateRoot : IEvented
 	{
-		private readonly List<IAct> _pendingEvents;
+		private readonly List<IEvent> _pendingEvents;
 		private readonly Aggregator _applicator;
 
 		protected AggregateRoot()
 		{
 			_applicator = new Aggregator(GetType());
-			_pendingEvents = new List<IAct>();
+			_pendingEvents = new List<IEvent>();
 		}
 
 		public ToggleID ID { get; protected set; }
 
 		protected void ApplyEvent<TEvent>(TEvent @event)
 		{
-			var act = new Act<TEvent>
+			var act = new Event<TEvent>
 			{
 				AggregateID = ID,
 				TimeStamp = DateTime.Now,
@@ -31,7 +31,7 @@ namespace Crispin.Infrastructure
 			_pendingEvents.Add(act);
 		}
 
-		IEnumerable<IAct> IEvented.GetPendingEvents() => _pendingEvents;
+		IEnumerable<IEvent> IEvented.GetPendingEvents() => _pendingEvents;
 		void IEvented.ClearPendingEvents() => _pendingEvents.Clear();
 	}
 }
