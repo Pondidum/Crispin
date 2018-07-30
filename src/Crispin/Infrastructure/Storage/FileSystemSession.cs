@@ -20,7 +20,7 @@ namespace Crispin.Infrastructure.Storage
 		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
 		private readonly IEnumerable<Projector> _projections;
 		private readonly string _root;
-		private readonly Dictionary<ToggleID, List<IEvent>> _pending;
+		private readonly PendingEventsStore _pending;
 
 		public FileSystemSession(
 			IFileSystem fileSystem,
@@ -33,7 +33,7 @@ namespace Crispin.Infrastructure.Storage
 			_projections = projections;
 			_root = root;
 
-			_pending = new Dictionary<ToggleID, List<IEvent>>();
+			_pending = new PendingEventsStore();
 		}
 
 		public void Dispose()
@@ -86,9 +86,7 @@ namespace Crispin.Infrastructure.Storage
 				.Cast<IEvent>()
 				: Enumerable.Empty<IEvent>();
 
-			var sessionEvents = _pending.ContainsKey(aggregateID)
-				? _pending[aggregateID]
-				: Enumerable.Empty<IEvent>();
+			var sessionEvents = _pending.EventsFor(aggregateID);
 
 			var events = fsEvents
 				.Concat(sessionEvents)
@@ -106,10 +104,8 @@ namespace Crispin.Infrastructure.Storage
 		{
 			var pending = aggregate.GetPendingEvents();
 
-			if (_pending.ContainsKey(aggregate.ID) == false)
-				_pending[aggregate.ID] = new List<IEvent>();
+			_pending.AddEvents(aggregate.ID, pending);
 
-			_pending[aggregate.ID].AddRange(pending);
 			aggregate.ClearPendingEvents();
 
 			return Task.CompletedTask;
@@ -117,22 +113,18 @@ namespace Crispin.Infrastructure.Storage
 
 		public async Task Commit()
 		{
-			foreach (var pair in _pending)
+			await _pending.ForEach(async (aggregateID, events) =>
 			{
-				var aggregatePath = Path.Combine(_root, pair.Key.ToString());
-				var events = pair.Value.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings));
+				var aggregatePath = Path.Combine(_root, aggregateID.ToString());
+				var lines = events
+					.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings))
+					.ToArray();
 
-				await _fileSystem.AppendFile(aggregatePath, async stream =>
-				{
-					using (var writer = new StreamWriter(stream))
-						foreach (var @event in events)
-							await writer.WriteLineAsync(@event);
-				});
-			}
+				await _fileSystem.AppendFileLines(aggregatePath, lines);
+			});
 
-			var eventsForProjection = _pending
-				.SelectMany(p => p.Value)
-				.ToArray();
+
+			var eventsForProjection = _pending.AllEvents.ToArray();
 
 			foreach (var projection in _projections)
 			foreach (var @event in eventsForProjection)
