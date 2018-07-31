@@ -7,11 +7,11 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class PendingEventsStore
 	{
-		private readonly Dictionary<ToggleID, List<IEvent>> _pending;
+		private readonly Dictionary<object, List<IEvent>> _pending;
 
 		public PendingEventsStore()
 		{
-			_pending = new Dictionary<ToggleID, List<IEvent>>();
+			_pending = new Dictionary<object, List<IEvent>>();
 		}
 
 		public IEnumerable<IEvent> AllEvents => _pending.SelectMany(pair => pair.Value);
@@ -19,11 +19,11 @@ namespace Crispin.Infrastructure.Storage
 		public bool Any() => _pending.Any();
 		public void Clear() => _pending.Clear();
 
-		public IEnumerable<IEvent> EventsFor(ToggleID aggregateID) => _pending.ContainsKey(aggregateID)
+		public IEnumerable<IEvent> EventsFor<T>(T aggregateID) => _pending.ContainsKey(aggregateID)
 			? _pending[aggregateID]
 			: Enumerable.Empty<IEvent>();
 
-		public void AddEvents(ToggleID aggregateID, IEnumerable<IEvent> pending)
+		public void AddEvents<T>(T aggregateID, IEnumerable<IEvent> pending)
 		{
 			if (_pending.ContainsKey(aggregateID) == false)
 				_pending[aggregateID] = new List<IEvent>();
