@@ -100,11 +100,9 @@ namespace Crispin.Infrastructure.Storage
 			return (TAggregate)aggregate;
 		}
 
-		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot, IEvented
+		public Task Save(IEvented aggregate)
 		{
-			var pending = aggregate.GetPendingEvents();
-
-			_pending.AddEvents(aggregate.ID, pending);
+			_pending.AddEvents(aggregate.GetPendingEvents());
 
 			aggregate.ClearPendingEvents();
 

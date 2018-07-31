@@ -23,12 +23,17 @@ namespace Crispin.Infrastructure.Storage
 			? _pending[aggregateID]
 			: Enumerable.Empty<IEvent>();
 
-		public void AddEvents<T>(T aggregateID, IEnumerable<IEvent> pending)
+		public void AddEvents(IEnumerable<IEvent> pending)
 		{
-			if (_pending.ContainsKey(aggregateID) == false)
-				_pending[aggregateID] = new List<IEvent>();
+			pending.Each(AddEvent);
+		}
 
-			_pending[aggregateID].AddRange(pending);
+		public void AddEvent(IEvent pending)
+		{
+			if (_pending.ContainsKey(pending.AggregateID) == false)
+				_pending[pending.AggregateID] = new List<IEvent>();
+
+			_pending[pending.AggregateID].Add(pending);
 		}
 
 		public async Task ForEach(Func<object, IEnumerable<IEvent>, Task> action)
