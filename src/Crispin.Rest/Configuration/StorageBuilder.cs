@@ -15,7 +15,7 @@ namespace Crispin.Rest.Configuration
 			Builders = new Dictionary<StorageBackends, Func<CrispinConfiguration, IStorage>>
 			{
 				{ StorageBackends.InMemory, BuildInMemoryStorage },
-//				{ StorageBackends.FileSystem, BuildFileSystemStorage }
+				{ StorageBackends.FileSystem, BuildFileSystemStorage }
 			};
 		}
 
@@ -31,13 +31,13 @@ namespace Crispin.Rest.Configuration
 			return new InMemoryStorage();
 		}
 
-//		private static IStorage BuildFileSystemStorage(CrispinConfiguration config)
-//		{
-//			var fs = new PhysicalFileSystem();
-//			fs.CreateDirectory(config.ConnectionString).Wait();
-//
-//			return new FileSystemStorage(fs, config.ConnectionString);
-//		}
+		private static IStorage BuildFileSystemStorage(CrispinConfiguration config)
+		{
+			var fs = new PhysicalFileSystem();
+			fs.CreateDirectory(config.ConnectionString).Wait();
+
+			return new FileSystemStorage(fs, config.ConnectionString);
+		}
 
 		public static TStore Configure<TStore>(TStore store) where TStore : IStorage
 		{
