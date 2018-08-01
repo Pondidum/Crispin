@@ -12,11 +12,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 {
 	public class InMemorySessionTests : StorageSessionTests
 	{
-		private readonly Dictionary<ToggleID, List<IEvent>> _eventStore;
+		private readonly Dictionary<object, List<IEvent>> _eventStore;
 
 		public InMemorySessionTests()
 		{
-			_eventStore = new Dictionary<ToggleID, List<IEvent>>();
+			_eventStore = new Dictionary<object, List<IEvent>>();
 		}
 
 		protected override Task<IStorageSession> CreateSession()

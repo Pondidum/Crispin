@@ -5,14 +5,14 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class InMemoryStorage : IStorage
 	{
-		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
-		private readonly IDictionary<ToggleID, List<IEvent>> _events;
+		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, object>> _builders;
+		private readonly IDictionary<object, List<IEvent>> _events;
 		private readonly Dictionary<Type, Projector> _projections;
 
-		public InMemoryStorage(Dictionary<ToggleID, List<IEvent>> events = null)
+		public InMemoryStorage(Dictionary<object, List<IEvent>> events = null)
 		{
-			_builders = new Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>>();
-			_events = events ?? new Dictionary<ToggleID, List<IEvent>>();
+			_builders = new Dictionary<Type, Func<IEnumerable<IEvent>, object>>();
+			_events = events ?? new Dictionary<object, List<IEvent>>();
 			_projections = new Dictionary<Type, Projector>();
 		}
 

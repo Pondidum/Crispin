@@ -7,15 +7,15 @@ namespace Crispin.Infrastructure.Storage
 {
 	public class InMemorySession : IStorageSession
 	{
-		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
+		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, object>> _builders;
 		private readonly IEnumerable<Projector> _projections;
-		private readonly IDictionary<ToggleID, List<IEvent>> _storeEvents;
+		private readonly IDictionary<object, List<IEvent>> _storeEvents;
 		private readonly PendingEventsStore _pendingEvents;
 
 		public InMemorySession(
-			IDictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
+			IDictionary<Type, Func<IEnumerable<IEvent>, object>> builders,
 			IEnumerable<Projector> projections,
-			IDictionary<ToggleID, List<IEvent>> storeEvents)
+			IDictionary<object, List<IEvent>> storeEvents)
 		{
 			_builders = builders;
 			_projections = projections;
@@ -36,10 +36,9 @@ namespace Crispin.Infrastructure.Storage
 			throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
 		}
 
-		public Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID)
-			where TAggregate : AggregateRoot
+		public Task<TAggregate> LoadAggregate<TAggregate>(object aggregateID)
 		{
-			Func<IEnumerable<IEvent>, AggregateRoot> builder;
+			Func<IEnumerable<IEvent>, object> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));

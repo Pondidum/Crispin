@@ -17,12 +17,12 @@ namespace Crispin.Tests.Handlers
 		protected Toggle Toggle { get; }
 		protected ToggleLocator Locator { get; }
 		protected THandler Handler { get; private set; }
-		protected Dictionary<ToggleID, List<IEvent>> Events { get; }
+		protected Dictionary<object, List<IEvent>> Events { get; }
 		protected EditorID Editor { get; }
 
 		protected HandlerTest()
 		{
-			Events = new Dictionary<ToggleID, List<IEvent>>();
+			Events = new Dictionary<object, List<IEvent>>();
 
 			Storage = new InMemoryStorage(Events);
 			Storage.RegisterAggregate<Toggle>();

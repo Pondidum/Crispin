@@ -17,14 +17,14 @@ namespace Crispin.Infrastructure.Storage
 		};
 
 		private readonly IFileSystem _fileSystem;
-		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> _builders;
+		private readonly Dictionary<Type, Func<IEnumerable<IEvent>, object>> _builders;
 		private readonly IEnumerable<Projector> _projections;
 		private readonly string _root;
 		private readonly PendingEventsStore _pending;
 
 		public FileSystemSession(
 			IFileSystem fileSystem,
-			Dictionary<Type, Func<IEnumerable<IEvent>, AggregateRoot>> builders,
+			Dictionary<Type, Func<IEnumerable<IEvent>, object>> builders,
 			IEnumerable<Projector> projections,
 			string root)
 		{
@@ -71,9 +71,9 @@ namespace Crispin.Infrastructure.Storage
 			return projection.ToMemento().Values.Cast<TProjection>();
 		}
 
-		public async Task<TAggregate> LoadAggregate<TAggregate>(ToggleID aggregateID) where TAggregate : AggregateRoot
+		public async Task<TAggregate> LoadAggregate<TAggregate>(object aggregateID)
 		{
-			Func<IEnumerable<IEvent>, AggregateRoot> builder;
+			Func<IEnumerable<IEvent>, object> builder;
 
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
