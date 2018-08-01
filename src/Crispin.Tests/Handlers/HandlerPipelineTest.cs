@@ -22,7 +22,7 @@ namespace Crispin.Tests.Handlers
 		{
 			Editor = EditorID.Parse("me");
 			Storage = new InMemoryStorage();
-			Storage.RegisterAggregate<Toggle>();
+			Storage.RegisterAggregate<ToggleID, Toggle>();
 			Storage.RegisterProjection<ToggleView>();
 
 			var container = new Container(_ =>

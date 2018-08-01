@@ -19,7 +19,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_storage = new InMemoryStorage();
 			_storage.RegisterProjection<ToggleView>();
-			_storage.RegisterAggregate<Toggle>();
+			_storage.RegisterAggregate<ToggleID, Toggle>();
 
 			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");
 			_toggle.AddTag(EditorID.Parse("me"), "readonly");

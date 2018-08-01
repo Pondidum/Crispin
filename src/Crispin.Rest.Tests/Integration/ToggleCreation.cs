@@ -25,7 +25,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_storage = new InMemoryStorage();
 			_storage.RegisterProjection<ToggleView>();
-			_storage.RegisterAggregate<Toggle>();
+			_storage.RegisterAggregate<ToggleID, Toggle>();
 
 			_system = SystemUnderTest.ForStartup<Startup>();
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));

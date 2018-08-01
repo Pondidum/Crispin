@@ -38,7 +38,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public void When_an_aggregate_is_registered()
 		{
-			_storage.RegisterAggregate<Toggle>();
+			_storage.RegisterAggregate<ToggleID, Toggle>();
 
 			using (var session = _storage.CreateSession())
 			{

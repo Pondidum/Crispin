@@ -25,7 +25,7 @@ namespace Crispin.Tests.Handlers
 			Events = new Dictionary<object, List<IEvent>>();
 
 			Storage = new InMemoryStorage(Events);
-			Storage.RegisterAggregate<Toggle>();
+			Storage.RegisterAggregate<ToggleID, Toggle>();
 			Storage.RegisterProjection<ToggleView>();
 
 			Toggle = Toggle.CreateNew(EditorID.Parse("editor"), "name", "desc");

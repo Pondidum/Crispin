@@ -8,7 +8,7 @@ using Crispin.Views;
 
 namespace Crispin
 {
-	public class Toggle : AggregateRoot
+	public class Toggle : AggregateRoot<ToggleID>
 	{
 		public static Toggle CreateNew(EditorID creator, string name, string description = "", ToggleID toggleID = null)
 		{

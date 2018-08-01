@@ -116,7 +116,7 @@ namespace Crispin.Tests.Infrastructure
 				.ShouldAllBe(e => e.AggregateID == id);
 		}
 
-		private class TestAggregate : AggregateRoot
+		private class TestAggregate : AggregateRoot<Guid>
 		{
 			public DateTime LastEvent { get; set; }
 			public List<object> SeenEvents { get; private set; }

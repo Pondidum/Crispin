@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crispin.Infrastructure
 {
-	public abstract class AggregateRoot : IEvented
+	public abstract class AggregateRoot<TIdentity> : IEvented
 	{
 		private readonly List<IEvent> _pendingEvents;
 		private readonly Aggregator _applicator;
