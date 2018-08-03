@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Crispin.Conditions;
+using Crispin.Handlers.WriteStatistics;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,19 +14,11 @@ namespace Crispin.Rest.Stats
 			_mediator = mediator;
 		}
 
-		public async Task<IActionResult> Post([FromBody] ToggleStatisticsPostRequest[] request)
+		public async Task<IActionResult> Post([FromBody] Statistic[] request)
 		{
-			return new JsonResult(new { Count = request.Length });
-		}
-	}
+			await _mediator.Send(new WriteStatisticsRequest(request));
 
-	public class ToggleStatisticsPostRequest
-	{
-		public ToggleID ToggleID { get; set; }
-		public UserID User { get; set; }
-		public DateTime Timestamp { get; set; }
-		public bool Active { get; set; }
-		
-		public Dictionary<ConditionID, bool> ConditionStates { get; set; } 
+			return new OkResult();
+		}
 	}
 }
