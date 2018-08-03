@@ -63,7 +63,7 @@ namespace Crispin.Infrastructure.Storage
 			using (var reader = new StreamReader(stream))
 			{
 				var json = await reader.ReadToEndAsync();
-				var memento = JsonConvert.DeserializeObject<Dictionary<ToggleID, object>>(json, JsonSerializerSettings);
+				var memento = JsonConvert.DeserializeObject<Dictionary<object, object>>(json, JsonSerializerSettings);
 
 				projection.FromMemento(memento);
 			}

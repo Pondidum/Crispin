@@ -7,13 +7,13 @@ namespace Crispin.Infrastructure.Storage
 	{
 		private readonly Func<object> _createBlank;
 		private readonly Aggregator _aggregator;
-		private Dictionary<ToggleID, object> _items;
+		private Dictionary<object, object> _items;
 
 		public Projector(Type projection, Func<object> createBlank)
 		{
 			_createBlank = createBlank;
 			_aggregator = new Aggregator(projection);
-			_items = new Dictionary<ToggleID, object>();
+			_items = new Dictionary<object, object>();
 			For = projection;
 		}
 
@@ -29,7 +29,7 @@ namespace Crispin.Infrastructure.Storage
 			@event.Apply(aggregate, _aggregator);
 		}
 
-		public Dictionary<ToggleID, object> ToMemento() => _items;
-		public void FromMemento(Dictionary<ToggleID, object> items) => _items = items;
+		public Dictionary<object, object> ToMemento() => _items;
+		public void FromMemento(Dictionary<object, object> items) => _items = items;
 	}
 }
