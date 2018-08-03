@@ -113,7 +113,7 @@ namespace Crispin.Tests.Infrastructure
 
 			((IEvented)_aggregate)
 				.GetPendingEvents()
-				.ShouldAllBe(e => e.AggregateID == id);
+				.ShouldAllBe(e => e.AggregateID as ToggleID == id);
 		}
 
 		private class TestAggregate : AggregateRoot<Guid>

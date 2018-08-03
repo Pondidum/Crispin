@@ -4,7 +4,7 @@ namespace Crispin.Infrastructure
 {
 	public class Event<TData> : IEvent
 	{
-		public ToggleID AggregateID { get; set; }
+		public object AggregateID { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public TData Data { get; set; }
 
