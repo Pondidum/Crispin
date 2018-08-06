@@ -107,13 +107,13 @@ namespace Crispin.Tests.Infrastructure
 		[Fact]
 		public void When_applying_an_event()
 		{
-			var id = ToggleID.CreateNew();
+			var id = Guid.NewGuid();
 			_aggregate.Raise(new TestAggregateCreated(id));
 			_aggregate.Raise(new TestEventOne());
 
 			((IEvented)_aggregate)
 				.GetPendingEvents()
-				.ShouldAllBe(e => e.AggregateID as ToggleID == id);
+				.ShouldAllBe(e => (Guid)e.AggregateID == id);
 		}
 
 		private class TestAggregate : AggregateRoot<Guid>
@@ -153,9 +153,9 @@ namespace Crispin.Tests.Infrastructure
 
 		private class TestAggregateCreated
 		{
-			public ToggleID ID { get; }
+			public Guid ID { get; }
 
-			public TestAggregateCreated(ToggleID id)
+			public TestAggregateCreated(Guid id)
 			{
 				ID = id;
 			}

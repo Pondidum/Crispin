@@ -14,7 +14,7 @@ namespace Crispin.Infrastructure
 			_pendingEvents = new List<IEvent>();
 		}
 
-		public ToggleID ID { get; protected set; }
+		public TIdentity ID { get; protected set; }
 
 		protected void ApplyEvent<TEvent>(TEvent @event)
 		{
