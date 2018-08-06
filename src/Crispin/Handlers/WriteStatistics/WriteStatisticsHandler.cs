@@ -9,8 +9,6 @@ namespace Crispin.Handlers.WriteStatistics
 {
 	public class WriteStatisticsHandler : IAsyncRequestHandler<WriteStatisticsRequest, WriteStatisticsResponse>
 	{
-		private static readonly Guid StatisticsID = Guid.Parse("2914B058-8AA5-42AF-9379-7671B4760AA1");
-
 		private readonly IStorageSession _session;
 
 		public WriteStatisticsHandler(IStorageSession session)
@@ -27,9 +25,9 @@ namespace Crispin.Handlers.WriteStatistics
 
 		private static IEvent CreateEvent(Statistic stat) => new Event<StatisticReceived>
 		{
-			AggregateID = StatisticsID,
+			AggregateID = stat.ToggleID,
 			TimeStamp = DateTime.Now,
-			Data = new StatisticReceived(stat.ToggleID, stat.User, stat.Timestamp, stat.Active, stat.ConditionStates)
+			Data = new StatisticReceived(stat.User, stat.Timestamp, stat.Active, stat.ConditionStates)
 		};
 	}
 }
