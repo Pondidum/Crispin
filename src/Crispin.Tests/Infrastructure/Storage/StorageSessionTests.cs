@@ -247,6 +247,57 @@ namespace Crispin.Tests.Infrastructure.Storage
 			projection.ShouldHaveSingleItem().ID.ShouldBe(toggle.ID);
 		}
 
+		[Fact]
+		public async Task Two_different_aggregate_types_can_have_the_same_id_and_not_see_each_others_events()
+		{
+			Builders[typeof(FirstAggregate)] = events => AggregateBuilder.Build(new FirstAggregate(), events);
+			Builders[typeof(SecondAggregate)] = events => AggregateBuilder.Build(new SecondAggregate(), events);
+
+			var id = Guid.NewGuid();
+
+			var first = new FirstAggregate();
+			first.SetID(id);
+			first.AddEvents();
+
+			var second = new SecondAggregate();
+			second.SetID(id);
+			second.AddEvents();
+
+			await Session.Save(first);
+			await Session.Save(second);
+			await Session.Commit();
+
+			var one = await Session.LoadAggregate<FirstAggregate>(id);
+			var two = await Session.LoadAggregate<SecondAggregate>(id);
+
+			one.SeenEvents.ShouldBe(5);
+			two.SeenEvents.ShouldBe(5);
+		}
+
 		public async Task DisposeAsync() => await Task.CompletedTask;
+
+
+		private class FirstAggregate : AggregateRoot<Guid>
+		{
+			public int SeenEvents { get; set; }
+
+			public void SetID(Guid id) => ID = id;
+			public void AddEvents() => Enumerable.Range(0, 5).Each(i => ApplyEvent(new CountEvent { Count = i }));
+			public void Apply(CountEvent @event) => SeenEvents += 1;
+		}
+
+		private class SecondAggregate : AggregateRoot<Guid>
+		{
+			public int SeenEvents { get; set; }
+
+			public void SetID(Guid id) => ID = id;
+			public void AddEvents() => Enumerable.Range(0, 5).Each(i => ApplyEvent(new CountEvent { Count = i }));
+			public void Apply(CountEvent @event) => SeenEvents += 1;
+		}
+
+		private class CountEvent
+		{
+			public int Count { get; set; }
+		}
 	}
 }

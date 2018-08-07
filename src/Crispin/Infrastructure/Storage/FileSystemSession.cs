@@ -82,8 +82,8 @@ namespace Crispin.Infrastructure.Storage
 
 			var fsEvents = await _fileSystem.FileExists(aggregatePath)
 				? (await _fileSystem.ReadFileLines(aggregatePath))
-				.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
-				.Cast<IEvent>()
+					.Select(e => JsonConvert.DeserializeObject(e, JsonSerializerSettings))
+					.Cast<IEvent>()
 				: Enumerable.Empty<IEvent>();
 
 			var sessionEvents = _pending.EventsFor(aggregateID);
