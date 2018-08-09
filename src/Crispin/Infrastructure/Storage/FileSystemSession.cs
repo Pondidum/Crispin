@@ -78,7 +78,7 @@ namespace Crispin.Infrastructure.Storage
 			if (_builders.TryGetValue(typeof(TAggregate), out builder) == false)
 				throw new BuilderNotFoundException(_builders.Keys, typeof(TAggregate));
 
-			var aggregatePath = Path.Combine(_root, aggregateID.ToString());
+			var aggregatePath = AggregatePath(_root, typeof(TAggregate), aggregateID);
 
 			var fsEvents = await _fileSystem.FileExists(aggregatePath)
 				? (await _fileSystem.ReadFileLines(aggregatePath))
@@ -113,7 +113,7 @@ namespace Crispin.Infrastructure.Storage
 		{
 			await _pending.ForEach(async (aggregateType, aggregateID, events) =>
 			{
-				var aggregatePath = Path.Combine(_root, aggregateID.ToString());
+				var aggregatePath = AggregatePath(_root, aggregateType, aggregateID);
 				var lines = events
 					.Select(e => JsonConvert.SerializeObject(e, JsonSerializerSettings))
 					.ToArray();
@@ -140,6 +140,11 @@ namespace Crispin.Infrastructure.Storage
 			}
 
 			_pending.Clear();
+		}
+
+		public static string AggregatePath(string root, Type aggregateType, object aggregateID)
+		{
+			return Path.Combine(root, $"[{aggregateType.Name}]{aggregateID}");
 		}
 
 		public Task Abort()

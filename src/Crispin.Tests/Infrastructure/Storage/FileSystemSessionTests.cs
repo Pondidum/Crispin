@@ -36,12 +36,12 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected override async Task<bool> AggregateExists(ToggleID toggleID)
 		{
-			return await _fs.FileExists(Path.Combine(Root, toggleID.ToString()));
+			return await _fs.FileExists(FileSystemSession.AggregatePath(Root, typeof(Toggle), toggleID));
 		}
 
 		protected override async Task WriteEvents(ToggleID toggleID, params IEvent[] events)
 		{
-			await _fs.WriteFile(Path.Combine(Root, toggleID.ToString()), stream =>
+			await _fs.WriteFile(FileSystemSession.AggregatePath(Root, typeof(Toggle), toggleID), stream =>
 			{
 				using (var writer = new StreamWriter(stream))
 					events
@@ -54,7 +54,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected override async Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID)
 		{
-			var path = Path.Combine(Root, toggleID.ToString());
+			var path = FileSystemSession.AggregatePath(Root, typeof(Toggle), toggleID);
 
 			if (await _fs.FileExists(path) == false)
 				return Enumerable.Empty<Type>();
