@@ -17,12 +17,12 @@ namespace Crispin.Tests.Handlers
 		protected Toggle Toggle { get; }
 		protected ToggleLocator Locator { get; }
 		protected THandler Handler { get; private set; }
-		protected Dictionary<object, List<IEvent>> Events { get; }
+		protected PendingEventsStore Events { get; }
 		protected EditorID Editor { get; }
 
 		protected HandlerTest()
 		{
-			Events = new Dictionary<object, List<IEvent>>();
+			Events = new PendingEventsStore();
 
 			Storage = new InMemoryStorage(Events);
 			Storage.RegisterAggregate<ToggleID, Toggle>();
@@ -44,8 +44,8 @@ namespace Crispin.Tests.Handlers
 			Handler = CreateHandler(Session);
 		}
 
-		protected IEnumerable<Type> EventTypes() => Events[Toggle.ID].Select(e => e.GetType());
-		protected TEvent Event<TEvent>() => Events[Toggle.ID].OfType<Event<TEvent>>().Single().Data;
+		protected IEnumerable<Type> EventTypes() => Events.EventsFor<Toggle>(Toggle.ID).Select(e => e.GetType());
+		protected TEvent Event<TEvent>() => Events.EventsFor<Toggle>(Toggle.ID).OfType<Event<TEvent>>().Single().Data;
 		protected void Event<TEvent>(Action<TEvent> callback) => callback(Event<TEvent>());
 
 		protected abstract THandler CreateHandler(IStorageSession session);

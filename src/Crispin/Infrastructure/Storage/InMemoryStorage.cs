@@ -6,13 +6,13 @@ namespace Crispin.Infrastructure.Storage
 	public class InMemoryStorage : IStorage
 	{
 		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, object>> _builders;
-		private readonly IDictionary<object, List<IEvent>> _events;
+		private readonly PendingEventsStore _events;
 		private readonly Dictionary<Type, Projector> _projections;
 
-		public InMemoryStorage(Dictionary<object, List<IEvent>> events = null)
+		public InMemoryStorage(PendingEventsStore events = null)
 		{
 			_builders = new Dictionary<Type, Func<IEnumerable<IEvent>, object>>();
-			_events = events ?? new Dictionary<object, List<IEvent>>();
+			_events = events ?? new PendingEventsStore();
 			_projections = new Dictionary<Type, Projector>();
 		}
 

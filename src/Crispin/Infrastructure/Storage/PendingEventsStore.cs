@@ -28,19 +28,32 @@ namespace Crispin.Infrastructure.Storage
 		public void AddEvents<TAggregate>(IEnumerable<IEvent> pending)
 		{
 			foreach (var @event in pending)
-				AddEvent<TAggregate>(@event);
+				_pending[typeof(TAggregate)][@event.AggregateID].Add(@event);
 		}
 
-		public void AddEvent<TAggregate>(IEvent pending)
+		public void AddEvents(Type aggregateType, object aggregateID, IEnumerable<IEvent> pending)
 		{
-			_pending[typeof(TAggregate)][pending.AggregateID].Add(pending);
+			_pending[aggregateType][aggregateID].AddRange(pending);
 		}
 
-		public async Task ForEach(Func<Type, object, IEnumerable<IEvent>, Task> action)
+		public void ForEach(Action<Type, object, IReadOnlyCollection<IEvent>> action)
+		{
+			foreach (var aggregateType in _pending)
+			foreach (var aggregateEvents in aggregateType.Value)
+				action(aggregateType.Key, aggregateEvents.Key, aggregateEvents.Value);
+		}
+
+		public async Task ForEach(Func<Type, object, IReadOnlyCollection<IEvent>, Task> action)
 		{
 			foreach (var aggregateType in _pending)
 			foreach (var aggregateEvents in aggregateType.Value)
 				await action(aggregateType.Key, aggregateEvents.Key, aggregateEvents.Value);
+		}
+
+		public bool Contains<TAggregate>(object aggregateID)
+		{
+			var type = typeof(TAggregate);
+			return _pending.ContainsKey(type) && _pending[type].ContainsKey(aggregateID);
 		}
 	}
 }

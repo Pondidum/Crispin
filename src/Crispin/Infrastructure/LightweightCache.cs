@@ -104,6 +104,8 @@ namespace Crispin.Infrastructure
 			return returnValue;
 		}
 
+		public bool ContainsKey(TKey key) => _values.ContainsKey(key);
+
 		public void Clear()
 		{
 			_values.Clear();

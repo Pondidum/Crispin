@@ -9,13 +9,13 @@ namespace Crispin.Infrastructure.Storage
 	{
 		private readonly IDictionary<Type, Func<IEnumerable<IEvent>, object>> _builders;
 		private readonly IEnumerable<Projector> _projections;
-		private readonly IDictionary<object, List<IEvent>> _storeEvents;
+		private readonly PendingEventsStore _storeEvents;
 		private readonly PendingEventsStore _pendingEvents;
 
 		public InMemorySession(
 			IDictionary<Type, Func<IEnumerable<IEvent>, object>> builders,
 			IEnumerable<Projector> projections,
-			IDictionary<object, List<IEvent>> storeEvents)
+			PendingEventsStore storeEvents)
 		{
 			_builders = builders;
 			_projections = projections;
@@ -45,9 +45,7 @@ namespace Crispin.Infrastructure.Storage
 
 			var eventsToLoad = new List<IEvent>();
 
-			if (_storeEvents.ContainsKey(aggregateID))
-				eventsToLoad.AddRange(_storeEvents[aggregateID]);
-
+			eventsToLoad.AddRange(_storeEvents.EventsFor<TAggregate>(aggregateID));
 			eventsToLoad.AddRange(_pendingEvents.EventsFor<TAggregate>(aggregateID));
 
 			if (eventsToLoad.Any() == false)
@@ -83,16 +81,14 @@ namespace Crispin.Infrastructure.Storage
 
 		private void PerformCommit()
 		{
-			foreach (var @event in _pendingEvents.AllEvents)
+			_pendingEvents.ForEach((aggregateType, aggregateID, events) =>
 			{
-				if (_storeEvents.ContainsKey(@event.AggregateID) == false)
-					_storeEvents.Add(@event.AggregateID, new List<IEvent>());
-
-				_storeEvents[@event.AggregateID].Add(@event);
+				_storeEvents.AddEvents(aggregateType, aggregateID, events);
 
 				foreach (var projection in _projections)
+				foreach (var @event in events)
 					projection.Apply(@event);
-			}
+			});
 
 			_pendingEvents.Clear();
 		}

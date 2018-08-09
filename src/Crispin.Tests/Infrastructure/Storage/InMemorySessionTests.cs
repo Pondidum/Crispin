@@ -12,11 +12,11 @@ namespace Crispin.Tests.Infrastructure.Storage
 {
 	public class InMemorySessionTests : StorageSessionTests
 	{
-		private readonly Dictionary<object, List<IEvent>> _eventStore;
+		private readonly PendingEventsStore _eventStore;
 
 		public InMemorySessionTests()
 		{
-			_eventStore = new Dictionary<object, List<IEvent>>();
+			_eventStore = new PendingEventsStore();
 		}
 
 		protected override Task<IStorageSession> CreateSession()
@@ -26,21 +26,18 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 		protected override Task<bool> AggregateExists(ToggleID toggleID)
 		{
-			return Task.FromResult(_eventStore.ContainsKey(toggleID));
+			return Task.FromResult(_eventStore.Contains<Toggle>(toggleID));
 		}
 
 		protected override Task WriteEvents(ToggleID toggleID, params IEvent[] events)
 		{
-			_eventStore[toggleID] = events.ToList();
+			_eventStore.AddEvents(typeof(Toggle), toggleID, events);
 			return Task.CompletedTask;
 		}
 
 		protected override Task<IEnumerable<Type>> ReadEvents(ToggleID toggleID)
 		{
-			if (_eventStore.ContainsKey(toggleID) == false)
-				return Task.FromResult(Enumerable.Empty<Type>());
-
-			return Task.FromResult(_eventStore[toggleID].Select(e => e.GetType()));
+			return Task.FromResult(_eventStore.EventsFor<Toggle>(toggleID).Select(e => e.GetType()));
 		}
 
 		protected override Task<IEnumerable<TProjection>> ReadProjection<TProjection>()
