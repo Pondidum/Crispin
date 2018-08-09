@@ -11,7 +11,7 @@ namespace Crispin.Infrastructure.Storage
 		Task<IEnumerable<TProjection>> QueryProjection<TProjection>();
 
 		Task<TAggregate> LoadAggregate<TAggregate>(object aggregateID);
-		Task Save(IEvented aggregate);
+		Task Save<TAggregate>(TAggregate aggregate) where TAggregate : IEvented;
 
 		Task Commit();
 		Task Abort();

@@ -86,7 +86,7 @@ namespace Crispin.Infrastructure.Storage
 					.Cast<IEvent>()
 				: Enumerable.Empty<IEvent>();
 
-			var sessionEvents = _pending.EventsFor(aggregateID);
+			var sessionEvents = _pending.EventsFor<TAggregate>(aggregateID);
 
 			var events = fsEvents
 				.Concat(sessionEvents)
@@ -100,9 +100,9 @@ namespace Crispin.Infrastructure.Storage
 			return (TAggregate)aggregate;
 		}
 
-		public Task Save(IEvented aggregate)
+		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : IEvented
 		{
-			_pending.AddEvents(aggregate.GetPendingEvents());
+			_pending.AddEvents<TAggregate>(aggregate.GetPendingEvents());
 
 			aggregate.ClearPendingEvents();
 
@@ -111,7 +111,7 @@ namespace Crispin.Infrastructure.Storage
 
 		public async Task Commit()
 		{
-			await _pending.ForEach(async (aggregateID, events) =>
+			await _pending.ForEach(async (aggregateType, aggregateID, events) =>
 			{
 				var aggregatePath = Path.Combine(_root, aggregateID.ToString());
 				var lines = events

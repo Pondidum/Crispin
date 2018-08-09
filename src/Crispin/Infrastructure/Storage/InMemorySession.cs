@@ -48,7 +48,7 @@ namespace Crispin.Infrastructure.Storage
 			if (_storeEvents.ContainsKey(aggregateID))
 				eventsToLoad.AddRange(_storeEvents[aggregateID]);
 
-			eventsToLoad.AddRange(_pendingEvents.EventsFor(aggregateID));
+			eventsToLoad.AddRange(_pendingEvents.EventsFor<TAggregate>(aggregateID));
 
 			if (eventsToLoad.Any() == false)
 				throw new AggregateNotFoundException(typeof(TAggregate), aggregateID);
@@ -59,9 +59,9 @@ namespace Crispin.Infrastructure.Storage
 		}
 
 
-		public Task Save(IEvented aggregate)
+		public Task Save<TAggregate>(TAggregate aggregate) where TAggregate : IEvented
 		{
-			_pendingEvents.AddEvents(aggregate.GetPendingEvents());
+			_pendingEvents.AddEvents<TAggregate>(aggregate.GetPendingEvents());
 
 			aggregate.ClearPendingEvents();
 
