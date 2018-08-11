@@ -20,10 +20,17 @@ namespace Crispin.Tests.Views
 			_user = UserID.Parse("editor");
 		}
 
+		private void Apply(bool active, DateTime when = default(DateTime)) => _view.Apply(new StatisticReceived(
+			_user,
+			when == default(DateTime) ? DateTime.Now : when,
+			active: active,
+			conditionStates: new Dictionary<ConditionID, bool>()
+		));
+
 		[Fact]
-		public void Adding_an_active_statistic_increases_active_count()
+		public void Adding_an_inactive_statistic_increases_active_count()
 		{
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: false, conditionStates: new Dictionary<ConditionID, bool>()));
+			Apply(active: false);
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view.TotalQueries.ShouldBe(1),
@@ -33,9 +40,9 @@ namespace Crispin.Tests.Views
 		}
 
 		[Fact]
-		public void Adding_an_inactive_statistic_doesnt_affect_active_count()
+		public void Adding_an_active_statistic_doesnt_affect_active_count()
 		{
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: true, conditionStates: new Dictionary<ConditionID, bool>()));
+			Apply(active: true);
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view.TotalQueries.ShouldBe(1),
@@ -47,10 +54,10 @@ namespace Crispin.Tests.Views
 		[Fact]
 		public void Adding_multiple_adjusts_percentage()
 		{
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: true, conditionStates: new Dictionary<ConditionID, bool>()));
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: true, conditionStates: new Dictionary<ConditionID, bool>()));
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: false, conditionStates: new Dictionary<ConditionID, bool>()));
-			_view.Apply(new StatisticReceived(_user, DateTime.Now, active: true, conditionStates: new Dictionary<ConditionID, bool>()));
+			Apply(active: true);
+			Apply(active: true);
+			Apply(active: false);
+			Apply(active: true);
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view.TotalQueries.ShouldBe(4),
