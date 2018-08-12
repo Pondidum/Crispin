@@ -100,6 +100,7 @@ namespace Crispin.Tests.Views
 		public void ActiveGraph_groups_and_counts_events_by_second()
 		{
 			Apply(active: true, when: _now);
+			Apply(active: false, when: _now);
 			Apply(active: true, when: _now.AddSeconds(1));
 			Apply(active: false, when: _now.AddSeconds(1));
 			Apply(active: true, when: _now.AddSeconds(1));
@@ -110,6 +111,12 @@ namespace Crispin.Tests.Views
 			{
 				{ zero, 1 },
 				{ zero.AddSeconds(1), 2 }
+			});
+
+			_view.QueryGraph.ShouldBe(new Dictionary<DateTime, int>
+			{
+				{ zero, 2 },
+				{ zero.AddSeconds(1), 3 }
 			});
 		}
 	}
