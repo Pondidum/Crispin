@@ -95,5 +95,22 @@ namespace Crispin.Tests.Views
 				() => _view.LastInactive.ShouldBe(_now.AddSeconds(4))
 			);
 		}
+
+		[Fact]
+		public void ActiveGraph_groups_and_counts_events_by_second()
+		{
+			Apply(active: true, when: _now);
+			Apply(active: true, when: _now.AddSeconds(1));
+			Apply(active: false, when: _now.AddSeconds(1));
+			Apply(active: true, when: _now.AddSeconds(1));
+
+			var zero = _now.AddTicks(-(_now.Ticks % TimeSpan.TicksPerSecond));
+
+			_view.ActiveGraph.ShouldBe(new Dictionary<DateTime, int>
+			{
+				{ zero, 1 },
+				{ zero.AddSeconds(1), 2 }
+			});
+		}
 	}
 }
