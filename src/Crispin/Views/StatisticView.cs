@@ -14,13 +14,15 @@ namespace Crispin.Views
 		public int TotalQueries { get; set; }
 		public int ActiveQueries { get; set; }
 
-		public Dictionary<DateTime, int> ActiveGraph { get; set; }
 		public Dictionary<DateTime, int> QueryGraph { get; set; }
+		public Dictionary<DateTime, int> ActiveGraph { get; set; }
+		public Dictionary<DateTime, int> InactiveGraph { get; set; }
 
 		public StatisticView()
 		{
-			ActiveGraph = new Dictionary<DateTime, int>();
 			QueryGraph = new Dictionary<DateTime, int>();
+			ActiveGraph = new Dictionary<DateTime, int>();
+			InactiveGraph = new Dictionary<DateTime, int>();
 		}
 
 		public void Apply(StatisticReceived @event)
@@ -48,6 +50,11 @@ namespace Crispin.Views
 			{
 				ActiveGraph.TryGetValue(groupTime, out var activeCount);
 				ActiveGraph[groupTime] = ++activeCount;
+			}
+			else
+			{
+				InactiveGraph.TryGetValue(groupTime, out var inactiveCount);
+				InactiveGraph[groupTime] = ++inactiveCount;
 			}
 		}
 

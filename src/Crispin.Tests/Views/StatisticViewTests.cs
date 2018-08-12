@@ -107,16 +107,22 @@ namespace Crispin.Tests.Views
 
 			var zero = _now.AddTicks(-(_now.Ticks % TimeSpan.TicksPerSecond));
 
+			_view.QueryGraph.ShouldBe(new Dictionary<DateTime, int>
+			{
+				{ zero, 2 },
+				{ zero.AddSeconds(1), 3 }
+			});
+
 			_view.ActiveGraph.ShouldBe(new Dictionary<DateTime, int>
 			{
 				{ zero, 1 },
 				{ zero.AddSeconds(1), 2 }
 			});
 
-			_view.QueryGraph.ShouldBe(new Dictionary<DateTime, int>
+			_view.InactiveGraph.ShouldBe(new Dictionary<DateTime, int>
 			{
-				{ zero, 2 },
-				{ zero.AddSeconds(1), 3 }
+				{ zero, 1 },
+				{ zero.AddSeconds(1), 1 }
 			});
 		}
 	}
