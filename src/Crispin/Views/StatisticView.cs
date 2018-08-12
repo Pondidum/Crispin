@@ -27,20 +27,33 @@ namespace Crispin.Views
 
 		public void Apply(StatisticReceived @event)
 		{
+			UpdateCounts(@event);
+			UpdateTimestamps(@event);
+			UpdateGraphs(@event);
+		}
+
+		private void UpdateCounts(StatisticReceived @event)
+		{
 			TotalQueries++;
 
 			if (@event.Active)
 				ActiveQueries++;
 
 			ActivePercentage = (int)((100M / TotalQueries) * ActiveQueries);
+		}
 
+		private void UpdateTimestamps(StatisticReceived @event)
+		{
 			LastQueried = Latest(LastQueried, @event.Timestamp);
 
 			if (@event.Active)
 				LastActive = Latest(LastActive, @event.Timestamp);
 			else
 				LastInactive = Latest(LastInactive, @event.Timestamp);
+		}
 
+		private void UpdateGraphs(StatisticReceived @event)
+		{
 			var groupTime = Truncate(@event.Timestamp);
 
 			QueryGraph.TryGetValue(groupTime, out var queryCount);
