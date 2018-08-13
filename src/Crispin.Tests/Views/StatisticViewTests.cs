@@ -40,7 +40,7 @@ namespace Crispin.Tests.Views
 				() => _view.ActivePercentage.ShouldBe(0),
 				() => _view.LastQueried.ShouldBe(_now),
 				() => _view.LastInactive.ShouldBe(_now),
-				() => _view.LastActive.ShouldBe(DateTime.MinValue)
+				() => _view.LastActive.ShouldBeNull()
 			);
 		}
 
@@ -54,7 +54,7 @@ namespace Crispin.Tests.Views
 				() => _view.ActiveQueries.ShouldBe(1),
 				() => _view.ActivePercentage.ShouldBe(100),
 				() => _view.LastQueried.ShouldBe(_now),
-				() => _view.LastInactive.ShouldBe(DateTime.MinValue),
+				() => _view.LastInactive.ShouldBeNull(),
 				() => _view.LastActive.ShouldBe(_now)
 			);
 		}

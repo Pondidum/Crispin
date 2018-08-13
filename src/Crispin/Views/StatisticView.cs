@@ -6,9 +6,9 @@ namespace Crispin.Views
 {
 	public class StatisticView
 	{
-		public DateTime LastQueried { get; set; }
-		public DateTime LastActive { get; set; }
-		public DateTime LastInactive { get; set; }
+		public DateTime? LastQueried { get; set; }
+		public DateTime? LastActive { get; set; }
+		public DateTime? LastInactive { get; set; }
 
 		public int ActivePercentage { get; set; }
 		public int TotalQueries { get; set; }
@@ -71,7 +71,7 @@ namespace Crispin.Views
 			}
 		}
 
-		private static DateTime Latest(DateTime one, DateTime two) => one >= two ? one : two;
+		private static DateTime Latest(DateTime? one, DateTime two) => one.HasValue && one.Value >= two ? one.Value : two;
 		private static DateTime Truncate(DateTime value) => value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
 	}
 }
