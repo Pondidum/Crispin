@@ -125,5 +125,25 @@ namespace Crispin.Tests.Views
 				{ zero.AddSeconds(1), 1 }
 			});
 		}
+
+		[Fact]
+		public void When_processing_conditions_on_a_toggle()
+		{
+			_view.Apply(new StatisticReceived(_user, _now, active: true, conditionStates: new Dictionary<ConditionID, bool>
+			{
+				{ ConditionID.Parse(0), true },
+				{ ConditionID.Parse(1), false },
+				{ ConditionID.Parse(2), true },
+				{ ConditionID.Parse(3), false }
+			}));
+
+			_view.Conditions.Keys.ShouldBe(new[]
+			{
+				ConditionID.Parse(0),
+				ConditionID.Parse(1),
+				ConditionID.Parse(2),
+				ConditionID.Parse(3)
+			});
+		}
 	}
 }

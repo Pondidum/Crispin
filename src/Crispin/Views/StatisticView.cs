@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Crispin.Conditions;
 using Crispin.Events;
 
 namespace Crispin.Views
@@ -18,11 +19,14 @@ namespace Crispin.Views
 		public Dictionary<DateTime, int> ActiveGraph { get; set; }
 		public Dictionary<DateTime, int> InactiveGraph { get; set; }
 
+		public Dictionary<ConditionID, ConditionStatisticView> Conditions { get; set; }
+
 		public StatisticView()
 		{
 			QueryGraph = new Dictionary<DateTime, int>();
 			ActiveGraph = new Dictionary<DateTime, int>();
 			InactiveGraph = new Dictionary<DateTime, int>();
+			Conditions = new Dictionary<ConditionID, ConditionStatisticView>();
 		}
 
 		public void Apply(StatisticReceived @event)
@@ -30,6 +34,7 @@ namespace Crispin.Views
 			UpdateCounts(@event);
 			UpdateTimestamps(@event);
 			UpdateGraphs(@event);
+			UpdateConditions(@event);
 		}
 
 		private void UpdateCounts(StatisticReceived @event)
@@ -68,6 +73,17 @@ namespace Crispin.Views
 			{
 				InactiveGraph.TryGetValue(groupTime, out var inactiveCount);
 				InactiveGraph[groupTime] = ++inactiveCount;
+			}
+		}
+
+		private void UpdateConditions(StatisticReceived @event)
+		{
+			foreach (var state in @event.ConditionStates)
+			{
+				if (Conditions.TryGetValue(state.Key, out var view) == false)
+					Conditions[state.Key] = view = new ConditionStatisticView();
+
+				view.Apply(@event, state.Value);
 			}
 		}
 
