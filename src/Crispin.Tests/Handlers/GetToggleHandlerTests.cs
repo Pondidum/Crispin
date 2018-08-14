@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Handlers.GetSingle;
 using Crispin.Infrastructure.Storage;
@@ -31,7 +32,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var toggleID = ToggleID.CreateNew();
 
-			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)), CancellationToken.None);
 
 			result.Toggle.ShouldBeNull();
 		}
@@ -42,7 +43,7 @@ namespace Crispin.Tests.Handlers
 			var toggleID = ToggleID.CreateNew();
 			_view.Add(new ToggleView { ID = toggleID, Name = "name", Description = "desc" });
 
-			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleID)), CancellationToken.None);
 
 			result.Toggle.ID.ShouldBe(toggleID);
 		}
@@ -52,7 +53,7 @@ namespace Crispin.Tests.Handlers
 		{
 			var toggleName = ToggleID.CreateNew().ToString();
 
-			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)), CancellationToken.None);
 
 			result.Toggle.ShouldBeNull();
 		}
@@ -63,7 +64,7 @@ namespace Crispin.Tests.Handlers
 			var toggleName = "name";
 			_view.Add(new ToggleView { ID = ToggleID.CreateNew(), Name = toggleName, Description = "desc" });
 
-			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)));
+			var result = await _handler.Handle(new GetToggleRequest(ToggleLocator.Create(toggleName)), CancellationToken.None);
 
 			result.Toggle.Name.ShouldBe(toggleName);
 		}

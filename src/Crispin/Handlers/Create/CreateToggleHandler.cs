@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
 namespace Crispin.Handlers.Create
 {
-	public class CreateToggleHandler : IAsyncRequestHandler<CreateToggleRequest, CreateTogglesResponse>
+	public class CreateToggleHandler : IRequestHandler<CreateToggleRequest, CreateTogglesResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -13,7 +14,7 @@ namespace Crispin.Handlers.Create
 			_session = session;
 		}
 
-		public async Task<CreateTogglesResponse> Handle(CreateToggleRequest message)
+		public async Task<CreateTogglesResponse> Handle(CreateToggleRequest message, CancellationToken cancellationToken)
 		{
 			var newToggle = Toggle.CreateNew(
 				message.Creator,

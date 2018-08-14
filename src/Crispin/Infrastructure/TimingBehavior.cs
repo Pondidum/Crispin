@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace Crispin.Infrastructure
 			_logger = logger;
 		}
 
-		public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next)
+		public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
 		{
 			var sw = new Stopwatch();
 			sw.Start();

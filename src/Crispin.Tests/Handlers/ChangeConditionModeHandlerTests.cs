@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Handlers.ChangeConditionMode;
 using Crispin.Infrastructure;
@@ -22,7 +23,7 @@ namespace Crispin.Tests.Handlers
 			await Session.Save(Toggle);
 			await Session.Commit();
 
-			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.Any));
+			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.Any), CancellationToken.None);
 			await Session.Commit();
 
 			Event<EnabledOnAnyCondition>();
@@ -36,7 +37,7 @@ namespace Crispin.Tests.Handlers
 			await Session.Save(Toggle);
 			await Session.Commit();
 
-			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.All));
+			await Handler.Handle(new ChangeConditionModeRequest(Editor, Locator, ConditionModes.All), CancellationToken.None);
 			await Session.Commit();
 
 			Event<EnabledOnAllConditions>();

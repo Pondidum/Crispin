@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Conditions;
 using Crispin.Events;
@@ -26,7 +27,7 @@ namespace Crispin.Tests.Handlers
 		public async Task The_updated_conditions_collection_is_returned()
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
-			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID), CancellationToken.None);
 			await Session.Commit();
 
 			result.Conditions.ShouldBeEmpty();
@@ -36,7 +37,7 @@ namespace Crispin.Tests.Handlers
 		public async Task The_updated_condition_mode_is_returned()
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
-			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			var result = await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID), CancellationToken.None);
 			await Session.Commit();
 
 			result.ConditionMode.ShouldBe(Toggle.ConditionMode);
@@ -46,7 +47,7 @@ namespace Crispin.Tests.Handlers
 		public async Task The_toggle_is_saved_into_the_session()
 		{
 			var conditionID = Toggle.Conditions.Single().ID;
-			await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID));
+			await Handler.Handle(new RemoveToggleConditionRequest(Editor, Locator, conditionID), CancellationToken.None);
 			await Session.Commit();
 
 			Event<ConditionRemoved>(e => e.ShouldSatisfyAllConditions(

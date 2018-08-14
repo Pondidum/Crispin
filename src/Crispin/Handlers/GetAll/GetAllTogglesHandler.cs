@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using Crispin.Views;
 using MediatR;
 
 namespace Crispin.Handlers.GetAll
 {
-	public class GetAllTogglesHandler : IAsyncRequestHandler<GetAllTogglesRequest, GetAllTogglesResponse>
+	public class GetAllTogglesHandler : IRequestHandler<GetAllTogglesRequest, GetAllTogglesResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -14,7 +15,7 @@ namespace Crispin.Handlers.GetAll
 			_session = session;
 		}
 
-		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message)
+		public async Task<GetAllTogglesResponse> Handle(GetAllTogglesRequest message, CancellationToken cancellationToken)
 		{
 			var projection = await _session.QueryProjection<ToggleView>();
 

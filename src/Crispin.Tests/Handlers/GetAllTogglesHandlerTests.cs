@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Handlers.GetAll;
 using Crispin.Infrastructure.Storage;
@@ -29,7 +30,7 @@ namespace Crispin.Tests.Handlers
 				.Throws(new ProjectionNotRegisteredException("wat"));
 
 			Should.Throw<ProjectionNotRegisteredException>(
-				() => _handler.Handle(new GetAllTogglesRequest())
+				() => _handler.Handle(new GetAllTogglesRequest(), CancellationToken.None)
 			);
 		}
 		
@@ -38,7 +39,7 @@ namespace Crispin.Tests.Handlers
 		{
 			_session.QueryProjection<ToggleView>().Returns(new List<ToggleView>());
 
-			var response = await _handler.Handle(new GetAllTogglesRequest());
+			var response = await _handler.Handle(new GetAllTogglesRequest(), CancellationToken.None);
 
 			response.Toggles.ShouldBeEmpty();
 		}
@@ -53,7 +54,7 @@ namespace Crispin.Tests.Handlers
 
 			_session.QueryProjection<ToggleView>().Returns(projections);
 
-			var response = await _handler.Handle(new GetAllTogglesRequest());
+			var response = await _handler.Handle(new GetAllTogglesRequest(), CancellationToken.None);
 
 			response.Toggles.ShouldHaveSingleItem();
 		}

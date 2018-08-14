@@ -17,11 +17,8 @@ namespace Crispin.Infrastructure
 				a.WithDefaultConventions();
 
 				a.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
-				a.ConnectImplementationsToTypesClosing(typeof(IAsyncRequestHandler<,>));
-				a.ConnectImplementationsToTypesClosing(typeof(ICancellableAsyncRequestHandler<,>));
+				a.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
 				a.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
-				a.ConnectImplementationsToTypesClosing(typeof(IAsyncNotificationHandler<>));
-				a.ConnectImplementationsToTypesClosing(typeof(ICancellableAsyncNotificationHandler<>));
 
 				a.ConnectImplementationsToTypesClosing(typeof(IRequestValidator<>));
 			});
@@ -33,8 +30,8 @@ namespace Crispin.Infrastructure
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(StorageBehavior<,>));
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
 
-			For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
-			For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
+			For<IMediator>().Use<Mediator>().Transient();
+			For<ServiceFactory>().Use<ServiceFactory>(ctx => ctx.GetInstance);
 		}
 	}
 }

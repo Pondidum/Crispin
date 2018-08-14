@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
 namespace Crispin.Handlers.RemoveCondition
 {
-	public class RemoveConditionHandler : IAsyncRequestHandler<RemoveToggleConditionRequest, RemoveToggleConditionResponse>
+	public class RemoveConditionHandler : IRequestHandler<RemoveToggleConditionRequest, RemoveToggleConditionResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -13,7 +14,7 @@ namespace Crispin.Handlers.RemoveCondition
 			_session = session;
 		}
 
-		public async Task<RemoveToggleConditionResponse> Handle(RemoveToggleConditionRequest message)
+		public async Task<RemoveToggleConditionResponse> Handle(RemoveToggleConditionRequest message, CancellationToken cancellationToken)
 		{
 			var toggle = await message.Locator.LocateAggregate(_session);
 

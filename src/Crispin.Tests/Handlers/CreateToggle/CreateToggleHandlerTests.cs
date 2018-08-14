@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Handlers.Create;
 using Crispin.Infrastructure.Storage;
 using NSubstitute;
@@ -21,10 +22,9 @@ namespace Crispin.Tests.Handlers.CreateToggle
 		[Fact]
 		public async Task When_a_toggle_is_created()
 		{
-			var response = await _handler.Handle(new CreateToggleRequest(
-				creator: EditorID.Parse("?"),
-				name: "Test",
-				description: "desc"));
+			var response = await _handler.Handle(
+				new CreateToggleRequest(creator: EditorID.Parse("?"), name: "Test", description: "desc"),
+				CancellationToken.None);
 
 			response.Toggle.ShouldNotBeNull();
 

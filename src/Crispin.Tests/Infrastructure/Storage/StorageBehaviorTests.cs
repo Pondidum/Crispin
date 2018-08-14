@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using NSubstitute;
@@ -21,7 +22,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		[Fact]
 		public async Task The_session_is_opened_and_committed_on_a_successful_request()
 		{
-			await _behavior.Handle(new Request(), () => Task.FromResult(new Response()));
+			await _behavior.Handle(new Request(), CancellationToken.None, () => Task.FromResult(new Response()));
 
 			await _session.Received().Open();
 			await _session.Received().Commit();
@@ -32,7 +33,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 		public async Task The_session_is_aborted_if_there_was_an_exception_thrown()
 		{
 			Should.Throw<ExpectedException>(() =>
-				_behavior.Handle(new Request(), () => throw new ExpectedException())
+				_behavior.Handle(new Request(), CancellationToken.None, () => throw new ExpectedException())
 			);
 
 			await _session.Received().Open();

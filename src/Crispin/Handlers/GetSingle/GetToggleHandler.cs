@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
 namespace Crispin.Handlers.GetSingle
 {
-	public class GetToggleHandler : IAsyncRequestHandler<GetToggleRequest, GetToggleResponse>
+	public class GetToggleHandler : IRequestHandler<GetToggleRequest, GetToggleResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -13,7 +14,7 @@ namespace Crispin.Handlers.GetSingle
 			_session = session;
 		}
 
-		public async Task<GetToggleResponse> Handle(GetToggleRequest message)
+		public async Task<GetToggleResponse> Handle(GetToggleRequest message, CancellationToken cancellationToken)
 		{
 			var view = await message.Locator.LocateView(_session);
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Conditions;
 using Crispin.Conditions.ConditionTypes;
@@ -29,7 +30,7 @@ namespace Crispin.Tests.Handlers.AddCondition
 
 		private async Task<AddToggleConditionResponse> HandleMessage()
 		{
-			var response = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, _properties));
+			var response = await Handler.Handle(new AddToggleConditionRequest(Editor, Locator, _properties), CancellationToken.None);
 			await Session.Commit();
 			return response;
 		}

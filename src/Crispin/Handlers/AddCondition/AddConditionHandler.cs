@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
 namespace Crispin.Handlers.AddCondition
 {
-	public class AddConditionHandler : IAsyncRequestHandler<AddToggleConditionRequest, AddToggleConditionResponse>
+	public class AddConditionHandler : IRequestHandler<AddToggleConditionRequest, AddToggleConditionResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -13,7 +14,7 @@ namespace Crispin.Handlers.AddCondition
 			_session = session;
 		}
 
-		public async Task<AddToggleConditionResponse> Handle(AddToggleConditionRequest message)
+		public async Task<AddToggleConditionResponse> Handle(AddToggleConditionRequest message, CancellationToken cancellationToken)
 		{
 			var toggle = await message.Locator.LocateAggregate(_session);
 			var added = toggle.AddCondition(message.Editor, message.Properties);

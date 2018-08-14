@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Handlers.UpdateTags;
 using Crispin.Infrastructure.Storage;
@@ -23,7 +24,7 @@ namespace Crispin.Tests.Handlers
 		public void When_adding_tags_and_the_toggle_doesnt_exist()
 		{
 			Should.Throw<AggregateNotFoundException>(async () => await Handler.Handle(
-				new AddToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
+				new AddToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"), CancellationToken.None)
 			);
 		}
 
@@ -31,7 +32,7 @@ namespace Crispin.Tests.Handlers
 		public void When_removing_tags_and_the_toggle_doesnt_exist()
 		{
 			Should.Throw<AggregateNotFoundException>(async () => await Handler.Handle(
-				new RemoveToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"))
+				new RemoveToggleTagRequest(Editor, ToggleLocator.Create(ToggleID.CreateNew()), "wat"), CancellationToken.None)
 			);
 		}
 
@@ -43,8 +44,8 @@ namespace Crispin.Tests.Handlers
 		public async Task When_changing_tags_around_randomly(TagAction action, string tagName, string expected)
 		{
 			var response = action == TagAction.Add
-				? await Handler.Handle(new AddToggleTagRequest(Editor, Locator, tagName))
-				: await Handler.Handle(new RemoveToggleTagRequest(Editor, Locator, tagName));
+				? await Handler.Handle(new AddToggleTagRequest(Editor, Locator, tagName), CancellationToken.None)
+				: await Handler.Handle(new RemoveToggleTagRequest(Editor, Locator, tagName), CancellationToken.None);
 
 			var expectedTags = string.IsNullOrWhiteSpace(expected)
 				? Array.Empty<string>()

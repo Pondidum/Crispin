@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
 
 namespace Crispin.Handlers.ChangeConditionMode
 {
-	public class ChangeConditionModeHandler : IAsyncRequestHandler<ChangeConditionModeRequest, ChangeConditionModeResponse>
+	public class ChangeConditionModeHandler : IRequestHandler<ChangeConditionModeRequest, ChangeConditionModeResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -13,7 +14,7 @@ namespace Crispin.Handlers.ChangeConditionMode
 			_session = session;
 		}
 
-		public async Task<ChangeConditionModeResponse> Handle(ChangeConditionModeRequest message)
+		public async Task<ChangeConditionModeResponse> Handle(ChangeConditionModeRequest message, CancellationToken cancellationToken)
 		{
 			var toggle = await message.Locator.LocateAggregate(_session);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Infrastructure.Storage;
 using MediatR;
@@ -7,8 +8,8 @@ using MediatR;
 namespace Crispin.Handlers.UpdateTags
 {
 	public class UpdateToggleTagsHandler :
-		IAsyncRequestHandler<AddToggleTagRequest, UpdateToggleTagsResponse>,
-		IAsyncRequestHandler<RemoveToggleTagRequest, UpdateToggleTagsResponse>
+		IRequestHandler<AddToggleTagRequest, UpdateToggleTagsResponse>,
+		IRequestHandler<RemoveToggleTagRequest, UpdateToggleTagsResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -17,7 +18,7 @@ namespace Crispin.Handlers.UpdateTags
 			_session = session;
 		}
 
-		public Task<UpdateToggleTagsResponse> Handle(AddToggleTagRequest message)
+		public Task<UpdateToggleTagsResponse> Handle(AddToggleTagRequest message, CancellationToken cancellationToken)
 		{
 			return ModifyTags(
 				message.Locator,
@@ -25,7 +26,7 @@ namespace Crispin.Handlers.UpdateTags
 			);
 		}
 
-		public Task<UpdateToggleTagsResponse> Handle(RemoveToggleTagRequest message)
+		public Task<UpdateToggleTagsResponse> Handle(RemoveToggleTagRequest message, CancellationToken cancellationToken)
 		{
 			return ModifyTags(
 				message.Locator,

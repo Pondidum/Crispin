@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Crispin.Events;
 using Crispin.Infrastructure;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Crispin.Handlers.WriteStatistics
 {
-	public class WriteStatisticsHandler : IAsyncRequestHandler<WriteStatisticsRequest, WriteStatisticsResponse>
+	public class WriteStatisticsHandler : IRequestHandler<WriteStatisticsRequest, WriteStatisticsResponse>
 	{
 		private readonly IStorageSession _session;
 
@@ -16,7 +17,7 @@ namespace Crispin.Handlers.WriteStatistics
 			_session = session;
 		}
 
-		public async Task<WriteStatisticsResponse> Handle(WriteStatisticsRequest message)
+		public async Task<WriteStatisticsResponse> Handle(WriteStatisticsRequest message, CancellationToken cancellationToken)
 		{
 			await _session.Save(new EventAdaptor<Statistic>(message.Statistics, CreateEvent));
 
