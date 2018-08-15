@@ -3,38 +3,24 @@ using System.Net;
 using System.Threading.Tasks;
 using Alba;
 using Crispin.Conditions;
-using Crispin.Infrastructure.Storage;
-using Crispin.Views;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleConditions : IAsyncLifetime
+	public class ToggleConditions : IntegrationBase
 	{
-		private readonly SystemUnderTest _system;
 		private readonly Toggle _toggle;
-		private readonly InMemoryStorage _storage;
 
 		public ToggleConditions()
 		{
-			_storage = new InMemoryStorage();
-			_storage.RegisterProjection<ToggleView>();
-			_storage.RegisterAggregate<ToggleID, Toggle>();
-
 			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");
-			_system = SystemUnderTest.ForStartup<Startup>();
-
-			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
 		}
 
-		public async Task InitializeAsync()
+		public override async Task InitializeAsync()
 		{
 			using (var session = _storage.CreateSession())
 				await session.Save(_toggle);
 		}
-
-		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		private static Dictionary<string, object> Condition(string type) => new Dictionary<string, object>
 		{

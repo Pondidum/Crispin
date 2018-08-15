@@ -5,34 +5,16 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Alba;
-using Crispin.Infrastructure.Storage;
 using Crispin.Rest.Tests.TestUtils;
-using Crispin.Views;
-using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleCreation : IAsyncLifetime
+	public class ToggleCreation : IntegrationBase
 	{
 		private const string ToggleName = "toggle-1";
 		private const string ToggleDescription = "a test toggle";
-		private readonly SystemUnderTest _system;
-		private readonly InMemoryStorage _storage;
-
-		public ToggleCreation()
-		{
-			_storage = new InMemoryStorage();
-			_storage.RegisterProjection<ToggleView>();
-			_storage.RegisterAggregate<ToggleID, Toggle>();
-
-			_system = SystemUnderTest.ForStartup<Startup>();
-			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
-		}
-
-		public Task InitializeAsync() => Task.CompletedTask;
-		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 
 		private async Task<string> CreateToggle(string name = ToggleName)
 		{
