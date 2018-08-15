@@ -4,19 +4,17 @@ using System.Threading.Tasks;
 using Crispin.Infrastructure;
 using Crispin.Rest.Configuration;
 using Crispin.Rest.Infrastructure;
+using Lamar;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
-using StructureMap;
 
 namespace Crispin.Rest
 {
 	public class Startup
 	{
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-		public IServiceProvider ConfigureServices(IServiceCollection services)
+		public void ConfigureContainer(ServiceRegistry services)
 		{
 			services.AddMvc(options =>
 			{
@@ -28,14 +26,12 @@ namespace Crispin.Rest
 				options.ModelBinderProviders.Insert(1, new DomainIDBinder());
 			});
 
-			var container = new Container(_ =>
+			services.Scan(_ =>
 			{
-				_.Populate(services);
-				_.AddRegistry<CrispinRestRegistry>();
-				_.AddRegistry<MediatrRegistry>();
+				_.TheCallingAssembly();
+				_.AssemblyContainingType<Toggle>();
+				_.LookForRegistries();
 			});
-
-			return container.GetInstance<IServiceProvider>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,7 +5,7 @@ using Crispin.Views;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using StructureMap;
+using Lamar;
 
 namespace Crispin.Tests.Handlers
 {
@@ -27,7 +27,7 @@ namespace Crispin.Tests.Handlers
 
 			var container = new Container(_ =>
 			{
-				_.AddRegistry<MediatrRegistry>();
+				_.IncludeRegistry<MediatrRegistry>();
 
 				_.For<IStorage>().Use(Storage);
 				_.For<IStorageSession>().Use(c => c.GetInstance<IStorage>().CreateSession());

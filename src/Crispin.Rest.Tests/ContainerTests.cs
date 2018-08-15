@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
-using StructureMap;
+using Lamar;
 using Xunit;
 
 namespace Crispin.Rest.Tests
@@ -23,8 +23,8 @@ namespace Crispin.Rest.Tests
 		{
 			_container = new Container(_ =>
 			{
-				_.AddRegistry<CrispinRestRegistry>();
-				_.AddRegistry<MediatrRegistry>();
+				_.IncludeRegistry<CrispinRestRegistry>();
+				_.IncludeRegistry<MediatrRegistry>();
 
 				_.For(typeof(ILogger<>)).Use(typeof(FakeLogger<>));
 				_.For<IStorage>().Use(StorageBuilder.Configure(new InMemoryStorage()));

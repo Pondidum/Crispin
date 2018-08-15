@@ -2,11 +2,11 @@ using Crispin.Infrastructure.Storage;
 using Crispin.Infrastructure.Validation;
 using MediatR;
 using MediatR.Pipeline;
-using StructureMap;
+using Lamar;
 
 namespace Crispin.Infrastructure
 {
-	public class MediatrRegistry : Registry
+	public class MediatrRegistry : ServiceRegistry
 	{
 		public MediatrRegistry()
 		{
@@ -16,7 +16,6 @@ namespace Crispin.Infrastructure
 				a.AssemblyContainingType<Toggle>();
 				a.WithDefaultConventions();
 
-				a.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
 				a.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
 				a.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
 
@@ -31,7 +30,7 @@ namespace Crispin.Infrastructure
 			For(typeof(IPipelineBehavior<,>)).Add(typeof(ValidationBehavior<,>));
 
 			For<IMediator>().Use<Mediator>().Transient();
-			For<ServiceFactory>().Use<ServiceFactory>(ctx => ctx.GetInstance);
+			For<ServiceFactory>().Use(ctx => ctx.GetInstance);
 		}
 	}
 }

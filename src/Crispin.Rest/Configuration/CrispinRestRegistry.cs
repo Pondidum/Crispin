@@ -1,10 +1,10 @@
 using System;
 using Crispin.Infrastructure.Storage;
-using StructureMap;
+using Lamar;
 
 namespace Crispin.Rest.Configuration
 {
-	public class CrispinRestRegistry : Registry
+	public class CrispinRestRegistry : ServiceRegistry
 	{
 		public CrispinRestRegistry()
 		{
@@ -14,8 +14,8 @@ namespace Crispin.Rest.Configuration
 				a.WithDefaultConventions();
 			});
 
-			For<Func<DateTime>>().Use<Func<DateTime>>(() => () => DateTime.UtcNow);
-			For<IStorageSession>().Use(c => c.GetInstance<IStorage>().CreateSession());
+			For<Func<DateTime>>().Use(() => DateTime.UtcNow);
+			For<IStorageSession>().Use(c => c.GetInstance<IStorage>().CreateSession()).Scoped();
 		}
 	}
 }

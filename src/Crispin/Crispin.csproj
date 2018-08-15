@@ -4,10 +4,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FileSystem" Version="0.3.0" />
+    <PackageReference Include="Lamar" Version="1.1.1" />
     <PackageReference Include="MediatR" Version="5.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="StatsdClient" Version="3.0.86" />
-    <PackageReference Include="StructureMap" Version="4.5.2" />
   </ItemGroup>
 </Project>

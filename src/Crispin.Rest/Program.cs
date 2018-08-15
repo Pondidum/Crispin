@@ -1,4 +1,5 @@
 ﻿using Crispin.Rest.Configuration;
+using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ namespace Crispin.Rest
 
 		public static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
+				.UseLamar()
 				.UseStartup<Startup>()
 				.ConfigureServices(InjectStrongConfiguration)
 				.ConfigureLogging((hosting, logging) =>
