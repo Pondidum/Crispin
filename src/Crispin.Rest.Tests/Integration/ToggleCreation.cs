@@ -13,7 +13,7 @@ namespace Crispin.Rest.Tests.Integration
 {
 	public class ToggleCreation : IntegrationBase
 	{
-		private const string ToggleName = "toggle-1";
+		private const string ToggleName = "toggle-create";
 		private const string ToggleDescription = "a test toggle";
 
 		private async Task<string> CreateToggle(string name = ToggleName)
@@ -72,11 +72,12 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			var location = await CreateToggle();
 			var response = await _system.Scenario(_ => _.Get.Url("/toggles"));
+			var expectedID = Regex.Match(location, Regexes.Guid).Value;
 
 			var toggles = response.ResponseBody.ReadAsJson<Dictionary<string, object>[]>();
-			var toggle = toggles.Single();
+			var toggle = toggles.Single(x => (string)x["id"] == expectedID);
 
-			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+			ValidateToggle(toggle, expectedID);
 		}
 
 		[Fact]

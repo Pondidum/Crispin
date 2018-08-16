@@ -1,67 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Alba;
 using Crispin.Conditions;
-using Crispin.Infrastructure.Storage;
-using Crispin.Views;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
 	public class RouteTests : IntegrationBase
 	{
-		private const string Name = "the-toggle";
-		private const string ID = "a7fa0716-ec0e-4582-a22c-fe9673ed52ca";
 		private const string Tag = "environment:dev";
-
-		private readonly Toggle _toggle;
 
 		public RouteTests()
 		{
-			var editor = EditorID.Parse("RouteTests");
-			_toggle = Toggle.CreateNew(
-				editor,
-				Name,
-				toggleID: ToggleID.Parse(Guid.Parse(ID))
-			);
-
-			_toggle.AddTag(editor, "test");
-			_toggle.AddCondition(editor, new Dictionary<string, object>
+			_toggle.AddTag(_editor, "test");
+			_toggle.AddCondition(_editor, new Dictionary<string, object>
 			{
 				{ ConditionBuilder.TypeKey, "enabled" }
 			});
 		}
 
-		public override async Task InitializeAsync()
-		{
-			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
-		}
-
 		[Theory]
 		[InlineData("GET", "/toggles")]
 		//
-		[InlineData("GET", "/toggles/id/" + ID)]
-		[InlineData("GET", "/toggles/name/" + Name)]
+		[InlineData("GET", "/toggles/id/{id}")]
+		[InlineData("GET", "/toggles/name/{name}")]
 		//
-		[InlineData("GET", "/toggles/id/" + ID + "/tags")]
-		[InlineData("GET", "/toggles/name/" + Name + "/tags")]
+		[InlineData("GET", "/toggles/id/{id}/tags")]
+		[InlineData("GET", "/toggles/name/{name}/tags")]
 		//
-		[InlineData("PUT", "/toggles/id/" + ID + "/tags/environmnet:test")]
-		[InlineData("PUT", "/toggles/name/" + Name + "/tags/environmnet:test")]
+		[InlineData("PUT", "/toggles/id/{id}/tags/environmnet:test")]
+		[InlineData("PUT", "/toggles/name/{name}/tags/environmnet:test")]
 		//
-		[InlineData("DELETE", "/toggles/id/" + ID + "/tags/" + Tag)]
-		[InlineData("DELETE", "/toggles/name/" + Name + "/tags/" + Tag)]
+		[InlineData("DELETE", "/toggles/id/{id}/tags/" + Tag)]
+		[InlineData("DELETE", "/toggles/name/{name}/tags/" + Tag)]
 		//
-		[InlineData("GET", "/toggles/id/" + ID + "/conditions")]
-		[InlineData("GET", "/toggles/name/" + Name + "/conditions")]
+		[InlineData("GET", "/toggles/id/{id}/conditions")]
+		[InlineData("GET", "/toggles/name/{name}/conditions")]
 		//
-		[InlineData("GET", "/toggles/id/" + ID + "/conditions/0")]
-		[InlineData("GET", "/toggles/name/" + Name + "/conditions/0")]
+		[InlineData("GET", "/toggles/id/{id}/conditions/0")]
+		[InlineData("GET", "/toggles/name/{name}/conditions/0")]
 		public Task Route_works(string method, string url) => _system.Scenario(_ =>
 		{
+			url = url.Replace("{id}", _toggle.ID.ToString()).Replace("{name}", _toggle.Name);
+
 			_.Context.HttpMethod(method);
 			_.Context.RelativeUrl(url);
 

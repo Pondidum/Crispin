@@ -9,19 +9,6 @@ namespace Crispin.Rest.Tests.Integration
 {
 	public class ToggleConditions : IntegrationBase
 	{
-		private readonly Toggle _toggle;
-
-		public ToggleConditions()
-		{
-			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");
-		}
-
-		public override async Task InitializeAsync()
-		{
-			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
-		}
-
 		private static Dictionary<string, object> Condition(string type) => new Dictionary<string, object>
 		{
 			{ ConditionBuilder.TypeKey, type }

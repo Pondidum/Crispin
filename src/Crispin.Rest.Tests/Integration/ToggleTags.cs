@@ -8,20 +8,6 @@ namespace Crispin.Rest.Tests.Integration
 {
 	public class ToggleTags : IntegrationBase
 	{
-		private readonly Toggle _toggle;
-
-		public ToggleTags()
-		{
-			_toggle = Toggle.CreateNew(EditorID.Parse("me"), "toggle-1");
-			_toggle.AddTag(EditorID.Parse("me"), "readonly");
-		}
-
-		public override async Task InitializeAsync()
-		{
-			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
-		}
-
 		[Fact]
 		public Task When_adding_a_new_tag_to_a_toggle() => _system.Scenario(_ =>
 		{

@@ -12,6 +12,8 @@ namespace Crispin.Rest.Tests.Integration
 	{
 		protected readonly SystemUnderTest _system;
 		protected readonly InMemoryStorage _storage;
+		protected Toggle _toggle;
+		protected readonly EditorID _editor;
 
 		public IntegrationBase()
 		{
@@ -22,9 +24,18 @@ namespace Crispin.Rest.Tests.Integration
 			_system = SystemUnderTest.ForStartup<Startup>();
 			_system.Configure(builder => builder.UseLamar());
 			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
+
+			_editor = EditorID.Parse("me");
+			_toggle = Toggle.CreateNew(_editor, "toggle-1");
+			_toggle.AddTag(_editor, "readonly");
+
 		}
 
-		public virtual Task InitializeAsync() => Task.CompletedTask;
+		public async Task InitializeAsync()
+		{
+			using (var session = _storage.CreateSession())
+				await session.Save(_toggle);
+		}
 
 		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
 	}
