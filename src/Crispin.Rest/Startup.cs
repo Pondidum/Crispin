@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Converters;
 
 namespace Crispin.Rest
 {
@@ -16,15 +17,20 @@ namespace Crispin.Rest
 	{
 		public void ConfigureContainer(ServiceRegistry services)
 		{
-			services.AddMvc(options =>
-			{
-				options.Filters.Add<JsonNotFoundActionFilter>();
-				options.Filters.Add<ValidationExceptionFilter>();
-				options.Filters.Add<NotFoundExceptionFilter>();
+			services
+				.AddMvc(options =>
+				{
+					options.Filters.Add<JsonNotFoundActionFilter>();
+					options.Filters.Add<ValidationExceptionFilter>();
+					options.Filters.Add<NotFoundExceptionFilter>();
 
-				options.ModelBinderProviders.Insert(0, new ToggleLocatorBinder());
-				options.ModelBinderProviders.Insert(1, new DomainIDBinder());
-			});
+					options.ModelBinderProviders.Insert(0, new ToggleLocatorBinder());
+					options.ModelBinderProviders.Insert(1, new DomainIDBinder());
+				}).AddJsonOptions(options =>
+				{
+					options.SerializerSettings.Converters.Add(new StringEnumConverter  { CamelCaseText = true });
+				});
+
 
 			services.Scan(_ =>
 			{
@@ -39,7 +45,8 @@ namespace Crispin.Rest
 		{
 			if (env.IsDevelopment())
 			{
-				app.UseDeveloperExceptionPage();app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+				app.UseDeveloperExceptionPage();
+				app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
 				{
 					HotModuleReplacement = true,
 					ReactHotModuleReplacement = true
