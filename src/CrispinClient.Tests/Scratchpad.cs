@@ -47,29 +47,11 @@ namespace CrispinClient.Tests
 		}
 	}
 
-	public class Toggle
-	{
-		public Guid ID { get; set; }
-		public SpecPart[] Conditions { get; set; }
-		
-		
-		public bool IsActive(IActiveQuery query)
-		{
-			var specBuilder = new SpecBuilder<IActiveQuery>();
-			var spec = new AnySpecification<IActiveQuery>(Conditions.Select(specBuilder.Build).ToArray());
 
-			return spec.IsMatch(query);
-		}
-	}
 
 	public interface IToggleQuery
 	{
 		bool IsActive(Guid toggleID, object query);
-	}
-
-	public interface IActiveQuery
-	{
-		
 	}
 
 	public class QueryAdapter : IActiveQuery
