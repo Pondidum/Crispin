@@ -1,4 +1,5 @@
 using System;
+using CrispinClient.Conditions;
 using Shouldly;
 using Xunit;
 
@@ -12,9 +13,9 @@ namespace CrispinClient.Tests
 			var toggleID = Guid.NewGuid();
 			var service = new ToggleService();
 
-			var enabled = new Condition { ID = 1, ConditionType = "true" };
-			var disabled = new Condition { ID = 2, ConditionType = "false" };
-			var any = new Condition { ID = 0, ConditionType = "any", Children = new[] { enabled, disabled } };
+			var enabled = new EnabledCondition { ID = 1 };
+			var disabled = new DisabledCondition { ID = 2 };
+			var any = new AnyCondition { ID = 0, Children = new Condition[] { enabled, disabled } };
 
 			service.Populate(new[]
 			{

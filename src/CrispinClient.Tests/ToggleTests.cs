@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CrispinClient.Conditions;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
@@ -28,9 +29,9 @@ namespace CrispinClient.Tests
 
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ID.ShouldBe(Guid.Parse("57F137CA-4251-4D2D-BD40-EC798854593E")),
-				() => toggle.Conditions[0].ConditionType.ShouldBe("All"),
-				() => toggle.Conditions[0].Children.First().ConditionType.ShouldBe("Enabled"),
-				() => toggle.Conditions[0].Children.Last().ConditionType.ShouldBe("Disabled")
+				() => toggle.Conditions[0].ShouldBeOfType<AllCondition>(),
+				() => toggle.Conditions[0].Children.First().ShouldBeOfType<EnabledCondition>(),
+				() => toggle.Conditions[0].Children.Last().ShouldBeOfType<DisabledCondition>()
 			);
 		}
 	}

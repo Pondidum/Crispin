@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using Ruler;
-using Ruler.Specifications;
+using CrispinClient.Conditions;
 
 namespace CrispinClient
 {
@@ -14,36 +10,8 @@ namespace CrispinClient
 
 		public bool IsActive(IActiveQuery query)
 		{
-			var specBuilder = new SpecBuilder<IActiveQuery>();
-
-			var specs = Conditions
-				.Select(Convert)
-				.Select(specBuilder.Build)
-				.ToArray();
-
-			return new AnySpecification<IActiveQuery>(specs)
-				.IsMatch(query);
-		}
-
-		private SpecPart Convert(Condition condition)
-		{
-			return new SpecPart
-			{
-				Type = condition.ConditionType,
-				Children = condition.Children.Select(Convert)
-			};
-		}
-	}
-
-	public class InGroupSpec : ISpecification<IActiveQuery>
-	{
-		public InGroupSpec(HashSet<string> group)
-		{
-		}
-
-		public bool IsMatch(IActiveQuery input)
-		{
-			throw new NotImplementedException();
+			var any = new AnyCondition { Children = Conditions };
+			return any.IsMatch(query);
 		}
 	}
 }

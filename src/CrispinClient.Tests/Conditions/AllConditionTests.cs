@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CrispinClient.Conditions;
 using NSubstitute;
-using Ruler.Specifications;
 using Shouldly;
 using Xunit;
 
-namespace Ruler.Tests.Specifications
+namespace CrispinClient.Tests.Conditions
 {
-	public class AllSpecificationTests
+	public class AllConditionTests
 	{
-		private readonly ISpecification<string>[] _inners;
-		private readonly AllSpecification<string> _sut;
+		private readonly Condition[] _inners;
+		private readonly AllCondition _sut;
 
-		public AllSpecificationTests()
+		public AllConditionTests()
 		{
 			_inners = Enumerable
 				.Range(0, 5)
-				.Select(i => Substitute.For<ISpecification<string>>())
+				.Select(i => Substitute.For<Condition>())
 				.ToArray();
-			_sut = new AllSpecification<string>(_inners);
+			_sut = new AllCondition { Children = _inners };
 		}
 
 		public static IEnumerable<object[]> Indexes => Enumerable.Range(0, 5).Select(i => new object[] { i });
@@ -28,9 +28,9 @@ namespace Ruler.Tests.Specifications
 		public void When_any_are_false(int falseIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<string>()).Returns(i != falseIndex);
+				_inners[i].IsMatch(Arg.Any<IActiveQuery>()).Returns(i != falseIndex);
 
-			_sut.IsMatch("wat").ShouldBeFalse();
+			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeFalse();
 		}
 
 		[Theory]
@@ -38,12 +38,12 @@ namespace Ruler.Tests.Specifications
 		public void Children_after_first_false_match_are_not_evaluated(int falseIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<string>()).Returns(i != falseIndex);
+				_inners[i].IsMatch(Arg.Any<IActiveQuery>()).Returns(i != falseIndex);
 
-			_sut.IsMatch("wat").ShouldBeFalse();
+			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeFalse();
 
 			for (int i = falseIndex + 1; i < _inners.Length; i++)
-				_inners[i].DidNotReceive().IsMatch(Arg.Any<string>());
+				_inners[i].DidNotReceive().IsMatch(Arg.Any<IActiveQuery>());
 		}
 	}
 }

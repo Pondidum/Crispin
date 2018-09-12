@@ -1,7 +1,6 @@
-using System;
 using System.Linq;
+using CrispinClient.Conditions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Shouldly;
 using Xunit;
 
