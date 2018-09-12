@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Ruler;
 using Ruler.Specifications;
 
@@ -30,6 +32,18 @@ namespace CrispinClient
 				Type = condition.ConditionType,
 				Children = condition.Children.Select(Convert)
 			};
+		}
+	}
+
+	public class InGroupSpec : ISpecification<IActiveQuery>
+	{
+		public InGroupSpec(HashSet<string> group)
+		{
+		}
+
+		public bool IsMatch(IActiveQuery input)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

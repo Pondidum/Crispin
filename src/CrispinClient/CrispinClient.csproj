@@ -5,7 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ruler\Ruler.csproj" />
+        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\Ruler\Ruler.csproj" />
     </ItemGroup>
 
 </Project>
