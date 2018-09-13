@@ -12,25 +12,26 @@ namespace CrispinClient
 
 		static ConditionConverter()
 		{
-			Builder = new Dictionary<string, Func<Condition>>(StringComparer.OrdinalIgnoreCase);
+			Builder = new Dictionary<string, Func<Condition>>(StringComparer.OrdinalIgnoreCase)
+			{
+				{ "enabled", () => new EnabledCondition() },
+				{ "on", () => new EnabledCondition() },
+				{ "true", () => new EnabledCondition() },
 
-			Builder.Add("enabled", () => new EnabledCondition());
-			Builder.Add("on", () => new EnabledCondition());
-			Builder.Add("true", () => new EnabledCondition());
+				{ "disabled", () => new DisabledCondition() },
+				{ "off", () => new DisabledCondition() },
+				{ "false", () => new DisabledCondition() },
 
-			Builder.Add("disabled", () => new DisabledCondition());
-			Builder.Add("off", () => new DisabledCondition());
-			Builder.Add("false", () => new DisabledCondition());
+				{ "not", () => new NotCondition() },
+				{ "any", () => new AnyCondition() },
+				{ "all", () => new AllCondition() },
 
-			Builder.Add("not", () => new NotCondition());
-			Builder.Add("any", () => new AnyCondition());
-			Builder.Add("all", () => new AllCondition());
-			
-			Builder.Add("ingroup", () => new InGroupCondition());
+				{ "ingroup", () => new InGroupCondition() }
+			};
 		}
 
 		public override bool CanWrite => false;
-		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotSupportedException();
 
 		public override bool CanConvert(Type objectType) => typeof(Condition).IsAssignableFrom(objectType);
 

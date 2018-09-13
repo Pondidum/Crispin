@@ -48,9 +48,6 @@ namespace CrispinClient.Conditions
 		public string SearchKey { get; set; }
 		public string GroupName { get; set; }
 
-		public override bool IsMatch(IActiveQuery query)
-		{
-			return query.GroupContains(GroupName, SearchKey);
-		}
+		public override bool IsMatch(IActiveQuery query) => query.GroupContains(GroupName, SearchKey);
 	}
 }
