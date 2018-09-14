@@ -19,17 +19,17 @@ namespace CrispinClient.Tests.Conditions
 		[Fact]
 		public void When_the_inner_spec_is_true()
 		{
-			_inner.IsMatch(Arg.Any<IActiveQuery>()).Returns(true);
+			_inner.IsMatch(Arg.Any<IToggleContext>()).Returns(true);
 
-			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeFalse();
+			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeFalse();
 		}
 
 		[Fact]
 		public void When_the_inner_spec_is_false()
 		{
-			_inner.IsMatch(Arg.Any<IActiveQuery>()).Returns(false);
+			_inner.IsMatch(Arg.Any<IToggleContext>()).Returns(false);
 
-			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeTrue();
+			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 	}
 }

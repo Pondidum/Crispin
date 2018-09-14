@@ -9,7 +9,7 @@ namespace CrispinClient.Tests.Conditions
 	{
 		[Fact]
 		public void It_always_returns_false() => new DisabledCondition()
-			.IsMatch(Substitute.For<IActiveQuery>())
+			.IsMatch(Substitute.For<IToggleContext>())
 			.ShouldBe(false);
 	}
 }

@@ -28,9 +28,9 @@ namespace CrispinClient.Tests.Conditions
 		public void When_any_are_true(int trueIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<IActiveQuery>()).Returns(i == trueIndex);
+				_inners[i].IsMatch(Arg.Any<IToggleContext>()).Returns(i == trueIndex);
 
-			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeTrue();
+			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 
 		[Theory]
@@ -38,12 +38,12 @@ namespace CrispinClient.Tests.Conditions
 		public void Children_after_first_true_match_are_not_evaluated(int trueIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<IActiveQuery>()).Returns(i == trueIndex);
+				_inners[i].IsMatch(Arg.Any<IToggleContext>()).Returns(i == trueIndex);
 
-			_sut.IsMatch(Substitute.For<IActiveQuery>()).ShouldBeTrue();
+			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
 
 			for (int i = trueIndex + 1; i < _inners.Length; i++)
-				_inners[i].DidNotReceive().IsMatch(Arg.Any<IActiveQuery>());
+				_inners[i].DidNotReceive().IsMatch(Arg.Any<IToggleContext>());
 		}
 	}
 }

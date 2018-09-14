@@ -4,11 +4,11 @@ using System.Reflection;
 
 namespace CrispinClient
 {
-	public class QueryAdapter : IActiveQuery
+	public class ObjectContext : IToggleContext
 	{
 		private readonly object _target;
 
-		public QueryAdapter(object target)
+		public ObjectContext(object target)
 		{
 			_target = target;
 		}

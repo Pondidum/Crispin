@@ -17,7 +17,7 @@ namespace CrispinClient
 			if (_toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new KeyNotFoundException(toggleID.ToString());
 
-			return toggle.IsActive(new QueryAdapter(query));
+			return toggle.IsActive(new ObjectContext(query));
 		}
 
 		public void Populate(IEnumerable<Toggle> toggles)

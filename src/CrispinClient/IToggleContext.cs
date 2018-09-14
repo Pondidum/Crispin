@@ -1,6 +1,6 @@
 namespace CrispinClient
 {
-	public interface IActiveQuery
+	public interface IToggleContext
 	{
 		bool GroupContains(string groupName, string term);
 	}

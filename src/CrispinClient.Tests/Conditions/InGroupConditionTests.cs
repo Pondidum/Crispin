@@ -8,7 +8,7 @@ namespace CrispinClient.Tests.Conditions
 	public class InGroupConditionTests
 	{
 		private readonly InGroupCondition _condition;
-		private readonly IActiveQuery _query;
+		private readonly IToggleContext _query;
 
 		public InGroupConditionTests()
 		{
@@ -17,7 +17,7 @@ namespace CrispinClient.Tests.Conditions
 				GroupName = "group",
 				SearchKey = "term"
 			};
-			_query = Substitute.For<IActiveQuery>();
+			_query = Substitute.For<IToggleContext>();
 		}
 
 		[Fact]
