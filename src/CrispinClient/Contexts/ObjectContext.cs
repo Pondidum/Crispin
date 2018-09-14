@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CrispinClient
+namespace CrispinClient.Contexts
 {
 	public class ObjectContext : IToggleContext
 	{
