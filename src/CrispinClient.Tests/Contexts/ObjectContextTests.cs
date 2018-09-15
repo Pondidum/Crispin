@@ -8,11 +8,7 @@ namespace CrispinClient.Tests.Contexts
 {
 	public class ObjectContextTests
 	{
-		private const string TypeName = nameof(TestTarget);
-		private const string GoodGroup = nameof(TestTarget.SomeGroup);
-		private const string BadGroup = nameof(TestTarget.SomeBadGroup);
-		private const string NullGroup = nameof(TestTarget.NullGroup);
-		private const string InvalidGroup = "wat";
+		private const string TargetName = nameof(TestTarget);
 
 		private readonly ObjectContext _context;
 
@@ -28,25 +24,31 @@ namespace CrispinClient.Tests.Contexts
 		[Fact]
 		public void When_a_groupName_doesnt_match_a_property()
 		{
+			var groupName = "wat";
+
 			Should
-				.Throw<MissingMemberException>(() => _context.GroupContains(InvalidGroup, "is this"))
-				.Message.ShouldBe($"Member '{TypeName}.{InvalidGroup}' not found.");
+				.Throw<MissingMemberException>(() => _context.GroupContains(groupName, "is this"))
+				.Message.ShouldBe($"Member '{TargetName}.{groupName}' not found.");
 		}
 
 		[Fact]
 		public void When_the_property_is_null()
 		{
+			var groupName = nameof(TestTarget.NullGroup);
+
 			Should
-				.Throw<NullReferenceException>(() => _context.GroupContains(NullGroup, "is this"))
-				.Message.ShouldBe($"Member '{TypeName}.{NullGroup}' is null.");
+				.Throw<NullReferenceException>(() => _context.GroupContains(groupName, "is this"))
+				.Message.ShouldBe($"Member '{TargetName}.{groupName}' is null.");
 		}
 
 		[Fact]
 		public void When_the_property_is_not_enumerable_string()
 		{
+			var groupName = nameof(TestTarget.SomeBadGroup);
+
 			Should
-				.Throw<InvalidCastException>(() => _context.GroupContains(BadGroup, "is this"))
-				.Message.ShouldBe($"Member '{TypeName}.{BadGroup}' does not implement IEnumerable<string>.");
+				.Throw<InvalidCastException>(() => _context.GroupContains(groupName, "is this"))
+				.Message.ShouldBe($"Member '{TargetName}.{groupName}' does not implement IEnumerable<string>.");
 		}
 
 		[Theory]
@@ -67,28 +69,28 @@ namespace CrispinClient.Tests.Contexts
 		[InlineData(nameof(TestTarget.BadReturn))]
 		[InlineData(nameof(TestTarget.BadParameter))]
 		[InlineData(nameof(TestTarget.MultipleParameters))]
-		public void Matching_methods_should_be_found(string functionName)
+		public void Matching_methods_should_be_found(string groupName)
 		{
 			Should
-				.Throw<MissingMethodException>(() => _context.GroupContains(functionName, "is this"))
-				.Message.ShouldBe($"No method found with a signature 'bool {TypeName}.{functionName}(string term)' (case insensitive).");
+				.Throw<MissingMethodException>(() => _context.GroupContains(groupName, "is this"))
+				.Message.ShouldBe($"No method found with a signature 'bool {TargetName}.{groupName}(string term)' (case insensitive).");
 		}
 
 		[Fact]
 		public void Overloaded_methods_with_no_matching_method()
 		{
-			var functionName = nameof(TestTarget.BadOverload);
+			var groupName = nameof(TestTarget.BadOverload);
 
 			var message = Should
-				.Throw<MissingMethodException>(() => _context.GroupContains(functionName, "is this"))
+				.Throw<MissingMethodException>(() => _context.GroupContains(groupName, "is this"))
 				.Message;
 
 			message.ShouldSatisfyAllConditions(
-				() => message.ShouldStartWith($"No method found with a signature 'bool {TypeName}.{functionName}(string term)' (case insensitive)."),
+				() => message.ShouldStartWith($"No method found with a signature 'bool {TargetName}.{groupName}(string term)' (case insensitive)."),
 				() => message.ShouldContain("Found:"),
-				() => message.ShouldContain($"* Boolean {TypeName}.{functionName}(Uri one)"),
-				() => message.ShouldContain($"* Boolean {TypeName}.{functionName}(String one, String two)"),
-				() => message.ShouldContain($"* Void {TypeName}.{functionName}()")
+				() => message.ShouldContain($"* Boolean {TargetName}.{groupName}(Uri one)"),
+				() => message.ShouldContain($"* Boolean {TargetName}.{groupName}(String one, String two)"),
+				() => message.ShouldContain($"* Void {TargetName}.{groupName}()")
 			);
 		}
 
@@ -108,6 +110,7 @@ namespace CrispinClient.Tests.Contexts
 
 			public bool BadOverload(Uri one) => true;
 			public bool BadOverload(string one, string two) => true;
+
 			public void BadOverload()
 			{
 			}
