@@ -22,16 +22,6 @@ namespace CrispinClient.Tests.Contexts
 		}
 
 		[Fact]
-		public void When_a_groupName_doesnt_match_a_property()
-		{
-			var groupName = "wat";
-
-			Should
-				.Throw<MissingMemberException>(() => _context.GroupContains(groupName, "is this"))
-				.Message.ShouldBe($"Member '{TargetName}.{groupName}' not found.");
-		}
-
-		[Fact]
 		public void When_the_property_is_null()
 		{
 			var groupName = nameof(TestTarget.NullGroup);
@@ -69,28 +59,18 @@ namespace CrispinClient.Tests.Contexts
 		[InlineData(nameof(TestTarget.BadReturn))]
 		[InlineData(nameof(TestTarget.BadParameter))]
 		[InlineData(nameof(TestTarget.MultipleParameters))]
+		[InlineData(nameof(TestTarget.BadOverload))]
+		[InlineData("wat")]
 		public void Matching_methods_should_be_found(string groupName)
 		{
-			Should
-				.Throw<MissingMethodException>(() => _context.GroupContains(groupName, "is this"))
-				.Message.ShouldBe($"No method found with a signature 'bool {TargetName}.{groupName}(string term)' (case insensitive).");
-		}
-
-		[Fact]
-		public void Overloaded_methods_with_no_matching_method()
-		{
-			var groupName = nameof(TestTarget.BadOverload);
-
 			var message = Should
 				.Throw<MissingMethodException>(() => _context.GroupContains(groupName, "is this"))
 				.Message;
 
 			message.ShouldSatisfyAllConditions(
-				() => message.ShouldStartWith($"No method found with a signature 'bool {TargetName}.{groupName}(string term)' (case insensitive)."),
-				() => message.ShouldContain("Found:"),
-				() => message.ShouldContain($"* Boolean {TargetName}.{groupName}(Uri one)"),
-				() => message.ShouldContain($"* Boolean {TargetName}.{groupName}(String one, String two)"),
-				() => message.ShouldContain($"* Void {TargetName}.{groupName}()")
+				() => message.ShouldStartWith($"No method or property found to query for group '{groupName}'."),
+				() => message.ShouldContain($"* 'bool {TargetName}.{groupName}(string term)'"),
+				() => message.ShouldContain($"* 'IEnumerable<string> {TargetName}.{groupName} {{ get; }}'")
 			);
 		}
 
