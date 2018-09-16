@@ -1,4 +1,6 @@
+using System.Linq;
 using CrispinClient.Conditions;
+using Newtonsoft.Json;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -32,6 +34,28 @@ namespace CrispinClient.Tests.Conditions
 		{
 			_query.GroupContains("group", "term").Returns(false);
 			_condition.IsMatch(_query).ShouldBe(false);
+		}
+
+		[Fact]
+		public void When_deserializing()
+		{
+			var conditionJson = @"{
+				""id"": 17,
+				""conditionType"": ""ingroup"",
+				""groupName"":""where to look"",
+				""searchKey"":""what to find""
+			}";
+
+			var condition = JsonConvert
+				.DeserializeObject<Condition>(conditionJson)
+				.ShouldBeOfType<InGroupCondition>();
+
+			condition.ShouldSatisfyAllConditions(
+				() => condition.ID.ShouldBe(17),
+				() => condition.GroupName.ShouldBe("where to look"),
+				() => condition.SearchKey.ShouldBe("what to find"),
+				() => condition.Children.ShouldBeEmpty()
+			);
 		}
 	}
 }
