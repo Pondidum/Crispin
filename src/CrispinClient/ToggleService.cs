@@ -13,12 +13,14 @@ namespace CrispinClient
 			_toggles = new Dictionary<Guid, Toggle>();
 		}
 
-		public bool IsActive(Guid toggleID, object query)
+		public bool IsActive(Guid toggleID, object context) => IsActive(toggleID, new ObjectContext(context));
+
+		public bool IsActive(Guid toggleID, IToggleContext context)
 		{
 			if (_toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new KeyNotFoundException(toggleID.ToString());
 
-			return toggle.IsActive(new ObjectContext(query));
+			return toggle.IsActive(context);
 		}
 
 		public void Populate(IEnumerable<Toggle> toggles)
