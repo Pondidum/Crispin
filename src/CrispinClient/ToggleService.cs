@@ -6,27 +6,23 @@ namespace CrispinClient
 {
 	public class ToggleService : IToggleQuery
 	{
-		private readonly Dictionary<Guid, Toggle> _toggles;
+		private readonly IToggleFetcher _fetcher;
 
-		public ToggleService()
+		public ToggleService(IToggleFetcher fetcher)
 		{
-			_toggles = new Dictionary<Guid, Toggle>();
+			_fetcher = fetcher;
 		}
 
 		public bool IsActive(Guid toggleID, object context) => IsActive(toggleID, new ObjectContext(context));
 
 		public bool IsActive(Guid toggleID, IToggleContext context)
 		{
-			if (_toggles.TryGetValue(toggleID, out var toggle) == false)
+			var toggles = _fetcher.GetAllToggles();
+
+			if (toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new KeyNotFoundException(toggleID.ToString());
 
 			return toggle.IsActive(context);
-		}
-
-		public void Populate(IEnumerable<Toggle> toggles)
-		{
-			foreach (var toggle in toggles)
-				_toggles[toggle.ID] = toggle;
 		}
 	}
 }

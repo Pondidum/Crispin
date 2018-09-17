@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using CrispinClient.Conditions;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -10,19 +12,17 @@ namespace CrispinClient.Tests
 		[Fact]
 		public void Scratch()
 		{
-			var toggleID = Guid.NewGuid();
-			var service = new ToggleService();
-
 			var enabled = new EnabledCondition { ID = 1 };
 			var disabled = new DisabledCondition { ID = 2 };
 			var any = new AnyCondition { ID = 0, Children = new Condition[] { enabled, disabled } };
 
-			service.Populate(new[]
-			{
-				new Toggle { ID = toggleID, Conditions = new[] { any } }
-			});
+			var toggle = new Toggle { ID = Guid.NewGuid(), Conditions = new[] { any } };
 
-			var active = service.IsActive(toggleID, new
+			var fetcher = Substitute.For<IToggleFetcher>();
+			fetcher.GetAllToggles().Returns(new Dictionary<Guid, Toggle> { { toggle.ID, toggle } });
+			var service = new ToggleService(fetcher);
+
+			var active = service.IsActive(toggle.ID, new
 			{
 				UserName = "testing"
 			});
