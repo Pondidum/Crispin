@@ -4,7 +4,7 @@ using CrispinClient.Conditions;
 
 namespace CrispinClient
 {
-	public class CrispinHttpClient
+	public class CrispinHttpClient : ICrispinClient
 	{
 		private bool _enabled;
 

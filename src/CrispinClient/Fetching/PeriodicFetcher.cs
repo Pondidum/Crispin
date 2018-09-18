@@ -12,7 +12,7 @@ namespace CrispinClient.Fetching
 		private readonly CancellationTokenSource _source;
 		private readonly Task _backgroundFetch;
 
-		public PeriodicFetcher(CrispinHttpClient client, TimeSpan frequency)
+		public PeriodicFetcher(ICrispinClient client, TimeSpan frequency)
 		{
 			_toggles = new Dictionary<Guid, Toggle>();
 			_source = new CancellationTokenSource();

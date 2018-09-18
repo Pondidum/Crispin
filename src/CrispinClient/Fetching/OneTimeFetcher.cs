@@ -8,7 +8,7 @@ namespace CrispinClient.Fetching
 	{
 		private readonly Lazy<Dictionary<Guid, Toggle>> _toggles;
 
-		public OneTimeFetcher(CrispinHttpClient client)
+		public OneTimeFetcher(ICrispinClient client)
 		{
 			_toggles = new Lazy<Dictionary<Guid, Toggle>>(() => client
 				.GetAllToggles()
