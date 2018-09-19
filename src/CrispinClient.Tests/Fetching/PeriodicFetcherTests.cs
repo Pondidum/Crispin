@@ -53,43 +53,5 @@ namespace CrispinClient.Tests.Fetching
 
 			_fetcher.GetAllToggles().ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
-
-		[Fact]
-		public void When_the_background_fetch_fails()
-		{
-			_client.GetAllToggles().Returns(
-				ci => _toggles,
-				ci => throw new TimeoutException()
-			);
-
-			_timeControl
-				.Delay(Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
-				.Returns(ci => Task.CompletedTask);
-
-			var toggles = _fetcher.GetAllToggles();
-
-			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
-		}
-		
-		
-		[Fact]
-		public void When_the_background_fetch_fails_and_a_subsequent_call_succeeds()
-		{
-			var initialToggles = _toggles.Take(2).ToArray();
-
-			_client.GetAllToggles().Returns(
-				ci => initialToggles,
-				ci => throw new TimeoutException(),
-				ci => _toggles
-			);
-
-			_timeControl
-				.Delay(Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
-				.Returns(Task.CompletedTask);
-
-			var toggles = _fetcher.GetAllToggles();
-
-			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
-		}
 	}
 }
