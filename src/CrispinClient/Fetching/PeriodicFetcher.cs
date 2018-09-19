@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CrispinClient.Infrastructure;
 
 namespace CrispinClient.Fetching
 {
@@ -12,15 +13,17 @@ namespace CrispinClient.Fetching
 		private readonly CancellationTokenSource _source;
 		private readonly Task _backgroundFetch;
 
-		public PeriodicFetcher(ICrispinClient client, TimeSpan frequency)
+		public PeriodicFetcher(ICrispinClient client, TimeSpan frequency, ITimeControl timeControl = null)
 		{
+			timeControl = timeControl ?? new RealTimeControl();
+
 			_toggles = new Dictionary<Guid, Toggle>();
 			_source = new CancellationTokenSource();
 			_backgroundFetch = Task.Run(async () =>
 			{
 				while (_source.IsCancellationRequested == false)
 				{
-					await Task.Delay(frequency, _source.Token);
+					await timeControl.Delay(frequency, _source.Token);
 					_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
 
 				}
