@@ -21,7 +21,7 @@ namespace CrispinClient.Fetching
 			_toggles = new Dictionary<Guid, Toggle>();
 			_source = new CancellationTokenSource();
 			_initialLoadDone = new ManualResetEventSlim();
-			
+
 			_backgroundFetch = Task.Run(async () =>
 			{
 				_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
@@ -30,7 +30,13 @@ namespace CrispinClient.Fetching
 				while (_source.IsCancellationRequested == false)
 				{
 					await timeControl.Delay(frequency, _source.Token);
-					_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
+					try
+					{
+						_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
+					}
+					catch (Exception)
+					{
+					}
 				}
 			}, _source.Token);
 		}
