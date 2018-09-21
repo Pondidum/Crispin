@@ -24,21 +24,26 @@ namespace CrispinClient.Fetching
 
 			_backgroundFetch = Task.Run(async () =>
 			{
-				_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
+				SafeReadToggles(client);
 				_initialLoadDone.Set();
 
 				while (_source.IsCancellationRequested == false)
 				{
 					await timeControl.Delay(frequency, _source.Token);
-					try
-					{
-						_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
-					}
-					catch (Exception)
-					{
-					}
+					SafeReadToggles(client);
 				}
 			}, _source.Token);
+		}
+
+		private void SafeReadToggles(ICrispinClient client)
+		{
+			try
+			{
+				_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		public IReadOnlyDictionary<Guid, Toggle> GetAllToggles()
@@ -51,6 +56,7 @@ namespace CrispinClient.Fetching
 		{
 			_source.Cancel();
 			_source.Dispose();
+			_backgroundFetch.GetAwaiter().GetResult();
 			_backgroundFetch.Dispose();
 		}
 	}

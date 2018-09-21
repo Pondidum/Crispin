@@ -101,6 +101,34 @@ namespace CrispinClient.Tests.Fetching
 			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
 
+		[Fact]
+		public void When_the_initial_query_fails()
+		{
+			var finished = new ManualResetEventSlim();
+			var currentStep = 0;
+
+			_client
+				.GetAllToggles()
+				.Returns(ci =>
+				{
+					currentStep++;
+
+					if (currentStep == 1)
+						throw new TimeoutException();
+
+					if (currentStep > 2)
+						finished.Set();
+
+					return _toggles;
+				});
+
+			var fetcher = CreateFetcher();
+			finished.Wait(TimeSpan.FromSeconds(2));
+			var toggles = fetcher.GetAllToggles();
+
+			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
+		}
+
 		public void Dispose()
 		{
 			_fetcher?.Dispose();
