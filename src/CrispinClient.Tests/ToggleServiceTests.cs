@@ -29,15 +29,19 @@ namespace CrispinClient.Tests
 		[Fact]
 		public void When_the_toggle_is_found()
 		{
+			var condition = Substitute.For<Condition>();
+			condition.IsMatch(Arg.Any<IToggleContext>()).Returns(true);
+
 			var toggle = new Toggle
 			{
 				ID = Guid.NewGuid(),
-				Conditions = new[] { new EnabledCondition() }
+				Conditions = new[] { condition }
 			};
 
 			_fetcher.GetAllToggles().Returns(new Dictionary<Guid, Toggle> { { toggle.ID, toggle } });
 
 			_service.IsActive(toggle.ID, null).ShouldBe(true);
+			condition.Received().IsMatch(Arg.Any<IToggleContext>());
 		}
 	}
 }
