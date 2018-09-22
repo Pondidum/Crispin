@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CrispinClient.Contexts;
 
 namespace CrispinClient
@@ -20,7 +19,7 @@ namespace CrispinClient
 			var toggles = _fetcher.GetAllToggles();
 
 			if (toggles.TryGetValue(toggleID, out var toggle) == false)
-				throw new KeyNotFoundException(toggleID.ToString());
+				throw new ToggleNotFoundException(toggleID);
 
 			return toggle.IsActive(context);
 		}
