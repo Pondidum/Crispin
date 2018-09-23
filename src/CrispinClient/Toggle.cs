@@ -10,10 +10,16 @@ namespace CrispinClient
 		public string Description { get; set; }
 
 		public Condition[] Conditions { get; set; }
+		public ConditionModes ConditionMode { get; set; }
 
 		public bool IsActive(IToggleContext query)
 		{
-			var any = new AnyCondition { Children = Conditions };
+			var any = ConditionMode == ConditionModes.Any
+				? new AnyCondition() as Condition
+				: new AllCondition() as Condition;
+
+			any.Children = Conditions;
+
 			return any.IsMatch(query);
 		}
 	}
