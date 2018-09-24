@@ -6,10 +6,12 @@ namespace CrispinClient
 	public class ToggleService : IToggleQuery
 	{
 		private readonly IToggleFetcher _fetcher;
+		private readonly IToggleStatistics _statistics;
 
-		public ToggleService(IToggleFetcher fetcher)
+		public ToggleService(IToggleFetcher fetcher, IToggleStatistics statistics)
 		{
 			_fetcher = fetcher;
+			_statistics = statistics;
 		}
 
 		public bool IsActive(Guid toggleID, object context) => IsActive(toggleID, new ObjectContext(context));
@@ -21,7 +23,10 @@ namespace CrispinClient
 			if (toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new ToggleNotFoundException(toggleID);
 
-			return toggle.IsActive(context);
+			var reporter = _statistics.CreateReporter(toggleID);
+			var isActive = toggle.IsActive(reporter, context);
+
+			return isActive;
 		}
 	}
 }

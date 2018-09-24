@@ -58,7 +58,9 @@ namespace CrispinClient.Tests
 				}
 			};
 
-			toggle.IsActive(Substitute.For<IToggleContext>()).ShouldBe(expected);
+			toggle
+				.IsActive(Substitute.For<IToggleReporter>(), Substitute.For<IToggleContext>())
+				.ShouldBe(expected);
 		}
 	}
 }

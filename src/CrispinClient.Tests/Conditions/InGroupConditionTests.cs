@@ -11,9 +11,11 @@ namespace CrispinClient.Tests.Conditions
 	{
 		private readonly InGroupCondition _condition;
 		private readonly IToggleContext _query;
+		private readonly IToggleReporter _reporter;
 
 		public InGroupConditionTests()
 		{
+			_reporter = Substitute.For<IToggleReporter>();
 			_condition = new InGroupCondition
 			{
 				GroupName = "group",
@@ -26,14 +28,14 @@ namespace CrispinClient.Tests.Conditions
 		public void When_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(true);
-			_condition.IsMatch(_query).ShouldBe(true);
+			_condition.IsMatch(_reporter, _query).ShouldBe(true);
 		}
 
 		[Fact]
 		public void When_not_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(false);
-			_condition.IsMatch(_query).ShouldBe(false);
+			_condition.IsMatch(_reporter, _query).ShouldBe(false);
 		}
 
 		[Fact]

@@ -12,9 +12,11 @@ namespace CrispinClient.Tests.Conditions
 	{
 		private readonly Condition[] _inners;
 		private readonly AnyCondition _sut;
+		private readonly IToggleReporter _reporter;
 
 		public AnyConditionTests()
 		{
+			_reporter = Substitute.For<IToggleReporter>();
 			_inners = Enumerable
 				.Range(0, 5)
 				.Select(i => Substitute.For<Condition>())
@@ -29,9 +31,9 @@ namespace CrispinClient.Tests.Conditions
 		public void When_any_are_true(int trueIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<IToggleContext>()).Returns(i == trueIndex);
+				_inners[i].IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(i == trueIndex);
 
-			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
+			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 
 		[Theory]
@@ -39,12 +41,12 @@ namespace CrispinClient.Tests.Conditions
 		public void Children_after_first_true_match_are_not_evaluated(int trueIndex)
 		{
 			for (int i = 0; i < _inners.Length; i++)
-				_inners[i].IsMatch(Arg.Any<IToggleContext>()).Returns(i == trueIndex);
+				_inners[i].IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(i == trueIndex);
 
-			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
+			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
 
 			for (int i = trueIndex + 1; i < _inners.Length; i++)
-				_inners[i].DidNotReceive().IsMatch(Arg.Any<IToggleContext>());
+				_inners[i].DidNotReceive().IsMatch(_reporter, Arg.Any<IToggleContext>());
 		}
 
 		[Fact]

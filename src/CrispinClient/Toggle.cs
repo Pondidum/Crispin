@@ -12,7 +12,7 @@ namespace CrispinClient
 		public Condition[] Conditions { get; set; }
 		public ConditionModes ConditionMode { get; set; }
 
-		public bool IsActive(IToggleContext query)
+		public bool IsActive(IToggleReporter reporter, IToggleContext context)
 		{
 			var any = ConditionMode == ConditionModes.Any
 				? new AnyCondition() as Condition
@@ -20,7 +20,7 @@ namespace CrispinClient
 
 			any.Children = Conditions;
 
-			return any.IsMatch(query);
+			return any.IsMatch(reporter, context);
 		}
 	}
 }

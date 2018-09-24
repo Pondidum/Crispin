@@ -8,9 +8,16 @@ namespace CrispinClient.Tests.Conditions
 {
 	public class DisabledConditionTests
 	{
+		private readonly IToggleReporter _reporter;
+
+		public DisabledConditionTests()
+		{
+			_reporter = Substitute.For<IToggleReporter>();
+		}
+
 		[Fact]
 		public void It_always_returns_false() => new DisabledCondition()
-			.IsMatch(Substitute.For<IToggleContext>())
+			.IsMatch(_reporter, Substitute.For<IToggleContext>())
 			.ShouldBe(false);
 
 		[Fact]

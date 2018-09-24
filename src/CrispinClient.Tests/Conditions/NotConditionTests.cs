@@ -10,9 +10,11 @@ namespace CrispinClient.Tests.Conditions
 	{
 		private readonly Condition _inner;
 		private readonly NotCondition _sut;
+		private readonly IToggleReporter _reporter;
 
 		public NotConditionTests()
 		{
+			_reporter = Substitute.For<IToggleReporter>();
 			_inner = Substitute.For<Condition>();
 			_sut = new NotCondition { Children = new[] { _inner } };
 		}
@@ -20,17 +22,17 @@ namespace CrispinClient.Tests.Conditions
 		[Fact]
 		public void When_the_inner_spec_is_true()
 		{
-			_inner.IsMatch(Arg.Any<IToggleContext>()).Returns(true);
+			_inner.IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(true);
 
-			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeFalse();
+			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
 		}
 
 		[Fact]
 		public void When_the_inner_spec_is_false()
 		{
-			_inner.IsMatch(Arg.Any<IToggleContext>()).Returns(false);
+			_inner.IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(false);
 
-			_sut.IsMatch(Substitute.For<IToggleContext>()).ShouldBeTrue();
+			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 
 		[Fact]
