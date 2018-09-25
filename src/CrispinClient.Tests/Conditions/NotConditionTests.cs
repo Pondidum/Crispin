@@ -1,4 +1,5 @@
-﻿using CrispinClient.Conditions;
+﻿using System.Linq;
+using CrispinClient.Conditions;
 using Newtonsoft.Json;
 using NSubstitute;
 using Shouldly;
@@ -6,33 +7,27 @@ using Xunit;
 
 namespace CrispinClient.Tests.Conditions
 {
-	public class NotConditionTests
+	public class NotConditionTests : ConditionTests<NotCondition>
 	{
-		private readonly Condition _inner;
-		private readonly NotCondition _sut;
-		private readonly IToggleReporter _reporter;
-
 		public NotConditionTests()
 		{
-			_reporter = Substitute.For<IToggleReporter>();
-			_inner = Substitute.For<Condition>();
-			_sut = new NotCondition { Children = new[] { _inner } };
+			Sut.Children = Sut.Children.Take(1).ToArray();
 		}
 
 		[Fact]
 		public void When_the_inner_spec_is_true()
 		{
-			_inner.IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(true);
+			ChildConditions[0].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(true);
 
-			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
+			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
 		}
 
 		[Fact]
 		public void When_the_inner_spec_is_false()
 		{
-			_inner.IsMatch(_reporter, Arg.Any<IToggleContext>()).Returns(false);
+			ChildConditions[0].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(false);
 
-			_sut.IsMatch(_reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
+			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 
 		[Fact]

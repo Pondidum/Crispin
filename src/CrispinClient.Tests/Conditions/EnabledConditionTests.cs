@@ -6,18 +6,11 @@ using Xunit;
 
 namespace CrispinClient.Tests.Conditions
 {
-	public class EnabledConditionTests
+	public class EnabledConditionTests : ConditionTests<EnabledCondition>
 	{
-		private readonly IToggleReporter _reporter;
-
-		public EnabledConditionTests()
-		{
-			_reporter = Substitute.For<IToggleReporter>();
-		}
-
 		[Fact]
-		public void It_always_returns_true() => new EnabledCondition()
-			.IsMatch(_reporter, Substitute.For<IToggleContext>())
+		public void It_always_returns_true() => Sut
+			.IsMatch(Reporter, Substitute.For<IToggleContext>())
 			.ShouldBe(true);
 
 		[Fact]

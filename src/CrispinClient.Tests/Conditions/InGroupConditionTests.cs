@@ -1,4 +1,3 @@
-using System.Linq;
 using CrispinClient.Conditions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -7,35 +6,30 @@ using Xunit;
 
 namespace CrispinClient.Tests.Conditions
 {
-	public class InGroupConditionTests
+	public class InGroupConditionTests : ConditionTests<InGroupCondition>
 	{
-		private readonly InGroupCondition _condition;
 		private readonly IToggleContext _query;
-		private readonly IToggleReporter _reporter;
 
 		public InGroupConditionTests()
 		{
-			_reporter = Substitute.For<IToggleReporter>();
-			_condition = new InGroupCondition
-			{
-				GroupName = "group",
-				SearchKey = "term"
-			};
 			_query = Substitute.For<IToggleContext>();
+
+			Sut.GroupName = "group";
+			Sut.SearchKey = "term";
 		}
 
 		[Fact]
 		public void When_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(true);
-			_condition.IsMatch(_reporter, _query).ShouldBe(true);
+			Sut.IsMatch(Reporter, _query).ShouldBe(true);
 		}
 
 		[Fact]
 		public void When_not_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(false);
-			_condition.IsMatch(_reporter, _query).ShouldBe(false);
+			Sut.IsMatch(Reporter, _query).ShouldBe(false);
 		}
 
 		[Fact]
