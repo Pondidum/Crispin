@@ -2,10 +2,11 @@
 using System.Linq;
 using CrispinClient.Conditions;
 using NSubstitute;
+using Xunit;
 
 namespace CrispinClient.Tests.Conditions
 {
-	public class ConditionTests<TCondition> where TCondition : Condition, new()
+	public abstract class ConditionTests<TCondition> where TCondition : Condition, new()
 	{
 		public Condition[] ChildConditions { get; }
 		public TCondition Sut { get; }
@@ -24,5 +25,13 @@ namespace CrispinClient.Tests.Conditions
 		public static IEnumerable<object[]> Indexes => Enumerable
 			.Range(0, 5)
 			.Select(i => new object[] { i });
+
+		[Fact]
+		public void Calling_is_match_reports_stats()
+		{
+			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>());
+
+			Reporter.Received().Report(Sut, Arg.Any<bool>());
+		}
 	}
 }
