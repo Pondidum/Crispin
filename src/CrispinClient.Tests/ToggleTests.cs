@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using CrispinClient.Conditions;
 using Newtonsoft.Json;
@@ -61,6 +62,42 @@ namespace CrispinClient.Tests
 			toggle
 				.IsActive(Substitute.For<IToggleReporter>(), Substitute.For<IToggleContext>())
 				.ShouldBe(expected);
+		}
+
+		[Fact]
+		public void When_writing_statistics()
+		{
+			var toggle = new Toggle
+			{
+				Conditions = new Condition[]
+				{
+					new AllCondition
+					{
+						Children = new Condition[]
+						{
+							new EnabledCondition(),
+							new InGroupCondition()
+						}
+					},
+					new DisabledCondition()
+				}
+			};
+
+			var seenConditions = new List<Type>();
+			var reporter = Substitute.For<IToggleReporter>();
+			reporter
+				.When(r => r.Report(Arg.Any<Condition>(), Arg.Any<bool>()))
+				.Do(ci => seenConditions.Add(ci.ArgAt<Condition>(0).GetType()));
+
+			toggle.IsActive(reporter, Substitute.For<IToggleContext>());
+
+			seenConditions.ShouldBe(new[]
+			{
+				typeof(EnabledCondition),
+				typeof(InGroupCondition),
+				typeof(AllCondition),
+				typeof(DisabledCondition)
+			});
 		}
 	}
 }

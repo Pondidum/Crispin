@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CrispinClient.Conditions;
 
 namespace CrispinClient
@@ -14,13 +15,9 @@ namespace CrispinClient
 
 		public bool IsActive(IToggleReporter reporter, IToggleContext context)
 		{
-			var any = ConditionMode == ConditionModes.Any
-				? new AnyCondition() as Condition
-				: new AllCondition() as Condition;
-
-			any.Children = Conditions;
-
-			return any.IsMatch(reporter, context);
+			return ConditionMode == ConditionModes.Any
+				? Conditions.Any(c => c.IsMatch(reporter, context))
+				: Conditions.All(c => c.IsMatch(reporter, context));
 		}
 	}
 }
