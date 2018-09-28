@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CrispinClient
+namespace CrispinClient.Fetching
 {
 	public interface IToggleFetcher
 	{

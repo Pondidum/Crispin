@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CrispinClient
+namespace CrispinClient.Fetching
 {
 	public interface ICrispinClient
 	{

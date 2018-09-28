@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CrispinClient.Conditions;
+using CrispinClient.Fetching;
 using CrispinClient.Statistics;
 using NSubstitute;
 using Shouldly;
