@@ -23,10 +23,8 @@ namespace CrispinClient
 			if (toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new ToggleNotFoundException(toggleID);
 
-			var reporter = _statistics.CreateReporter(toggleID);
-			var isActive = toggle.IsActive(reporter, context);
-
-			return isActive;
+			using (var reporter = _statistics.CreateReporter(toggleID))
+				return toggle.IsActive(reporter, context);
 		}
 	}
 }
