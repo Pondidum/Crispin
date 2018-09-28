@@ -5,7 +5,7 @@ using CrispinClient.Statistics;
 
 namespace CrispinClient
 {
-	public class ToggleService : IToggleQuery
+	public class ToggleService
 	{
 		private readonly IToggleFetcher _fetcher;
 		private readonly IToggleStatistics _statistics;
