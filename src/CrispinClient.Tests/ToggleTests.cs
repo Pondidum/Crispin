@@ -91,6 +91,8 @@ namespace CrispinClient.Tests
 
 			toggle.IsActive(reporter, Substitute.For<IToggleContext>());
 
+			reporter.Received().Report(toggle, false);
+
 			seenConditions.ShouldBe(new[]
 			{
 				typeof(EnabledCondition),

@@ -15,9 +15,13 @@ namespace CrispinClient
 
 		public bool IsActive(IToggleReporter reporter, IToggleContext context)
 		{
-			return ConditionMode == ConditionModes.Any
+			var isActive = ConditionMode == ConditionModes.Any
 				? Conditions.Any(c => c.IsMatch(reporter, context))
 				: Conditions.All(c => c.IsMatch(reporter, context));
+
+			reporter.Report(this, isActive);
+
+			return isActive;
 		}
 	}
 }
