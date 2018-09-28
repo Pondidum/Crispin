@@ -1,6 +1,6 @@
 using System;
 
-namespace CrispinClient
+namespace CrispinClient.Statistics
 {
 	public interface IToggleStatistics
 	{

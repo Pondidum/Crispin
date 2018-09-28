@@ -1,7 +1,7 @@
 using System;
 using CrispinClient.Conditions;
 
-namespace CrispinClient
+namespace CrispinClient.Statistics
 {
 	public interface IToggleReporter : IDisposable
 	{

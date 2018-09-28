@@ -1,5 +1,6 @@
 using System;
 using CrispinClient.Contexts;
+using CrispinClient.Statistics;
 
 namespace CrispinClient
 {

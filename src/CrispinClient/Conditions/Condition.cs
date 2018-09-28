@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CrispinClient.Statistics;
 using Newtonsoft.Json;
 
 namespace CrispinClient.Conditions

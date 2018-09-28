@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CrispinClient.Conditions;
+using CrispinClient.Statistics;
 
 namespace CrispinClient
 {
