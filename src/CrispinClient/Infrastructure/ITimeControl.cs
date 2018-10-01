@@ -7,5 +7,6 @@ namespace CrispinClient.Infrastructure
 	public interface ITimeControl
 	{
 		Task Delay(TimeSpan time, CancellationToken cancellationToken);
+		Func<Task> Every(TimeSpan interval, Action action);
 	}
 }
