@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CrispinClient.Statistics
+namespace CrispinClient
 {
 	public class Statistic
 	{
