@@ -30,11 +30,19 @@ namespace CrispinClient.Infrastructure
 
 			return async () =>
 			{
-				cancel.Cancel(false);
-				await task;
-
-				task.Dispose();
-				cancel.Dispose();
+				try
+				{
+					cancel.Cancel(false);
+					await task;
+				}
+				catch (TaskCanceledException e)
+				{
+				}
+				finally
+				{
+					task.Dispose();
+					cancel.Dispose();
+				}
 			};
 		}
 	}
