@@ -13,13 +13,11 @@ namespace CrispinClient.Tests
 	{
 		private readonly ToggleService _service;
 		private readonly IToggleFetcher _fetcher;
-		private readonly IToggleStatistics _statistics;
 
 		public ToggleServiceTests()
 		{
-			_statistics = Substitute.For<IToggleStatistics>();
 			_fetcher = Substitute.For<IToggleFetcher>();
-			_service = new ToggleService(_fetcher, _statistics);
+			_service = new ToggleService(_fetcher, Substitute.For<IStatisticsWriter>());
 		}
 
 		[Fact]
@@ -34,7 +32,7 @@ namespace CrispinClient.Tests
 		public void When_the_toggle_is_found()
 		{
 			var condition = Substitute.For<Condition>();
-			condition.IsMatch(Arg.Any<IToggleReporter>(), Arg.Any<IToggleContext>()).Returns(true);
+			condition.IsMatch(Arg.Any<Statistic>(), Arg.Any<IToggleContext>()).Returns(true);
 
 			var toggle = new Toggle
 			{
@@ -45,7 +43,7 @@ namespace CrispinClient.Tests
 			_fetcher.GetAllToggles().Returns(new Dictionary<Guid, Toggle> { { toggle.ID, toggle } });
 
 			_service.IsActive(toggle.ID, null).ShouldBe(true);
-			condition.Received().IsMatch(Arg.Any<IToggleReporter>(), Arg.Any<IToggleContext>());
+			condition.Received().IsMatch(Arg.Any<Statistic>(), Arg.Any<IToggleContext>());
 		}
 	}
 }

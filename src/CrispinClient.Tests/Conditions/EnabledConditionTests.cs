@@ -10,7 +10,7 @@ namespace CrispinClient.Tests.Conditions
 	{
 		[Fact]
 		public void It_always_returns_true() => Sut
-			.IsMatch(Reporter, Substitute.For<IToggleContext>())
+			.IsMatch(Stats, Substitute.For<IToggleContext>())
 			.ShouldBe(true);
 
 		[Fact]

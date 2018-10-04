@@ -22,14 +22,14 @@ namespace CrispinClient.Tests.Conditions
 		public void When_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(true);
-			Sut.IsMatch(Reporter, _query).ShouldBe(true);
+			Sut.IsMatch(Stats, _query).ShouldBe(true);
 		}
 
 		[Fact]
 		public void When_not_in_the_group()
 		{
 			_query.GroupContains("group", "term").Returns(false);
-			Sut.IsMatch(Reporter, _query).ShouldBe(false);
+			Sut.IsMatch(Stats, _query).ShouldBe(false);
 		}
 
 		[Fact]

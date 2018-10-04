@@ -17,17 +17,17 @@ namespace CrispinClient.Tests.Conditions
 		[Fact]
 		public void When_the_inner_spec_is_true()
 		{
-			ChildConditions[0].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(true);
+			ChildConditions[0].IsMatch(Stats, Arg.Any<IToggleContext>()).Returns(true);
 
-			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
+			Sut.IsMatch(Stats, Substitute.For<IToggleContext>()).ShouldBeFalse();
 		}
 
 		[Fact]
 		public void When_the_inner_spec_is_false()
 		{
-			ChildConditions[0].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(false);
+			ChildConditions[0].IsMatch(Stats, Arg.Any<IToggleContext>()).Returns(false);
 
-			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeTrue();
+			Sut.IsMatch(Stats, Substitute.For<IToggleContext>()).ShouldBeTrue();
 		}
 
 		[Fact]

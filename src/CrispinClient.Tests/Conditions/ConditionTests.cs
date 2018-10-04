@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CrispinClient.Conditions;
-using CrispinClient.Statistics;
 using NSubstitute;
+using Shouldly;
 using Xunit;
 
 namespace CrispinClient.Tests.Conditions
@@ -11,16 +11,21 @@ namespace CrispinClient.Tests.Conditions
 	{
 		public Condition[] ChildConditions { get; }
 		public TCondition Sut { get; }
-		public IToggleReporter Reporter { get; }
+		public Statistic Stats { get; }
 
 		public ConditionTests()
 		{
-			Reporter = Substitute.For<IToggleReporter>();
+			Stats = new Statistic();
 			ChildConditions = Enumerable
 				.Range(0, 5)
 				.Select(i => Substitute.For<Condition>())
 				.ToArray();
-			Sut = new TCondition { Children = ChildConditions };
+
+			Sut = new TCondition
+			{
+				ID = 18,
+				Children = ChildConditions
+			};
 		}
 
 		public static IEnumerable<object[]> Indexes => Enumerable
@@ -28,11 +33,11 @@ namespace CrispinClient.Tests.Conditions
 			.Select(i => new object[] { i });
 
 		[Fact]
-		public void Calling_is_match_reports_stats()
+		public void Calling_ismatch_reports_stats()
 		{
-			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>());
+			Sut.IsMatch(Stats, Substitute.For<IToggleContext>());
 
-			Reporter.Received().Report(Sut, Arg.Any<bool>());
+			Stats.ConditionStates.ShouldContainKey(Sut.ID);
 		}
 	}
 }

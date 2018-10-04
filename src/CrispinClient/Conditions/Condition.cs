@@ -16,52 +16,52 @@ namespace CrispinClient.Conditions
 			Children = Array.Empty<Condition>();
 		}
 
-		public abstract bool IsMatch(IToggleReporter reporter, IToggleContext context);
+		public abstract bool IsMatch(Statistic stats, IToggleContext context);
 
-		protected bool Report(IToggleReporter reporter, bool state)
+		protected bool Report(Statistic stats, bool state)
 		{
-			reporter.Report(this, state);
+			stats.Add(this, state);
 			return state;
 		}
 	}
 
 	public class EnabledCondition : Condition
 	{
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, true);
+			return Report(stats, true);
 		}
 	}
 
 	public class DisabledCondition : Condition
 	{
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, false);
+			return Report(stats, false);
 		}
 	}
 
 	public class NotCondition : Condition
 	{
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, Children.Single().IsMatch(reporter, context) == false);
+			return Report(stats, Children.Single().IsMatch(stats, context) == false);
 		}
 	}
 
 	public class AnyCondition : Condition
 	{
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, Children.Any(child => child.IsMatch(reporter, context)));
+			return Report(stats, Children.Any(child => child.IsMatch(stats, context)));
 		}
 	}
 
 	public class AllCondition : Condition
 	{
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, Children.All(child => child.IsMatch(reporter, context)));
+			return Report(stats, Children.All(child => child.IsMatch(stats, context)));
 		}
 	}
 
@@ -70,9 +70,9 @@ namespace CrispinClient.Conditions
 		public string SearchKey { get; set; }
 		public string GroupName { get; set; }
 
-		public override bool IsMatch(IToggleReporter reporter, IToggleContext context)
+		public override bool IsMatch(Statistic stats, IToggleContext context)
 		{
-			return Report(reporter, context.GroupContains(GroupName, SearchKey));
+			return Report(stats, context.GroupContains(GroupName, SearchKey));
 		}
 	}
 }

@@ -14,13 +14,21 @@ namespace CrispinClient
 		public Condition[] Conditions { get; set; }
 		public ConditionModes ConditionMode { get; set; }
 
-		public bool IsActive(IToggleReporter reporter, IToggleContext context)
+		public bool IsActive(IStatisticsWriter writer, IToggleContext context)
 		{
-			var isActive = ConditionMode == ConditionModes.Any
-				? Conditions.Any(c => c.IsMatch(reporter, context))
-				: Conditions.All(c => c.IsMatch(reporter, context));
+			var stats = new Statistic
+			{
+				ToggleID = ID,
+				Timestamp = DateTime.Now
+			};
 
-			reporter.Report(this, isActive);
+			var isActive = ConditionMode == ConditionModes.Any
+				? Conditions.Any(c => c.IsMatch(stats, context))
+				: Conditions.All(c => c.IsMatch(stats, context));
+
+			stats.Active = isActive;
+
+			writer.Write(stats);
 
 			return isActive;
 		}

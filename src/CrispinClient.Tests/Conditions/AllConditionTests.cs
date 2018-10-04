@@ -13,9 +13,9 @@ namespace CrispinClient.Tests.Conditions
 		public void When_any_are_false(int falseIndex)
 		{
 			for (int i = 0; i < ChildConditions.Length; i++)
-				ChildConditions[i].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(i != falseIndex);
+				ChildConditions[i].IsMatch(Stats, Arg.Any<IToggleContext>()).Returns(i != falseIndex);
 
-			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
+			Sut.IsMatch(Stats, Substitute.For<IToggleContext>()).ShouldBeFalse();
 		}
 
 		[Theory]
@@ -23,12 +23,12 @@ namespace CrispinClient.Tests.Conditions
 		public void Children_after_first_false_match_are_not_evaluated(int falseIndex)
 		{
 			for (int i = 0; i < ChildConditions.Length; i++)
-				ChildConditions[i].IsMatch(Reporter, Arg.Any<IToggleContext>()).Returns(i != falseIndex);
+				ChildConditions[i].IsMatch(Stats, Arg.Any<IToggleContext>()).Returns(i != falseIndex);
 
-			Sut.IsMatch(Reporter, Substitute.For<IToggleContext>()).ShouldBeFalse();
+			Sut.IsMatch(Stats, Substitute.For<IToggleContext>()).ShouldBeFalse();
 
 			for (int i = falseIndex + 1; i < ChildConditions.Length; i++)
-				ChildConditions[i].DidNotReceive().IsMatch(Reporter, Arg.Any<IToggleContext>());
+				ChildConditions[i].DidNotReceive().IsMatch(Stats, Arg.Any<IToggleContext>());
 		}
 
 		[Fact]

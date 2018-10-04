@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CrispinClient.Conditions;
 
 namespace CrispinClient
 {
@@ -15,6 +16,11 @@ namespace CrispinClient
 		public Statistic()
 		{
 			ConditionStates = new Dictionary<int, bool>();
+		}
+
+		public void Add(Condition condition, bool state)
+		{
+			ConditionStates[condition.ID] = state;
 		}
 	}
 }

@@ -61,7 +61,7 @@ namespace CrispinClient.Tests
 			};
 
 			toggle
-				.IsActive(Substitute.For<IToggleReporter>(), Substitute.For<IToggleContext>())
+				.IsActive(Substitute.For<IStatisticsWriter>(), Substitute.For<IToggleContext>())
 				.ShouldBe(expected);
 		}
 
@@ -74,33 +74,28 @@ namespace CrispinClient.Tests
 				{
 					new AllCondition
 					{
+						ID = 0,
 						Children = new Condition[]
 						{
-							new EnabledCondition(),
-							new InGroupCondition()
+							new EnabledCondition { ID = 2 },
+							new InGroupCondition { ID = 3 }
 						}
 					},
-					new DisabledCondition()
+					new DisabledCondition { ID = 1 }
 				}
 			};
 
-			var seenConditions = new List<Type>();
-			var reporter = Substitute.For<IToggleReporter>();
-			reporter
-				.When(r => r.Report(Arg.Any<Condition>(), Arg.Any<bool>()))
-				.Do(ci => seenConditions.Add(ci.ArgAt<Condition>(0).GetType()));
+			Statistic statistic = null;
+			var writer = Substitute.For<IStatisticsWriter>();
+			writer.When(w => w.Write(Arg.Any<Statistic>()))
+				.Do(ci => statistic = ci.Arg<Statistic>());
 
-			toggle.IsActive(reporter, Substitute.For<IToggleContext>());
+			toggle.IsActive(writer, Substitute.For<IToggleContext>());
 
-			reporter.Received().Report(toggle, false);
-
-			seenConditions.ShouldBe(new[]
-			{
-				typeof(EnabledCondition),
-				typeof(InGroupCondition),
-				typeof(AllCondition),
-				typeof(DisabledCondition)
-			});
+			statistic.ConditionStates.Keys.ShouldBe(
+				new[] { 0, 1, 2, 3 },
+				ignoreOrder: true
+			);
 		}
 	}
 }
