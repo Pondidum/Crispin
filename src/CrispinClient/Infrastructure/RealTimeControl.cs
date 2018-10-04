@@ -35,7 +35,7 @@ namespace CrispinClient.Infrastructure
 					cancel.Cancel(false);
 					await task;
 				}
-				catch (TaskCanceledException e)
+				catch (TaskCanceledException)
 				{
 				}
 				finally
