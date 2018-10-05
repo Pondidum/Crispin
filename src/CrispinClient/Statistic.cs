@@ -10,17 +10,18 @@ namespace CrispinClient
 		public string User { get; set; }
 		public DateTime Timestamp { get; set; }
 		public bool Active { get; set; }
+		public IEnumerable<KeyValuePair<int, bool>> ConditionStates => _states;
 
-		public Dictionary<int, bool> ConditionStates { get; set; }
+		private readonly Dictionary<int, bool> _states;
 
 		public Statistic()
 		{
-			ConditionStates = new Dictionary<int, bool>();
+			_states = new Dictionary<int, bool>();
 		}
 
 		public void Add(Condition condition, bool state)
 		{
-			ConditionStates[condition.ID] = state;
+			_states[condition.ID] = state;
 		}
 	}
 }

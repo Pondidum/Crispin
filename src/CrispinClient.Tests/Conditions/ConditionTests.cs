@@ -37,7 +37,7 @@ namespace CrispinClient.Tests.Conditions
 		{
 			Sut.IsMatch(Stats, Substitute.For<IToggleContext>());
 
-			Stats.ConditionStates.ShouldContainKey(Sut.ID);
+			Stats.ConditionStates.Select(states => states.Key).ShouldContain(Sut.ID);
 		}
 	}
 }

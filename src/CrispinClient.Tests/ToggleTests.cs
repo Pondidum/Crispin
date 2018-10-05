@@ -92,7 +92,7 @@ namespace CrispinClient.Tests
 
 			toggle.IsActive(writer, Substitute.For<IToggleContext>());
 
-			statistic.ConditionStates.Keys.ShouldBe(
+			statistic.ConditionStates.Select(state => state.Key).ShouldBe(
 				new[] { 0, 1, 2, 3 },
 				ignoreOrder: true
 			);
