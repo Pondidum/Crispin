@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using CrispinClient.Fetching;
 using NSubstitute;
 using Shouldly;
@@ -30,9 +31,9 @@ namespace CrispinClient.Tests.Fetching
 		}
 
 		[Fact]
-		public void When_fetching_toggles()
+		public async Task When_fetching_toggles()
 		{
-			_fetcher.GetAllToggles().ShouldBe(_toggles.ToDictionary(t => t.ID));
+			(await _fetcher.GetAllToggles()).ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
 
 		[Fact]

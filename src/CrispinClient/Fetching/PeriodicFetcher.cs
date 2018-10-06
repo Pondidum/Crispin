@@ -12,7 +12,7 @@ namespace CrispinClient.Fetching
 		private Dictionary<Guid, Toggle> _toggles;
 		private readonly CancellationTokenSource _source;
 		private readonly Task _backgroundFetch;
-		private ManualResetEventSlim _initialLoadDone;
+		private readonly TaskCompletionSource<bool> _initialLoadDone;
 
 		public PeriodicFetcher(ICrispinClient client, TimeSpan frequency, ITimeControl timeControl = null)
 		{
@@ -20,35 +20,35 @@ namespace CrispinClient.Fetching
 
 			_toggles = new Dictionary<Guid, Toggle>();
 			_source = new CancellationTokenSource();
-			_initialLoadDone = new ManualResetEventSlim();
+			_initialLoadDone = new TaskCompletionSource<bool>();
 
 			_backgroundFetch = Task.Run(async () =>
 			{
-				SafeReadToggles(client);
-				_initialLoadDone.Set();
+				await SafeReadToggles(client);
+				_initialLoadDone.SetResult(true);
 
 				while (_source.IsCancellationRequested == false)
 				{
 					await timeControl.Delay(frequency, _source.Token);
-					SafeReadToggles(client);
+					await SafeReadToggles(client);
 				}
 			}, _source.Token);
 		}
 
-		private void SafeReadToggles(ICrispinClient client)
+		private async Task SafeReadToggles(ICrispinClient client)
 		{
 			try
 			{
-				_toggles = client.GetAllToggles().ToDictionary(t => t.ID);
+				_toggles = (await client.GetAllToggles()).ToDictionary(t => t.ID);
 			}
 			catch (Exception)
 			{
 			}
 		}
 
-		public IReadOnlyDictionary<Guid, Toggle> GetAllToggles()
+		public async Task<IReadOnlyDictionary<Guid, Toggle>> GetAllToggles()
 		{
-			_initialLoadDone.Wait();
+			await _initialLoadDone.Task;
 			return _toggles;
 		}
 

@@ -46,16 +46,18 @@ namespace CrispinClient.Tests.Fetching
 		}
 
 		[Fact]
-		public void The_first_fetch_blocks_until_a_query_has_been_made()
+		public async Task The_first_fetch_blocks_until_a_query_has_been_made()
 		{
 			_client.GetAllToggles().Returns(_toggles);
 
 			var fetcher = CreateFetcher();
-			fetcher.GetAllToggles().ShouldBe(_toggles.ToDictionary(t => t.ID));
+			var toggles = await fetcher.GetAllToggles();
+
+			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
 
 		[Fact]
-		public void When_the_background_fetch_fails()
+		public async Task When_the_background_fetch_fails()
 		{
 			_client.GetAllToggles().Returns(
 				ci => _toggles,
@@ -63,14 +65,14 @@ namespace CrispinClient.Tests.Fetching
 			);
 
 			var fetcher = CreateFetcher();
-			var toggles = fetcher.GetAllToggles();
+			var toggles = await fetcher.GetAllToggles();
 
 			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
 
 
 		[Fact]
-		public void When_the_background_fetch_fails_and_a_subsequent_call_succeeds()
+		public async Task When_the_background_fetch_fails_and_a_subsequent_call_succeeds()
 		{
 			var finished = new ManualResetEventSlim();
 			var currentStep = 0;
@@ -96,13 +98,13 @@ namespace CrispinClient.Tests.Fetching
 			var fetcher = CreateFetcher();
 			finished.Wait(TimeSpan.FromSeconds(2));
 
-			var toggles = fetcher.GetAllToggles();
+			var toggles = await fetcher.GetAllToggles();
 
 			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}
 
 		[Fact]
-		public void When_the_initial_query_fails()
+		public async Task When_the_initial_query_fails()
 		{
 			var finished = new ManualResetEventSlim();
 			var currentStep = 0;
@@ -124,7 +126,7 @@ namespace CrispinClient.Tests.Fetching
 
 			var fetcher = CreateFetcher();
 			finished.Wait(TimeSpan.FromSeconds(2));
-			var toggles = fetcher.GetAllToggles();
+			var toggles = await fetcher.GetAllToggles();
 
 			toggles.ShouldBe(_toggles.ToDictionary(t => t.ID));
 		}

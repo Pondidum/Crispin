@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CrispinClient.Contexts;
 using CrispinClient.Fetching;
 using CrispinClient.Statistics;
@@ -16,11 +17,11 @@ namespace CrispinClient
 			_writer = writer;
 		}
 
-		public bool IsActive(Guid toggleID, object context) => IsActive(toggleID, new ObjectContext(context));
+		public Task<bool> IsActive(Guid toggleID, object context) => IsActive(toggleID, new ObjectContext(context));
 
-		public bool IsActive(Guid toggleID, IToggleContext context)
+		public async Task<bool> IsActive(Guid toggleID, IToggleContext context)
 		{
-			var toggles = _fetcher.GetAllToggles();
+			var toggles = await _fetcher.GetAllToggles();
 
 			if (toggles.TryGetValue(toggleID, out var toggle) == false)
 				throw new ToggleNotFoundException(toggleID);

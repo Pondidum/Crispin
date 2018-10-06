@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CrispinClient.Fetching
 {
 	public interface IToggleFetcher
 	{
-		IReadOnlyDictionary<Guid, Toggle> GetAllToggles();
+		Task<IReadOnlyDictionary<Guid, Toggle>> GetAllToggles();
 	}
 }
