@@ -6,6 +6,6 @@ namespace CrispinClient
 	public interface ICrispinClient
 	{
 		Task<IEnumerable<Toggle>> GetAllToggles();
-		void SendStatistics(IEnumerable<Statistic> statistics);
+		Task SendStatistics(IEnumerable<Statistic> statistics);
 	}
 }

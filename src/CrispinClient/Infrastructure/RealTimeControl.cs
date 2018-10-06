@@ -8,7 +8,14 @@ namespace CrispinClient.Infrastructure
 	{
 		public Task Delay(TimeSpan time, CancellationToken cancellationToken) => Task.Delay(time, cancellationToken);
 
-		public Func<Task> Every(TimeSpan interval, Action action)
+
+		public Func<Task> Every(TimeSpan interval, Action action) => Every(interval, () =>
+		{
+			action();
+			return Task.CompletedTask;
+		});
+
+		public Func<Task> Every(TimeSpan interval, Func<Task> action)
 		{
 			var cancel = new CancellationTokenSource();
 
@@ -19,7 +26,7 @@ namespace CrispinClient.Infrastructure
 					while (cancel.IsCancellationRequested == false)
 					{
 						await Task.Delay(interval, cancel.Token);
-						action();
+						await action();
 					}
 				}
 				catch (TaskCanceledException)

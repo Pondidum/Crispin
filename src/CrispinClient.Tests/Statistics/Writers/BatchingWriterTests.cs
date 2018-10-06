@@ -19,15 +19,15 @@ namespace CrispinClient.Tests.Statistics.Writers
 
 		private readonly BatchingWriter _writer;
 		private readonly Fixture _fixture;
-		private Action _timer;
+		private Func<Task> _timer;
 
 
 		public BatchingWriterTests()
 		{
 			var timeControl = Substitute.For<ITimeControl>();
 			timeControl
-				.When(t => t.Every(Arg.Any<TimeSpan>(), Arg.Any<Action>()))
-				.Do(ci => _timer = ci.Arg<Action>());
+				.When(t => t.Every(Arg.Any<TimeSpan>(), Arg.Any<Func<Task>>()))
+				.Do(ci => _timer = ci.Arg<Func<Task>>());
 
 			_client = Substitute.For<ICrispinClient>();
 			_writer = new BatchingWriter(_client, time: timeControl, batchSize: BatchSize);
@@ -40,52 +40,55 @@ namespace CrispinClient.Tests.Statistics.Writers
 		}
 
 		[Fact]
-		public void When_a_statistic_is_written()
+		public async Task When_a_statistic_is_written()
 		{
-			_writer.Write(_fixture.Create<Statistic>());
+			await _writer.Write(_fixture.Create<Statistic>());
 
-			_client.DidNotReceiveWithAnyArgs().SendStatistics(null);
+			await _client.DidNotReceiveWithAnyArgs().SendStatistics(null);
 		}
 
 		[Fact]
-		public void When_fewer_statistics_than_batch_size_are_written()
+		public async Task When_fewer_statistics_than_batch_size_are_written()
 		{
 			var stats = Enumerable
 				.Range(0, BatchSize - 1)
 				.Select(i => _fixture.Create<Statistic>())
 				.ToList();
 
-			stats.ForEach(_writer.Write);
+			foreach (var statistic in stats)
+				await _writer.Write(statistic);
 
-			_client.DidNotReceiveWithAnyArgs().SendStatistics(null);
+			await _client.DidNotReceiveWithAnyArgs().SendStatistics(null);
 		}
 
 		[Fact]
-		public void When_more_statistics_than_batch_size_are_written()
+		public async Task When_more_statistics_than_batch_size_are_written()
 		{
 			var stats = Enumerable
 				.Range(0, BatchSize)
 				.Select(i => _fixture.Create<Statistic>())
 				.ToList();
 
-			stats.ForEach(_writer.Write);
+			foreach (var statistic in stats)
+				await _writer.Write(statistic);
 
-			_client.Received().SendStatistics(Arg.Do<IEnumerable<Statistic>>(e => e.ShouldBe(stats)));
+			await _client.Received().SendStatistics(Arg.Do<IEnumerable<Statistic>>(e => e.ShouldBe(stats)));
 		}
 
 		[Fact]
-		public void When_a_small_batch_expires()
+		public async Task When_a_small_batch_expires()
 		{
 			var stats = Enumerable
 				.Range(0, 2)
 				.Select(i => _fixture.Create<Statistic>())
 				.ToList();
 
-			stats.ForEach(_writer.Write);
+			foreach (var statistic in stats)
+				await _writer.Write(statistic);
 
-			_timer();
+			await _timer();
 
-			_client.Received().SendStatistics(Arg.Do<IEnumerable<Statistic>>(e => e.ShouldBe(stats)));
+			await _client.Received().SendStatistics(Arg.Do<IEnumerable<Statistic>>(e => e.ShouldBe(stats)));
 		}
 
 		[Fact]
@@ -103,7 +106,7 @@ namespace CrispinClient.Tests.Statistics.Writers
 			{
 				while (run)
 				{
-					_timer();
+					await _timer();
 					await Task.Delay(10);
 				}
 			});
@@ -114,7 +117,7 @@ namespace CrispinClient.Tests.Statistics.Writers
 				{
 					var stat = _fixture.Create<Statistic>();
 					stats.Add(stat);
-					_writer.Write(stat);
+					await _writer.Write(stat);
 
 					await Task.Delay(1);
 				}
@@ -124,7 +127,7 @@ namespace CrispinClient.Tests.Statistics.Writers
 			run = false;
 
 			await Task.WhenAll(produce, consume);
-			_timer();
+			await _timer();
 
 			seen.ShouldBe(stats.Count);
 		}

@@ -8,5 +8,6 @@ namespace CrispinClient.Infrastructure
 	{
 		Task Delay(TimeSpan time, CancellationToken cancellationToken);
 		Func<Task> Every(TimeSpan interval, Action action);
+		Func<Task> Every(TimeSpan interval, Func<Task> action);
 	}
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CrispinClient.Infrastructure;
@@ -29,15 +28,15 @@ namespace CrispinClient.Statistics.Writers
 			_cancel = time.Every(interval, Send);
 		}
 
-		public void Write(Statistic statistic)
+		public async Task Write(Statistic statistic)
 		{
 			_pending.Enqueue(statistic);
 
 			if (_pending.Count >= _batchSize)
-				Send();
+				await Send();
 		}
 
-		private void Send()
+		private async Task Send()
 		{
 			var items = Enumerable
 				.Range(0, _batchSize).Select(i =>
@@ -49,7 +48,7 @@ namespace CrispinClient.Statistics.Writers
 				.Select(x => x.item)
 				.ToArray();
 
-			_client.SendStatistics(items);
+			await _client.SendStatistics(items);
 		}
 
 		public void Dispose()
