@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoFixture;
 using CrispinClient.Conditions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,7 @@ namespace CrispinClient.Tests
 		private readonly TestServer _server;
 		private readonly CrispinHttpClient _client;
 		private readonly List<string> _toggles;
-		private readonly List<Statistic> _stats;
+		private string _stats;
 
 		public CrispinHttpClientTests()
 		{
@@ -33,7 +34,6 @@ namespace CrispinClient.Tests
 			_client = new CrispinHttpClient(_server.BaseAddress, _server.CreateClient());
 
 			_toggles = new List<string>();
-			_stats = new List<Statistic>();
 		}
 
 		private void ConfigureApp(IApplicationBuilder app)
@@ -50,6 +50,12 @@ namespace CrispinClient.Tests
 				{
 					context.Response.Headers.Add("content-type", "application/json");
 					await context.Response.WriteAsync("[" + string.Join(", ", _toggles) + "]");
+				});
+
+				r.MapPost("/stats", async context =>
+				{
+					using (var sr = new StreamReader(context.Request.Body))
+						_stats = await sr.ReadToEndAsync();
 				});
 			});
 		}
@@ -80,6 +86,16 @@ namespace CrispinClient.Tests
 				() => toggle.Description.ShouldBe("the first of many"),
 				() => toggle.Conditions.ShouldHaveSingleItem().ShouldBeOfType<AllCondition>()
 			);
+		}
+
+		[Fact]
+		public async Task Statistics_are_serialised_correctly()
+		{
+			var stat = new Statistic { ToggleID = Guid.NewGuid(), Active = true, Timestamp = DateTime.Now, User = "me" };
+
+			await _client.SendStatistics(new[] { stat });
+
+			_stats.ShouldBe($"[{{\"ToggleID\":\"{stat.ToggleID}\",\"User\":\"me\",\"Timestamp\":\"{stat.Timestamp:o}\",\"Active\":true,\"ConditionStates\":{{}}}}]");
 		}
 
 		public void Dispose()
