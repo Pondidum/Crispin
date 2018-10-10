@@ -22,7 +22,7 @@ namespace CrispinClient.Tests.Contexts
 		}
 
 		[Fact]
-		public void When_the_property_is_null()
+		public void When_querying_a_group_and_the_property_is_null()
 		{
 			var groupName = nameof(TestTarget.NullGroup);
 
@@ -32,7 +32,7 @@ namespace CrispinClient.Tests.Contexts
 		}
 
 		[Fact]
-		public void When_the_property_is_not_enumerable_string()
+		public void When_querying_a_group_and_the_property_is_not_enumerable_string()
 		{
 			var groupName = nameof(TestTarget.SomeBadGroup);
 
@@ -48,7 +48,7 @@ namespace CrispinClient.Tests.Contexts
 		[InlineData(nameof(TestTarget.FunctionGroup), "fifth", false)]
 		[InlineData(nameof(TestTarget.Overloaded), "second", true)]
 		[InlineData(nameof(TestTarget.Overloaded), "fifth", false)]
-		public void GroupName_is_mapped_to_a_function_or_property(string groupName, string searchTerm, bool found)
+		public void When_querying_a_group_and_the_groupName_is_mapped_to_a_function_or_property(string groupName, string searchTerm, bool found)
 		{
 			_context
 				.GroupContains(groupName, searchTerm)
@@ -61,7 +61,7 @@ namespace CrispinClient.Tests.Contexts
 		[InlineData(nameof(TestTarget.MultipleParameters))]
 		[InlineData(nameof(TestTarget.BadOverload))]
 		[InlineData("wat")]
-		public void Matching_methods_should_be_found(string groupName)
+		public void When_querying_a_group_matching_methods_should_be_found(string groupName)
 		{
 			var message = Should
 				.Throw<MissingMethodException>(() => _context.GroupContains(groupName, "is this"))
@@ -72,6 +72,30 @@ namespace CrispinClient.Tests.Contexts
 				() => message.ShouldContain($"* 'bool {TargetName}.{groupName}(string term)'"),
 				() => message.ShouldContain($"* 'IEnumerable<string> {TargetName}.{groupName} {{ get; }}'")
 			);
+		}
+
+		[Fact]
+		public void When_querying_current_user_from_a_property()
+		{
+			var context = new ObjectContext(new TestUserProperty());
+
+			context.GetCurrentUser().ShouldBe("Dave");
+		}
+
+		[Fact]
+		public void When_querying_current_user_from_a_method()
+		{
+			var context = new ObjectContext(new TestUserMethod());
+
+			context.GetCurrentUser().ShouldBe("John");
+		}
+
+		[Fact]
+		public void When_querying_current_user_and_no_implementations_match()
+		{
+			var context = new ObjectContext(new TestTarget());
+
+			context.GetCurrentUser().ShouldBe(string.Empty);
 		}
 
 		private class TestTarget
@@ -94,6 +118,16 @@ namespace CrispinClient.Tests.Contexts
 			public void BadOverload()
 			{
 			}
+		}
+
+		private class TestUserProperty
+		{
+			public string CurrentUser { get; } = "Dave";
+		}
+
+		private class TestUserMethod
+		{
+			public string GetCurrentUser() => "John";
 		}
 	}
 }

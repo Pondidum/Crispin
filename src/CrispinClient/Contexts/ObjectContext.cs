@@ -38,7 +38,24 @@ namespace CrispinClient.Contexts
 
 		public string GetCurrentUser()
 		{
-			throw new NotImplementedException();
+			var methods = _target.GetType()
+				.GetMethods(PropertyFlags)
+				.Where(m => m.Name.Equals("GetCurrentUser", StringComparison.OrdinalIgnoreCase))
+				.Where(m => m.ReturnType == typeof(string))
+				.Where(m => m.GetParameters().Length == 0)
+				.ToArray();
+
+			if (methods.Length == 1)
+				return (string)methods.Single().Invoke(_target, new object[0]);
+
+			var property = _target.GetType().GetProperty("CurrentUser", PropertyFlags);
+
+			if (property == null)
+				return string.Empty;
+
+			var value = property.GetValue(_target);
+
+			return Convert.ToString(value);
 		}
 
 		private string BuildMessage(string groupName)
