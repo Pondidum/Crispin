@@ -68,8 +68,17 @@ namespace CrispinClient.Tests
 		[Fact]
 		public void When_writing_statistics()
 		{
+			Statistic statistic = null;
+			var writer = Substitute.For<IStatisticsWriter>();
+			writer.When(w => w.Write(Arg.Any<Statistic>()))
+				.Do(ci => statistic = ci.Arg<Statistic>());
+
+			var context = Substitute.For<IToggleContext>();
+			context.GetCurrentUser().Returns("some user");
+
 			var toggle = new Toggle
 			{
+				ID = Guid.NewGuid(),
 				Conditions = new Condition[]
 				{
 					new AllCondition
@@ -85,17 +94,16 @@ namespace CrispinClient.Tests
 				}
 			};
 
-			Statistic statistic = null;
-			var writer = Substitute.For<IStatisticsWriter>();
-			writer.When(w => w.Write(Arg.Any<Statistic>()))
-				.Do(ci => statistic = ci.Arg<Statistic>());
+			toggle.IsActive(writer, context);
 
-			toggle.IsActive(writer, Substitute.For<IToggleContext>());
-
-			statistic.ConditionStates.Select(state => state.Key).ShouldBe(
-				new[] { 0, 1, 2, 3 },
-				ignoreOrder: true
+			statistic.ShouldSatisfyAllConditions(
+				() => statistic.ToggleID.ShouldBe(toggle.ID),
+				() => statistic.Timestamp.ShouldNotBeNull(),
+				() => statistic.User.ShouldBe("some user"),
+				() => statistic.ConditionStates.Select(Keys).ShouldBe(new[] { 0, 1, 2, 3 }, ignoreOrder: true)
 			);
 		}
+
+		private static int Keys(KeyValuePair<int, bool> state) => state.Key;
 	}
 }

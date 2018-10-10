@@ -43,7 +43,7 @@ namespace CrispinClient.Tests
 
 			_fetcher.GetAllToggles().Returns(new Dictionary<Guid, Toggle> { { toggle.ID, toggle } });
 
-			var active = await _service.IsActive(toggle.ID, null);
+			var active = await _service.IsActive(toggle.ID, Substitute.For<IToggleContext>());
 
 			active.ShouldBe(true);
 			condition.Received().IsMatch(Arg.Any<Statistic>(), Arg.Any<IToggleContext>());

@@ -36,6 +36,11 @@ namespace CrispinClient.Contexts
 			throw new MissingMethodException(BuildMessage(groupName));
 		}
 
+		public string GetCurrentUser()
+		{
+			throw new NotImplementedException();
+		}
+
 		private string BuildMessage(string groupName)
 		{
 			var sb = new StringBuilder();

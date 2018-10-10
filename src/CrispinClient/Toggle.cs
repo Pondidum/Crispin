@@ -19,7 +19,8 @@ namespace CrispinClient
 			var stats = new Statistic
 			{
 				ToggleID = ID,
-				Timestamp = DateTime.Now
+				Timestamp = DateTime.Now,
+				User = context.GetCurrentUser()
 			};
 
 			var isActive = ConditionMode == ConditionModes.Any
