@@ -23,10 +23,13 @@ namespace CrispinClient.Contexts
 
 		public bool GroupContains(string groupName, string term)
 		{
-			var method = FindMethod(groupName, term);
+			var methods = FindMethodsFor<bool>(groupName)
+				.Where(m => m.GetParameters().Length == 1)
+				.Where(m => m.GetParameters().Single().ParameterType == typeof(string))
+				.ToArray();
 
-			if (method != null)
-				return RunMethod(method, term);
+			if (methods.Length == 1)
+				return RunMethod<bool>(methods.Single(), term);
 
 			var property = FindProperty(groupName);
 
@@ -38,15 +41,12 @@ namespace CrispinClient.Contexts
 
 		public string GetCurrentUser()
 		{
-			var methods = _target.GetType()
-				.GetMethods(PropertyFlags)
-				.Where(m => m.Name.Equals("GetCurrentUser", StringComparison.OrdinalIgnoreCase))
-				.Where(m => m.ReturnType == typeof(string))
+			var methods = FindMethodsFor<string>("GetCurrentUser")
 				.Where(m => m.GetParameters().Length == 0)
 				.ToArray();
 
 			if (methods.Length == 1)
-				return (string)methods.Single().Invoke(_target, new object[0]);
+				return RunMethod<string>(methods.Single());
 
 			var property = _target.GetType().GetProperty("CurrentUser", PropertyFlags);
 
@@ -96,31 +96,16 @@ namespace CrispinClient.Contexts
 			return searchable.Contains(term);
 		}
 
-		private MethodInfo FindMethod(string groupName, string term)
+		private MethodInfo[] FindMethodsFor<TReturn>(string groupName) => _target
+			.GetType()
+			.GetMethods(PropertyFlags)
+			.Where(m => m.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase))
+			.Where(m => m.ReturnType == typeof(TReturn))
+			.ToArray();
+
+		private TReturn RunMethod<TReturn>(MethodInfo method, params object[] args)
 		{
-			var methods = _target.GetType()
-				.GetMethods(PropertyFlags)
-				.Where(m => m.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase))
-				.ToArray();
-
-			if (methods.Any() == false)
-				return null;
-
-			var matches = methods
-				.Where(m => m.ReturnType == typeof(bool))
-				.Where(m => m.GetParameters().Length == 1)
-				.Where(m => m.GetParameters().Single().ParameterType == typeof(string))
-				.ToArray();
-
-			if (matches.Length == 1)
-				return matches.Single();
-
-			return null;
-		}
-
-		private bool RunMethod(MethodInfo method, string term)
-		{
-			return (bool)method.Invoke(_target, new object[] { term });
+			return (TReturn)method.Invoke(_target, args);
 		}
 	}
 }
