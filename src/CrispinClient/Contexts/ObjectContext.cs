@@ -8,7 +8,7 @@ namespace CrispinClient.Contexts
 {
 	public class ObjectContext : IToggleContext
 	{
-		private const BindingFlags PropertyFlags =
+		private const BindingFlags MemberFlags =
 			BindingFlags.Public |
 			BindingFlags.NonPublic |
 			BindingFlags.Instance |
@@ -31,12 +31,17 @@ namespace CrispinClient.Contexts
 			if (methods.Length == 1)
 				return RunMethod<bool>(methods.Single(), term);
 
-			var property = FindProperty(groupName);
+			var properties = FindPropertiesFor<IEnumerable<string>>(groupName);
 
-			if (property != null)
-				return RunProperty(property, term);
+			if (properties.Length == 0)
+				throw new MissingMethodException(BuildMessage(groupName));
 
-			throw new MissingMethodException(BuildMessage(groupName));
+			var searchable = RunProperty<IEnumerable<string>>(properties.Single());
+
+			if (searchable == null)
+				throw new NullReferenceException($"Member '{_target.GetType().Name}.{properties.Single().Name}' is null.");
+
+			return searchable.Contains(term);
 		}
 
 		public string GetCurrentUser()
@@ -48,14 +53,12 @@ namespace CrispinClient.Contexts
 			if (methods.Length == 1)
 				return RunMethod<string>(methods.Single());
 
-			var property = _target.GetType().GetProperty("CurrentUser", PropertyFlags);
+			var properties = FindPropertiesFor<string>("CurrentUser");
 
-			if (property == null)
+			if (properties.Length == 0)
 				return string.Empty;
 
-			var value = property.GetValue(_target);
-
-			return Convert.ToString(value);
+			return RunProperty<string>(properties.First());
 		}
 
 		private string BuildMessage(string groupName)
@@ -73,39 +76,21 @@ namespace CrispinClient.Contexts
 			return sb.ToString();
 		}
 
-		private PropertyInfo FindProperty(string groupName)
-		{
-			var property = _target.GetType().GetProperty(groupName, PropertyFlags);
-
-			if (property == null)
-				return null;
-
-			if (typeof(IEnumerable<string>).IsAssignableFrom(property.PropertyType) == false)
-				throw new InvalidCastException($"Member '{_target.GetType().Name}.{property.Name}' does not implement IEnumerable<string>.");
-
-			return property;
-		}
-
-		private bool RunProperty(PropertyInfo property, string term)
-		{
-			var searchable = (IEnumerable<string>)property.GetValue(_target);
-
-			if (searchable == null)
-				throw new NullReferenceException($"Member '{_target.GetType().Name}.{property.Name}' is null.");
-
-			return searchable.Contains(term);
-		}
-
-		private MethodInfo[] FindMethodsFor<TReturn>(string groupName) => _target
+		private PropertyInfo[] FindPropertiesFor<TReturn>(string groupName) => _target
 			.GetType()
-			.GetMethods(PropertyFlags)
-			.Where(m => m.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase))
-			.Where(m => m.ReturnType == typeof(TReturn))
+			.GetProperties(MemberFlags)
+			.Where(prop => prop.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase))
+			.Where(prop => typeof(TReturn).IsAssignableFrom(prop.PropertyType))
+			.Where(prop => prop.GetIndexParameters().Length == 0)
 			.ToArray();
 
-		private TReturn RunMethod<TReturn>(MethodInfo method, params object[] args)
-		{
-			return (TReturn)method.Invoke(_target, args);
-		}
+		private IEnumerable<MethodInfo> FindMethodsFor<TReturn>(string groupName) => _target
+			.GetType()
+			.GetMethods(MemberFlags)
+			.Where(m => m.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase))
+			.Where(m => m.ReturnType == typeof(TReturn));
+
+		private TReturn RunProperty<TReturn>(PropertyInfo property) => (TReturn)property.GetValue(_target);
+		private TReturn RunMethod<TReturn>(MethodInfo method, params object[] args) => (TReturn)method.Invoke(_target, args);
 	}
 }

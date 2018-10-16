@@ -31,16 +31,6 @@ namespace CrispinClient.Tests.Contexts
 				.Message.ShouldBe($"Member '{TargetName}.{groupName}' is null.");
 		}
 
-		[Fact]
-		public void When_querying_a_group_and_the_property_is_not_enumerable_string()
-		{
-			var groupName = nameof(TestTarget.SomeBadGroup);
-
-			Should
-				.Throw<InvalidCastException>(() => _context.GroupContains(groupName, "is this"))
-				.Message.ShouldBe($"Member '{TargetName}.{groupName}' does not implement IEnumerable<string>.");
-		}
-
 		[Theory]
 		[InlineData(nameof(TestTarget.SomeGroup), "second", true)]
 		[InlineData(nameof(TestTarget.SomeGroup), "fifth", false)]
@@ -60,6 +50,7 @@ namespace CrispinClient.Tests.Contexts
 		[InlineData(nameof(TestTarget.BadParameter))]
 		[InlineData(nameof(TestTarget.MultipleParameters))]
 		[InlineData(nameof(TestTarget.BadOverload))]
+		[InlineData(nameof(TestTarget.SomeBadGroup))]
 		[InlineData("wat")]
 		public void When_querying_a_group_matching_methods_should_be_found(string groupName)
 		{
