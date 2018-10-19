@@ -1,4 +1,6 @@
-#! /bin/bash
+#! /bin/sh
+
+set -e
 
 # First parameter is build mode, defaults to Debug
 MODE=${1:-Debug}
@@ -8,7 +10,7 @@ NAME=$(basename $(ls *.sln | head -n 1) .sln)
 
 dotnet build --configuration $MODE
 
-find ./src -iname "*.Tests.csproj" -type f -exec dotnet test \
+/usr/bin/find ./src -maxdepth 3 -iname "*.Tests.csproj" -type f -exec dotnet test \
     --no-build \
     --no-restore \
     --configuration $MODE \
