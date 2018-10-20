@@ -14,6 +14,6 @@ project.lock.json
 /.idea
 /.vscode
 
-/build
+/.build
 /storage
 /dev
