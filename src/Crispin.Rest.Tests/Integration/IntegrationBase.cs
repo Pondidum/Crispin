@@ -23,7 +23,11 @@ namespace Crispin.Rest.Tests.Integration
 
 			_system = SystemUnderTest.ForStartup<Startup>();
 			_system.Configure(builder => builder.UseLamar());
-			_system.ConfigureServices(services => services.AddSingleton<IStorage>(_storage));
+			_system.ConfigureServices(services =>
+			{
+				services.AddSingleton<IStorage>(_storage);
+				services.AddScoped(sp => _storage.CreateSession());
+			});
 
 			_editor = EditorID.Parse("me");
 			_toggle = Toggle.CreateNew(_editor, "toggle-1");
