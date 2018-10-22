@@ -80,7 +80,7 @@ namespace Crispin.Rest.Tests.Integration
     ""conditionType"": ""All"",
     ""id"": 0
   }
-]".Replace(" ", "").Replace("\r\n", ""));
+]".Replace(" ", "").Replace("\r\n", "").Replace("\n", ""));
 			});
 		}
 	}
