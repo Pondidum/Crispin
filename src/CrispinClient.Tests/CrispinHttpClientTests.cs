@@ -91,11 +91,23 @@ namespace CrispinClient.Tests
 		[Fact]
 		public async Task Statistics_are_serialised_correctly()
 		{
-			var stat = new Statistic { ToggleID = Guid.NewGuid(), Active = true, Timestamp = DateTime.Now, User = "me" };
+			var stat = new Statistic
+			{
+				ToggleID = Guid.NewGuid(),
+				Active = true,
+				Timestamp = DateTime.Now,
+				User = "me"
+			};
 
 			await _client.SendStatistics(new[] { stat });
 
-			_stats.ShouldBe($"[{{\"ToggleID\":\"{stat.ToggleID}\",\"User\":\"me\",\"Timestamp\":\"{stat.Timestamp:o}\",\"Active\":true,\"ConditionStates\":{{}}}}]");
+			_stats.ShouldSatisfyAllConditions(
+				() => _stats.ShouldContain($"\"ToggleID\":\"{stat.ToggleID}\""),
+				() => _stats.ShouldContain("\"User\":\"me\""),
+				() => _stats.ShouldMatch($"\"Timestamp\":\"(.*?)\""),
+				() => _stats.ShouldContain("\"Active\":true"),
+				() => _stats.ShouldContain("\"ConditionStates\":{}")
+			);
 		}
 
 		public void Dispose()
