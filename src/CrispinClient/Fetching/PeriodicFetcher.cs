@@ -56,7 +56,15 @@ namespace CrispinClient.Fetching
 		{
 			_source.Cancel();
 			_source.Dispose();
-			_backgroundFetch.GetAwaiter().GetResult();
+
+			try
+			{
+				_backgroundFetch.GetAwaiter().GetResult();
+			}
+			catch (TaskCanceledException)
+			{
+			}
+
 			_backgroundFetch.Dispose();
 		}
 	}

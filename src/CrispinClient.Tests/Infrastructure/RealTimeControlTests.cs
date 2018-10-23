@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CrispinClient.Infrastructure;
 using Shouldly;
@@ -18,10 +19,16 @@ namespace CrispinClient.Tests.Infrastructure
 		[Fact]
 		public async Task Repeating_works()
 		{
+			var reset = new ManualResetEventSlim();
 			var count = 0;
-			var stop = _timeControl.Every(TimeSpan.FromMilliseconds(10), () => count++);
+			var stop = _timeControl.Every(TimeSpan.FromMilliseconds(10), () =>
+			{
+				count++;
+				reset.Set();
+			});
 
 			await Task.Delay(TimeSpan.FromMilliseconds(50));
+			reset.Wait();
 			await stop();
 
 			count.ShouldBeGreaterThan(0);
