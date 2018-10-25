@@ -1,8 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
 
-const App = () => {
-  return <h1>Hello World from how about it!</h1>;
-};
+import AppRouter from "./router";
 
-ReactDom.render(<App />, document.getElementById("container"));
+ReactDom.render(<AppRouter />, document.getElementById("container"));
