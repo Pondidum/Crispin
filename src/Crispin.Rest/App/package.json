@@ -1,0 +1,21 @@
+{
+  "name": "App",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "node ./node_modules/parcel-bundler/bin/cli.js watch ./js/index.js --out-dir ../wwwroot --out-file app",
+    "build": "node ./node_modules/parcel-bundler/bin/cli.js build ./js/index.js --out-dir ../wwwroot --out-file app"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "parcel-bundler": "^1.7.0"
+  }
+}

@@ -7,7 +7,6 @@ using Crispin.Rest.Infrastructure;
 using Lamar;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 
@@ -45,12 +44,8 @@ namespace Crispin.Rest
 		{
 			if (env.IsDevelopment())
 			{
+				app.UseBrowserLink();
 				app.UseDeveloperExceptionPage();
-				app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-				{
-					HotModuleReplacement = true,
-					ReactHotModuleReplacement = true
-				});
 			}
 			else
 			{
@@ -63,17 +58,13 @@ namespace Crispin.Rest
 				routes.MapRoute(
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
-
-				routes.MapSpaFallbackRoute(
-					name: "spa-fallback",
-					defaults: new { controller = "Home", action = "Index" });
 			});
 
-			app.Run(context =>
-			{
-				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-				return Task.CompletedTask;
-			});
+			// app.Run(context =>
+			// {
+			// 	context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			// 	return Task.CompletedTask;
+			// });
 		}
 	}
 }

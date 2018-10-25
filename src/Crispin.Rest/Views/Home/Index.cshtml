@@ -1,9 +1,14 @@
-@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div id="react-app" asp-prerender-module="ClientApp/dist/main-server">Loading...</div>
-
-@section scripts {
-    <script src="~/dist/main-client.js" asp-append-version="true"></script>
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Crispin</title>
+</head>
+<body>
+    <noscript>You should turn on javascript so you can enjoy the site. :)</noscript>
+    <div id="container"></div>
+    <script src="~/app.js"></script>
+</body>
+</html>
