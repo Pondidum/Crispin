@@ -58,13 +58,11 @@ namespace Crispin.Rest
 				routes.MapRoute(
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
-			});
 
-			// app.Run(context =>
-			// {
-			// 	context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			// 	return Task.CompletedTask;
-			// });
+				routes.MapSpaFallbackRoute(
+					name: "spa-fallback",
+					defaults: new { controller = "Home", action = "Index" });
+			});
 		}
 	}
 }
