@@ -3,9 +3,10 @@ using Crispin.Handlers.WriteStatistics;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crispin.Rest.Stats
+namespace Crispin.Rest.Api.Stats
 {
-	public class StatsController
+	[Route("api/stats")]
+	public class StatsController : Controller
 	{
 		private readonly IMediator _mediator;
 
@@ -17,8 +18,7 @@ namespace Crispin.Rest.Stats
 		public async Task<IActionResult> Post([FromBody] Statistic[] request)
 		{
 			await _mediator.Send(new WriteStatisticsRequest(request));
-
-			return new OkResult();
+			return Ok();
 		}
 	}
 }

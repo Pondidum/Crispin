@@ -20,25 +20,25 @@ namespace Crispin.Rest.Tests.Integration
 		}
 
 		[Theory]
-		[InlineData("GET", "/toggles")]
+		[InlineData("GET", "/api/toggles")]
 		//
-		[InlineData("GET", "/toggles/id/{id}")]
-		[InlineData("GET", "/toggles/name/{name}")]
+		[InlineData("GET", "/api/toggles/id/{id}")]
+		[InlineData("GET", "/api/toggles/name/{name}")]
 		//
-		[InlineData("GET", "/toggles/id/{id}/tags")]
-		[InlineData("GET", "/toggles/name/{name}/tags")]
+		[InlineData("GET", "/api/toggles/id/{id}/tags")]
+		[InlineData("GET", "/api/toggles/name/{name}/tags")]
 		//
-		[InlineData("PUT", "/toggles/id/{id}/tags/environmnet:test")]
-		[InlineData("PUT", "/toggles/name/{name}/tags/environmnet:test")]
+		[InlineData("PUT", "/api/toggles/id/{id}/tags/environment:test")]
+		[InlineData("PUT", "/api/toggles/name/{name}/tags/environment:test")]
 		//
-		[InlineData("DELETE", "/toggles/id/{id}/tags/" + Tag)]
-		[InlineData("DELETE", "/toggles/name/{name}/tags/" + Tag)]
+		[InlineData("DELETE", "/api/toggles/id/{id}/tags/" + Tag)]
+		[InlineData("DELETE", "/api/toggles/name/{name}/tags/" + Tag)]
 		//
-		[InlineData("GET", "/toggles/id/{id}/conditions")]
-		[InlineData("GET", "/toggles/name/{name}/conditions")]
+		[InlineData("GET", "/api/toggles/id/{id}/conditions")]
+		[InlineData("GET", "/api/toggles/name/{name}/conditions")]
 		//
-		[InlineData("GET", "/toggles/id/{id}/conditions/0")]
-		[InlineData("GET", "/toggles/name/{name}/conditions/0")]
+		[InlineData("GET", "/api/toggles/id/{id}/conditions/0")]
+		[InlineData("GET", "/api/toggles/name/{name}/conditions/0")]
 		public Task Route_works(string method, string url) => _system.Scenario(_ =>
 		{
 			url = url.Replace("{id}", _toggle.ID.ToString()).Replace("{name}", _toggle.Name);

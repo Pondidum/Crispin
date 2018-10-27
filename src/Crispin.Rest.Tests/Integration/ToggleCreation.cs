@@ -22,10 +22,10 @@ namespace Crispin.Rest.Tests.Integration
 			{
 				_.Post
 					.Json(new { Name = name, Description = ToggleDescription })
-					.ToUrl("/toggles");
+					.ToUrl("/api/toggles");
 
 				_.StatusCodeShouldBe(HttpStatusCode.Created);
-				_.HeaderShouldMatch("location", new Regex($"/toggles/id/{Regexes.Guid}$"));
+				_.HeaderShouldMatch("location", new Regex($"/api/toggles/id/{Regexes.Guid}$"));
 			});
 
 			return response.Context.Response.Headers["location"].Single();
@@ -34,7 +34,7 @@ namespace Crispin.Rest.Tests.Integration
 		[Fact]
 		public Task Fetching_a_non_existing_toggle_by_id_returns_not_found() => _system.Scenario(_ =>
 		{
-			_.Get.Url("/toggles/id/" + Guid.NewGuid());
+			_.Get.Url("/api/toggles/id/" + Guid.NewGuid());
 
 			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
 		});
@@ -42,7 +42,7 @@ namespace Crispin.Rest.Tests.Integration
 		[Fact]
 		public Task Fetching_a_non_existing_toggle_by_name_returns_not_found() => _system.Scenario(_ =>
 		{
-			_.Get.Url("/toggles/name/whaaaaat");
+			_.Get.Url("/api/toggles/name/whaaaaat");
 
 			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
 		});
@@ -61,7 +61,7 @@ namespace Crispin.Rest.Tests.Integration
 		public async Task Once_created_a_toggle_can_be_fetched_by_name()
 		{
 			var location = await CreateToggle();
-			var getResponse = await _system.Scenario(_ => _.Get.Url("/toggles/name/" + ToggleName));
+			var getResponse = await _system.Scenario(_ => _.Get.Url("/api/toggles/name/" + ToggleName));
 			var toggle = getResponse.ResponseBody.ReadAsJson<Dictionary<string, object>>();
 
 			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
@@ -71,7 +71,7 @@ namespace Crispin.Rest.Tests.Integration
 		public async Task Once_created_the_toggle_is_in_the_main_list()
 		{
 			var location = await CreateToggle();
-			var response = await _system.Scenario(_ => _.Get.Url("/toggles"));
+			var response = await _system.Scenario(_ => _.Get.Url("/api/toggles"));
 			var expectedID = Regex.Match(location, Regexes.Guid).Value;
 
 			var toggles = response.ResponseBody.ReadAsJson<Dictionary<string, object>[]>();
@@ -89,7 +89,7 @@ namespace Crispin.Rest.Tests.Integration
 
 			await _system.Scenario(_ =>
 			{
-				_.Get.Url("/toggles");
+				_.Get.Url("/api/toggles");
 
 				_.ContentShouldContain(one);
 				_.ContentShouldContain(two);

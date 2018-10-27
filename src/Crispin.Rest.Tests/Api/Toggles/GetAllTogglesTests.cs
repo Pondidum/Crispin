@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Crispin.Handlers.GetAll;
-using Crispin.Rest.Toggles;
+using Crispin.Rest.Api.Toggles;
 using Crispin.Views;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Rest.Tests.Toggles
+namespace Crispin.Rest.Tests.Api.Toggles
 {
 	public class GetAllTogglesTests
 	{

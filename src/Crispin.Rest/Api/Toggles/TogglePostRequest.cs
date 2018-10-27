@@ -1,4 +1,4 @@
-﻿namespace Crispin.Rest.Toggles
+﻿namespace Crispin.Rest.Api.Toggles
 {
 	public class TogglePostRequest
 	{

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Crispin.Conditions;
 using Crispin.Handlers.AddCondition;
@@ -9,9 +8,9 @@ using Crispin.Handlers.RemoveCondition;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crispin.Rest.Toggles
+namespace Crispin.Rest.Api.Toggles
 {
-	[Route("toggles")]
+	[Route("api/toggles")]
 	public class ToggleConditionsController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -54,7 +53,7 @@ namespace Crispin.Rest.Toggles
 			var response = await _mediator.Send(request);
 
 			return Created(
-				$"/toggles/id/{response.ToggleID}/conditions/{response.Condition.ID}",
+				$"/api/toggles/id/{response.ToggleID}/conditions/{response.Condition.ID}",
 				response.Condition
 			);
 		}

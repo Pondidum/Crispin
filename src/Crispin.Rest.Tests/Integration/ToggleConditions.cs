@@ -19,10 +19,10 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_.Post
 				.Json(new { Type = "enabled" })
-				.ToUrl($"/toggles/id/{_toggle.ID}/conditions");
+				.ToUrl($"/api/toggles/id/{_toggle.ID}/conditions");
 
 			_.StatusCodeShouldBe(HttpStatusCode.Created);
-			_.Header("location").SingleValueShouldEqual($"/toggles/id/{_toggle.ID}/conditions/0");
+			_.Header("location").SingleValueShouldEqual($"/api/toggles/id/{_toggle.ID}/conditions/0");
 
 			_.ContentShouldBe(@"{""conditionType"":""Enabled"",""id"":0}");
 			_.ContentTypeShouldBe("application/json; charset=utf-8");
@@ -38,7 +38,7 @@ namespace Crispin.Rest.Tests.Integration
 			await _system.Scenario(_ =>
 			{
 				_.Delete
-					.Url($"/toggles/id/{_toggle.ID}/conditions/0");
+					.Url($"/api/toggles/id/{_toggle.ID}/conditions/0");
 
 				_.StatusCodeShouldBeOk();
 				_.ContentShouldBe("[]");
@@ -49,7 +49,7 @@ namespace Crispin.Rest.Tests.Integration
 		public Task When_removing_a_non_existing_condition_from_a_toggle() => _system.Scenario(_ =>
 		{
 			_.Delete
-				.Url($"/toggles/id/{_toggle.ID}/conditions/0");
+				.Url($"/api/toggles/id/{_toggle.ID}/conditions/0");
 
 			_.StatusCodeShouldBe(HttpStatusCode.NotFound);
 		});
@@ -68,7 +68,7 @@ namespace Crispin.Rest.Tests.Integration
 			await _system.Scenario(_ =>
 			{
 				_.Get
-					.Url($"/toggles/id/{_toggle.ID}/conditions");
+					.Url($"/api/toggles/id/{_toggle.ID}/conditions");
 
 				_.StatusCodeShouldBeOk();
 				_.ContentShouldBe(@"[

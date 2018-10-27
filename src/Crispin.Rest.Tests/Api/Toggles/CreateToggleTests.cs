@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Crispin.Handlers.Create;
-using Crispin.Rest.Toggles;
+using Crispin.Rest.Api.Toggles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 
-namespace Crispin.Rest.Tests.Toggles
+namespace Crispin.Rest.Tests.Api.Toggles
 {
 	public class CreateToggleTests
 	{
@@ -35,7 +35,7 @@ namespace Crispin.Rest.Tests.Toggles
 			var result = (CreatedResult)await _controller.Post(new TogglePostRequest());
 
 			result.ShouldSatisfyAllConditions(
-				() => result.Location.ShouldBe("/toggles/id/" + _response.Toggle.ID),
+				() => result.Location.ShouldBe("/api/toggles/id/" + _response.Toggle.ID),
 				() => result.Value.ShouldBe(_response.Toggle)
 			);
 		}

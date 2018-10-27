@@ -5,9 +5,9 @@ using Crispin.Handlers.GetSingle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crispin.Rest.Toggles
+namespace Crispin.Rest.Api.Toggles
 {
-	[Route("Toggles")]
+	[Route("api/Toggles")]
 	public class TogglesController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -46,7 +46,7 @@ namespace Crispin.Rest.Toggles
 			var request = new CreateToggleRequest(editor, model.Name, model.Description);
 			var response = await _mediator.Send(request);
 
-			return Created("/toggles/id/" + response.Toggle.ID, response.Toggle);
+			return Created("/api/toggles/id/" + response.Toggle.ID, response.Toggle);
 		}
 	}
 }

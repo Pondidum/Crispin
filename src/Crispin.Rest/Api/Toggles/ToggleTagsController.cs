@@ -1,13 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Crispin.Handlers.GetSingle;
 using Crispin.Handlers.UpdateTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crispin.Rest.Toggles
+namespace Crispin.Rest.Api.Toggles
 {
-	[Route("Toggles")]
+	[Route("api/Toggles")]
 	public class ToggleTagsController : Controller
 	{
 		private readonly IMediator _mediator;
