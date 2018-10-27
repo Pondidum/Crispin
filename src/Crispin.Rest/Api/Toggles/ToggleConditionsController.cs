@@ -52,10 +52,13 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new AddToggleConditionRequest(GetEditor(), id, condition);
 			var response = await _mediator.Send(request);
 
-			return Created(
-				$"/api/toggles/id/{response.ToggleID}/conditions/{response.Condition.ID}",
-				response.Condition
-			);
+			var uri = Url.Action(nameof(GetConditions), new
+			{
+				id = response.ToggleID,
+				condition = response.Condition.ID
+			});
+
+			return Created(uri, response.Condition);
 		}
 
 		[Route("id/{id}/conditions/{condition}")]

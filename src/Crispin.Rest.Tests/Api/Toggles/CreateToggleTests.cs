@@ -3,6 +3,7 @@ using Crispin.Handlers.Create;
 using Crispin.Rest.Api.Toggles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -17,12 +18,15 @@ namespace Crispin.Rest.Tests.Api.Toggles
 
 		public CreateToggleTests()
 		{
-			_mediator = Substitute.For<IMediator>();
-			_controller = new TogglesController(_mediator);
 			_response = new CreateTogglesResponse
 			{
 				Toggle = Toggle.CreateNew(EditorID.Parse("123"), "one", "two").ToView()
 			};
+
+			_mediator = Substitute.For<IMediator>();
+			_controller = new TogglesController(_mediator);
+			_controller.Url = Substitute.For<IUrlHelper>();
+			_controller.Url.Action(Arg.Any<UrlActionContext>()).Returns("/api/toggles/id/" + _response.Toggle.ID);
 		}
 
 		[Fact]

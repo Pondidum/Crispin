@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Crispin.Rest.Api.Toggles
 {
-	[Route("api/Toggles")]
+	[Route("api/toggles")]
 	public class TogglesController : Controller
 	{
 		private readonly IMediator _mediator;
@@ -42,11 +42,13 @@ namespace Crispin.Rest.Api.Toggles
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] TogglePostRequest model)
 		{
-			var editor = EditorID.Parse("TestApiUser");		//User.Identity.Name
+			var editor = EditorID.Parse("TestApiUser"); //User.Identity.Name
 			var request = new CreateToggleRequest(editor, model.Name, model.Description);
 			var response = await _mediator.Send(request);
 
-			return Created("/api/toggles/id/" + response.Toggle.ID, response.Toggle);
+			var uri = Url.Action(nameof(Get), new { id = response.Toggle.ID });
+
+			return Created(uri, response.Toggle);
 		}
 	}
 }

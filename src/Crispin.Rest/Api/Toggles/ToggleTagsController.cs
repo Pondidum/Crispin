@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Crispin.Rest.Api.Toggles
 {
-	[Route("api/Toggles")]
+	[Route("api/toggles")]
 	public class ToggleTagsController : Controller
 	{
 		private readonly IMediator _mediator;
