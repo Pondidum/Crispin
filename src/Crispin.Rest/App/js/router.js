@@ -4,8 +4,8 @@ import { Container, Col, Row } from "reactstrap";
 
 import Navigation from "./navigation";
 import Dashboard from "./dashboard";
+import Toggles from "./toggles";
 
-const About = () => <h2>About</h2>;
 const Users = () => <h2>Users</h2>;
 
 const AppRouter = () => (
@@ -15,10 +15,11 @@ const AppRouter = () => (
         <Col sm="12">
           <Navigation />
         </Col>
-
-        <Col sm="9">
+      </Row>
+      <Row>
+        <Col sm="12">
           <Route path="/" exact component={Dashboard} />
-          <Route path="/about/" component={About} />
+          <Route path="/toggles/" component={Toggles} />
           <Route path="/users/" component={Users} />
         </Col>
       </Row>
