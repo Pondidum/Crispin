@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Container, Col, Row } from "reactstrap";
 
 import Navigation from "./navigation";
 import Dashboard from "./dashboard";
@@ -9,13 +10,19 @@ const Users = () => <h2>Users</h2>;
 
 const AppRouter = () => (
   <Router>
-    <div>
-      <Navigation />
+    <Container fluid={true}>
+      <Row>
+        <Col sm="12">
+          <Navigation />
+        </Col>
 
-      <Route path="/" exact component={Dashboard} />
-      <Route path="/about/" component={About} />
-      <Route path="/users/" component={Users} />
-    </div>
+        <Col sm="9">
+          <Route path="/" exact component={Dashboard} />
+          <Route path="/about/" component={About} />
+          <Route path="/users/" component={Users} />
+        </Col>
+      </Row>
+    </Container>
   </Router>
 );
 
