@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, ButtonGroup, Button } from "reactstrap";
+import { Row, Col, Card, CardBody, CardTitle, CardImg } from "reactstrap";
 
 const headerWidth = 3;
 const detailsWidth = 12 - headerWidth;
@@ -47,7 +47,28 @@ const Details = ({ match }) => (
         </Col>
       </Row>
     </Col>
-    <Col md="7" />
+    <Col md="7">
+      <Card>
+        <CardBody>
+          <CardTitle>Usage Graph</CardTitle>
+        </CardBody>
+        <CardImg
+          width="100%"
+          src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97100&w=318&h=100"
+          alt="Card image cap"
+        />
+      </Card>
+      <Card>
+        <CardBody>
+          <CardTitle>Activation Graph</CardTitle>
+        </CardBody>
+      </Card>
+      <Card>
+        <CardBody>
+          <CardTitle>Condition Activation Graph</CardTitle>
+        </CardBody>
+      </Card>
+    </Col>
   </Row>
 );
 
