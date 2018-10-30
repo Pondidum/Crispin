@@ -1,5 +1,7 @@
 import React from "react";
-import { Row, Col, Card, CardBody, CardTitle, CardImg } from "reactstrap";
+import { Row, Col, CardColumns } from "reactstrap";
+
+import ToggleGraph from "./graph";
 
 const headerWidth = 3;
 const detailsWidth = 12 - headerWidth;
@@ -48,26 +50,9 @@ const Details = ({ match }) => (
       </Row>
     </Col>
     <Col md="7">
-      <Card>
-        <CardBody>
-          <CardTitle>Usage Graph</CardTitle>
-        </CardBody>
-        <CardImg
-          width="100%"
-          src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97100&w=318&h=100"
-          alt="Card image cap"
-        />
-      </Card>
-      <Card>
-        <CardBody>
-          <CardTitle>Activation Graph</CardTitle>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardBody>
-          <CardTitle>Condition Activation Graph</CardTitle>
-        </CardBody>
-      </Card>
+      <ToggleGraph title="Usage Graph" />
+      <ToggleGraph title="Activation Graph" />
+      <ToggleGraph title="Condition Activation Graph" />
     </Col>
   </Row>
 );
