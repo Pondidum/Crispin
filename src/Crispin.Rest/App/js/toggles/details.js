@@ -1,35 +1,61 @@
-import React from "react";
-import { Row, Col, Button } from "reactstrap";
+import React, { Component } from "react";
+import { Row, Col, Button, Input } from "reactstrap";
 
 import Conditions from "./conditions";
 import ToggleGraph from "./graph";
 
+class Editable extends Component {
+  constructor({ title, value }) {
+    super();
+    this.title = title;
+    this.value = value;
+    this.state = { editing: false };
+  }
+
+  viewMode() {
+    const startEdit = e => {
+      e.preventDefault();
+      this.setState({ editing: true });
+    };
+    return (
+      <Col md="12">
+        <h4 className="d-inline">{this.title}</h4>
+        <small className="d-inline">
+          <a href="#" onClick={startEdit}>
+            edit
+          </a>
+        </small>
+
+        <p>{this.value}</p>
+      </Col>
+    );
+  }
+
+  editMode() {
+    return (
+      <Col md="12">
+        <h4 className="d-inline">{this.title}</h4>
+        <Input type="text" defaultValue={this.value} />
+      </Col>
+    );
+  }
+  render() {
+    return this.state.editing ? this.editMode() : this.viewMode();
+  }
+}
+
 const Details = ({ match }) => (
   <Row>
     <Col md="6">
-      <Row />
-      <Col md="12">
-        <h4>Name</h4>
-        <p>Some Feature Toggle {match.params.id}</p>
-      </Col>
-      <Col md="12">
-        <h4>Description</h4>
-        <p>
-          Does something very interesting and potentially has quite a long
-          description
-        </p>
-      </Col>
+      <Editable title="Name" value={`Toggle ${match.params.id}`} />
+      <Editable
+        title="Description"
+        value="Does something very interesting and potentially has quite a long
+          description"
+      />
       <Col md="12">
         <h4>Conditions</h4>
         <Conditions />
-      </Col>
-      <Col md="12">
-        <div className="float-right">
-          <Button color="link">Delete</Button>
-          <Button outline color="primary">
-            Edit
-          </Button>
-        </div>
       </Col>
     </Col>
     <Col md="6">
