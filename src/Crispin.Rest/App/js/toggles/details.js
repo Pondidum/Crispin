@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Button } from "reactstrap";
 
 import Conditions from "./conditions";
 import ToggleGraph from "./graph";
@@ -7,21 +7,30 @@ import ToggleGraph from "./graph";
 const Details = ({ match }) => (
   <Row>
     <Col md="6">
-      <div>
+      <Row />
+      <Col md="12">
         <h4>Name</h4>
         <p>Some Feature Toggle {match.params.id}</p>
-      </div>
-      <div>
+      </Col>
+      <Col md="12">
         <h4>Description</h4>
         <p>
           Does something very interesting and potentially has quite a long
           description
         </p>
-      </div>
-      <div>
+      </Col>
+      <Col md="12">
         <h4>Conditions</h4>
         <Conditions />
-      </div>
+      </Col>
+      <Col md="12">
+        <div className="float-right">
+          <Button color="link">Delete</Button>
+          <Button outline color="primary">
+            Edit
+          </Button>
+        </div>
+      </Col>
     </Col>
     <Col md="6">
       <ToggleGraph title="Usage Graph" />
