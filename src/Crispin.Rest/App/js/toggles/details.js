@@ -3,6 +3,7 @@ import { Row, Col, Button, Input } from "reactstrap";
 
 import Conditions from "./conditions";
 import ToggleGraph from "./graph";
+import Glyph from "../util/glyph";
 
 class Editable extends Component {
   constructor({ title, value }) {
@@ -19,12 +20,13 @@ class Editable extends Component {
     };
     return (
       <Col md="12">
-        <h4 className="d-inline">{this.title}</h4>
-        <small className="d-inline">
+        <h4 className="d-inline">
+          {this.title}{" "}
           <a href="#" onClick={startEdit}>
-            edit
+            <Glyph name="pencil" />
           </a>
-        </small>
+        </h4>
+        <small className="d-inline" />
 
         <p>{this.value}</p>
       </Col>

@@ -1,0 +1,12 @@
+.glyph {
+  width: 0.7em;
+  height: 0.7em;
+}
+
+a .glyph {
+  fill: #007bff;
+}
+
+a .glyph:hover {
+  fill: #0056b3;
+}
