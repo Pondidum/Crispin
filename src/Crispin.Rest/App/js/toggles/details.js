@@ -32,9 +32,27 @@ class Editable extends Component {
   }
 
   editMode() {
+    const cancelEdit = e => {
+      e.preventDefault();
+      this.setState({ editing: false });
+    };
+
+    const acceptEdit = e => {
+      e.preventDefault();
+      this.setState({ editing: false });
+    };
+
     return (
       <Col md="12">
         <h4 className="d-inline">{this.title}</h4>
+        <small className="d-inline float-right">
+          <a href="#" onClick={cancelEdit}>
+            cancel
+          </a>{" "}
+          <a href="#" onClick={acceptEdit}>
+            ok
+          </a>
+        </small>
         <Input type="text" defaultValue={this.value} />
       </Col>
     );
