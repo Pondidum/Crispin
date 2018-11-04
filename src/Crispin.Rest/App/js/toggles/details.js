@@ -5,11 +5,18 @@ import Conditions from "./conditions";
 import ToggleGraph from "./graph";
 import Glyph from "../util/glyph";
 
+const EditHeader = ({ title, startEdit, children }) => (
+  <h4 className="d-inline">
+    {title}{" "}
+    <a href="#" onClick={startEdit}>
+      <Glyph name="pencil" />
+    </a>
+  </h4>
+);
+
 class Editable extends Component {
-  constructor({ title, value }) {
-    super();
-    this.title = title;
-    this.value = value;
+  constructor(props) {
+    super(props);
     this.state = { editing: false };
   }
 
@@ -20,15 +27,8 @@ class Editable extends Component {
     };
     return (
       <Col md="12">
-        <h4 className="d-inline">
-          {this.title}{" "}
-          <a href="#" onClick={startEdit}>
-            <Glyph name="pencil" />
-          </a>
-        </h4>
-        <small className="d-inline" />
-
-        <p>{this.value}</p>
+        <EditHeader title={this.props.title} startEdit={startEdit} />
+        <p>{this.props.value}</p>
       </Col>
     );
   }
@@ -46,7 +46,7 @@ class Editable extends Component {
 
     return (
       <Col md="12">
-        <h4 className="d-inline">{this.title}</h4>
+        <h4 className="d-inline">{this.props.title}</h4>
         <small className="d-inline float-right">
           <a href="#" onClick={cancelEdit}>
             cancel
@@ -55,7 +55,7 @@ class Editable extends Component {
             ok
           </a>
         </small>
-        <Input type="text" defaultValue={this.value} />
+        <Input type="text" defaultValue={this.props.value} />
       </Col>
     );
   }
@@ -74,7 +74,7 @@ const Details = ({ match }) => (
           description"
       />
       <Col md="12">
-        <h4>Conditions</h4>
+        <EditHeader title="Conditions" startEdit={() => {}} />
         <Conditions />
       </Col>
     </Col>
