@@ -5,14 +5,31 @@ import Conditions from "./conditions";
 import ToggleGraph from "./graph";
 import Glyph from "../util/glyph";
 
-const EditHeader = ({ title, startEdit, children }) => (
-  <h4 className="d-inline">
-    {title}{" "}
-    <a href="#" onClick={startEdit}>
+const EditHeader = ({ editing, title, startEdit, cancelEdit, acceptEdit }) => {
+  const viewActions = (
+    <a href="#" onClick={startEdit} className="ml-1 align-text-bottom">
       <Glyph name="pencil" />
     </a>
-  </h4>
-);
+  );
+
+  const editingActions = (
+    <small className="d-inline float-right">
+      <a href="#" onClick={cancelEdit}>
+        cancel
+      </a>{" "}
+      <a href="#" onClick={acceptEdit}>
+        ok
+      </a>
+    </small>
+  );
+
+  return (
+    <div>
+      <h4 className="d-inline">{title}</h4>
+      {editing ? editingActions : viewActions}
+    </div>
+  );
+};
 
 class Editable extends Component {
   constructor(props) {
@@ -21,19 +38,19 @@ class Editable extends Component {
   }
 
   viewMode() {
-    const startEdit = e => {
-      e.preventDefault();
-      this.setState({ editing: true });
-    };
     return (
       <Col md="12">
-        <EditHeader title={this.props.title} startEdit={startEdit} />
-        <p>{this.props.value}</p>
+        <EditHeader editing={this.state.editing} title={this.props.title} />
       </Col>
     );
   }
 
-  editMode() {
+  render() {
+    const startEdit = e => {
+      e.preventDefault();
+      this.setState({ editing: true });
+    };
+
     const cancelEdit = e => {
       e.preventDefault();
       this.setState({ editing: false });
@@ -53,28 +70,28 @@ class Editable extends Component {
       }
     };
 
+    const editor = (
+      <Input
+        type="text"
+        defaultValue={this.props.value}
+        onKeyDown={handleKeyDown}
+        autoFocus
+      />
+    );
+    const viewer = <p>{this.props.value}</p>;
+
     return (
       <Col md="12">
-        <h4 className="d-inline">{this.props.title}</h4>
-        <small className="d-inline float-right">
-          <a href="#" onClick={cancelEdit}>
-            cancel
-          </a>{" "}
-          <a href="#" onClick={acceptEdit}>
-            ok
-          </a>
-        </small>
-        <Input
-          type="text"
-          defaultValue={this.props.value}
-          onKeyDown={handleKeyDown}
-          autoFocus
+        <EditHeader
+          editing={this.state.editing}
+          title={this.props.title}
+          startEdit={startEdit}
+          cancelEdit={cancelEdit}
+          acceptEdit={acceptEdit}
         />
+        {this.state.editing ? editor : viewer}
       </Col>
     );
-  }
-  render() {
-    return this.state.editing ? this.editMode() : this.viewMode();
   }
 }
 
