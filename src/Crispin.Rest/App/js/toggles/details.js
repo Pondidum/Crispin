@@ -44,6 +44,15 @@ class Editable extends Component {
       this.setState({ editing: false });
     };
 
+    const handleKeyDown = e => {
+      if (e.key == "Enter") {
+        return acceptEdit(e);
+      }
+      if (e.key == "Escape") {
+        return cancelEdit(e);
+      }
+    };
+
     return (
       <Col md="12">
         <h4 className="d-inline">{this.props.title}</h4>
@@ -55,7 +64,12 @@ class Editable extends Component {
             ok
           </a>
         </small>
-        <Input type="text" defaultValue={this.props.value} />
+        <Input
+          type="text"
+          defaultValue={this.props.value}
+          onKeyDown={handleKeyDown}
+          autoFocus
+        />
       </Col>
     );
   }
