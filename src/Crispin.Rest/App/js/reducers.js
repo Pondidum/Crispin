@@ -1,4 +1,6 @@
+import { combineReducers } from "redux";
+import toggles from "./toggles/reducers";
 
-const rootReducer = (state, action) => state;
-
-export default rootReducer
+export default combineReducers({
+  toggles
+});

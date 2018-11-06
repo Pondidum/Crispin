@@ -1,14 +1,20 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { createStore } from "redux";
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
 
 import reducers from "./reducers";
 import AppRouter from "./router";
+import { fetchAllToggles } from "./toggles/actions";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const store = createStore(reducers);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const Root = <AppRouter store={store} />;
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+store.dispatch(fetchAllToggles());
 
-ReactDom.render(Root, document.getElementById("container"));
+ReactDom.render(
+  <AppRouter store={store} />,
+  document.getElementById("container")
+);
