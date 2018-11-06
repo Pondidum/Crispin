@@ -1,16 +1,21 @@
+import { connect } from "react-redux";
 import React from "react";
 import { Nav } from "reactstrap";
 import MenuEntry from "./menu-entry";
 
-const Navigation = ({ match }) => (
+const mapPropsFromState = (state, ownProps) => {
+  return {
+    ...ownProps,
+    toggles: state.toggles.all
+  };
+};
+
+const Navigation = ({ match, toggles }) => (
   <Nav vertical>
-    <MenuEntry match={match} id={1} />
-    <MenuEntry match={match} id={2} />
-    <MenuEntry match={match} id={3} />
-    <MenuEntry match={match} id={4} />
-    <MenuEntry match={match} id={5} />
-    <MenuEntry match={match} id={6} />
+    {toggles.map(t => (
+      <MenuEntry key={t.id} match={match} id={t.id} name={t.name} />
+    ))}
   </Nav>
 );
 
-export default Navigation;
+export default connect(mapPropsFromState)(Navigation);

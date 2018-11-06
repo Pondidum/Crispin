@@ -5,10 +5,10 @@ import { NavLink } from "react-router-dom";
 const combine = (left, right) =>
   left.endsWith("/") ? left + right : left + "/" + right;
 
-const ToggleMenuEntry = ({ match, id }) => (
+const ToggleMenuEntry = ({ match, id, name }) => (
   <NavItem>
     <NavLink className="nav-link" to={combine(match.url, id)}>
-      Toggle {id}
+      {name}
     </NavLink>
   </NavItem>
 );
