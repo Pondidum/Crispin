@@ -1,19 +1,25 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Row, Col } from "reactstrap";
 
 import ToggleGraph from "./graph";
 import TextEditor from "./text-editor";
 import ConditionEditor from "./condition-editor";
 
-const Details = ({ match }) => (
+const mapStateToProps = (state, ownProps) => {
+  const match = ownProps.match;
+  return {
+    toggle: state.toggles.all.find(t => t.id == match.params.id)
+  };
+};
+
+const Protect = ({ toggle }) => (toggle ? <Details toggle={toggle} /> : null);
+
+const Details = ({ toggle }) => (
   <Row>
     <Col md="6">
-      <TextEditor title="Name" value={`Toggle ${match.params.id}`} />
-      <TextEditor
-        title="Description"
-        value="Does something very interesting and potentially has quite a long
-          description"
-      />
+      <TextEditor title="Name" value={toggle.name} />
+      <TextEditor title="Description" value={toggle.description} />
       <ConditionEditor />
     </Col>
     <Col md="6">
@@ -24,4 +30,4 @@ const Details = ({ match }) => (
   </Row>
 );
 
-export default Details;
+export default connect(mapStateToProps)(Protect);
