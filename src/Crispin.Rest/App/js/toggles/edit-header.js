@@ -2,18 +2,27 @@ import React from "react";
 import Glyph from "../util/glyph";
 
 const EditHeader = ({ editing, title, startEdit, cancelEdit, acceptEdit }) => {
+  const wrap = (e, action) => {
+    e.preventDefault();
+    action();
+  };
+
   const viewActions = (
-    <a href="#" onClick={startEdit} className="ml-1 align-text-bottom">
+    <a
+      href="#"
+      onClick={e => wrap(e, startEdit)}
+      className="ml-1 align-text-bottom"
+    >
       <Glyph name="pencil" />
     </a>
   );
 
   const editingActions = (
     <small className="d-inline float-right">
-      <a href="#" onClick={cancelEdit}>
+      <a href="#" onClick={e => wrap(e, cancelEdit)}>
         cancel
       </a>{" "}
-      <a href="#" onClick={acceptEdit}>
+      <a href="#" onClick={e => wrap(e, acceptEdit)}>
         ok
       </a>
     </small>

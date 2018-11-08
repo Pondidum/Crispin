@@ -10,18 +10,15 @@ class TextEditor extends Component {
   }
 
   render() {
-    const startEdit = e => {
-      e.preventDefault();
+    const startEdit = () => {
       this.setState({ editing: true });
     };
 
-    const cancelEdit = e => {
-      e.preventDefault();
+    const cancelEdit = () => {
       this.setState({ editing: false });
     };
 
-    const acceptEdit = e => {
-      e.preventDefault();
+    const acceptEdit = () => {
       this.setState({ editing: false });
     };
 
