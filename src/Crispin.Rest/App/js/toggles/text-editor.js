@@ -7,19 +7,15 @@ class TextEditor extends Component {
   constructor(props) {
     super(props);
     this.state = { editing: false };
+    this.editor = React.createRef();
   }
 
   render() {
-    const startEdit = () => {
-      this.setState({ editing: true });
-    };
-
-    const cancelEdit = () => {
-      this.setState({ editing: false });
-    };
-
+    const startEdit = () => this.setState({ editing: true });
+    const cancelEdit = () => this.setState({ editing: false });
     const acceptEdit = () => {
       this.setState({ editing: false });
+      this.props.onAcceptEdit(this.editor.current.value);
     };
 
     const handleKeyDown = e => {
@@ -36,6 +32,7 @@ class TextEditor extends Component {
         type="text"
         defaultValue={this.props.value}
         onKeyDown={handleKeyDown}
+        innerRef={this.editor}
         autoFocus
       />
     );
