@@ -33,6 +33,8 @@ namespace Crispin.Views
 			Description = e.Description;
 		}
 
+		public void Apply(ToggleRenamed e) => Name = e.NewName;
+
 		public void Apply(TagAdded e) => Tags.Add(e.Name);
 		public void Apply(TagRemoved e) => Tags.Remove(e.Name);
 

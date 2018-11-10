@@ -1,4 +1,3 @@
-using System;
 using Crispin.Events;
 using Crispin.Views;
 using Shouldly;
@@ -29,6 +28,14 @@ namespace Crispin.Tests.Views
 				() => _view.Name.ShouldBe("a toggle"),
 				() => _view.Description.ShouldBe("some description")
 			);
+		}
+
+		[Fact]
+		public void When_applying_toggle_renamed()
+		{
+			_view.Apply(new ToggleRenamed(_editor, "new name!"));
+
+			_view.Name.ShouldBe("new name!");
 		}
 
 		[Fact]
