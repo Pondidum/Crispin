@@ -39,6 +39,14 @@ namespace Crispin.Tests.Views
 		}
 
 		[Fact]
+		public void When_applying_toggle_description_changed()
+		{
+			_view.Apply(new ToggleDescriptionChanged(_editor, "new description!"));
+
+			_view.Description.ShouldBe("new description!");
+		}
+
+		[Fact]
 		public void When_applying_tag_added()
 		{
 			_view.Apply(new TagAdded(_editor, "testing"));

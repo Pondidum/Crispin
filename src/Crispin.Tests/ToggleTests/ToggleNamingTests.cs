@@ -52,5 +52,35 @@ namespace Crispin.Tests.ToggleTests
 
 			Should.Throw<ArgumentException>(() => Toggle.Rename(Editor, "      "));
 		}
+
+		[Fact]
+		public void When_changing_the_description_of_a_toggle_the_event_is_created()
+		{
+			CreateToggle();
+			Toggle.ChangeDescription(Editor, "new description");
+
+			SingleEvent<ToggleDescriptionChanged>(e => e.ShouldSatisfyAllConditions(
+				() => e.NewDescription.ShouldBe("new description"),
+				() => e.Editor.ShouldBe(Editor)
+			));
+		}
+
+		[Fact]
+		public void When_changing_the_description_of_a_toggle_the_toggle_is_updated()
+		{
+			CreateToggle();
+			Toggle.ChangeDescription(Editor, "new description");
+
+			Toggle.Description.ShouldBe("new description");
+		}
+
+		[Fact]
+		public void When_changing_the_description_to_the_current_description()
+		{
+			CreateToggle();
+			Toggle.ChangeDescription(Editor, Toggle.Description);
+
+			EventTypes.ShouldBeEmpty();
+		}
 	}
 }

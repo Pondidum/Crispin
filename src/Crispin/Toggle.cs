@@ -56,6 +56,14 @@ namespace Crispin
 			ApplyEvent(new ToggleRenamed(editor, newName));
 		}
 
+		public void ChangeDescription(EditorID editor, string newDescription)
+		{
+			if (Description == newDescription)
+				return;
+
+			ApplyEvent(new ToggleDescriptionChanged(editor, newDescription));
+		}
+
 		//public methods which do domainy things
 		public void AddTag(EditorID editor, string tag)
 		{
@@ -150,6 +158,7 @@ namespace Crispin
 		}
 
 		private void Apply(ToggleRenamed e) => Name = e.NewName;
+		private void Apply(ToggleDescriptionChanged e) => Description = e.NewDescription;
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
 		private void Apply(TagRemoved e) => _tags.Remove(e.Name);
