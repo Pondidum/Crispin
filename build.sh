@@ -12,7 +12,7 @@ dotnet build \
 /usr/bin/find ./src -iname "*.Tests.csproj" | xargs -L1 dotnet test \
   --no-restore \
   --no-build \
-  --configuration $MODE \
+  --configuration $MODE
 
 dotnet pack \
   --no-restore \
