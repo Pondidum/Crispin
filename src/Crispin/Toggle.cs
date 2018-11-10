@@ -45,6 +45,17 @@ namespace Crispin
 			_currentConditionID = ConditionID.Empty;
 		}
 
+		public void Rename(EditorID editor, string newName)
+		{
+			if (string.IsNullOrWhiteSpace(newName))
+				throw new ArgumentNullException(nameof(newName), "Toggles must have a non-whitespace name.");
+
+			if (Name == newName)
+				return;
+
+			ApplyEvent(new ToggleRenamed(editor, newName));
+		}
+
 		//public methods which do domainy things
 		public void AddTag(EditorID editor, string tag)
 		{
@@ -137,6 +148,8 @@ namespace Crispin
 			Description = e.Description;
 			ConditionMode = ConditionModes.All;
 		}
+
+		private void Apply(ToggleRenamed e) => Name = e.NewName;
 
 		private void Apply(TagAdded e) => _tags.Add(e.Name);
 		private void Apply(TagRemoved e) => _tags.Remove(e.Name);
