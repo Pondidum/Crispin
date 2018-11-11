@@ -15,7 +15,7 @@ namespace Crispin.Tests.Handlers
 		where TRequest : IRequest<TResponse>
 	{
 		protected EditorID Editor { get; }
-		protected ToggleID ToggleID { get; }
+		protected ToggleID ToggleID { get; private set; }
 		protected ToggleLocator Locator => ToggleLocator.Create(ToggleID);
 
 		protected Exception Exception { get; private set; }
@@ -69,12 +69,13 @@ namespace Crispin.Tests.Handlers
 				var toggle = Toggle.CreateNew(
 					Editor,
 					"Test Toggle One",
-					"Some toggle description goes here",
-					ToggleID);
+					"Some toggle description goes here");
 
 				setup?.Invoke(toggle);
 
 				await session.Save(toggle);
+
+				ToggleID = toggle.ID;
 			}
 		}
 
