@@ -43,6 +43,7 @@ namespace Crispin.Handlers.UpdateTags
 
 			return new UpdateToggleTagsResponse
 			{
+				ToggleID = toggle.ID,
 				Tags = toggle.Tags.ToArray()
 			};
 		}
