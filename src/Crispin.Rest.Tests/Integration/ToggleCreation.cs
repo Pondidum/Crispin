@@ -11,14 +11,19 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleCreation : IntegrationBase
+	public class ToggleCreation : IClassFixture<ApiFixture>
 	{
-		private const string ToggleName = "toggle-create";
+		private readonly ApiFixture _fixture;
 		private const string ToggleDescription = "a test toggle";
 
-		private async Task<string> CreateToggle(string name = ToggleName)
+		public ToggleCreation(ApiFixture fixture)
 		{
-			var response = await _system.Scenario(_ =>
+			_fixture = fixture;
+		}
+
+		private async Task<string> CreateToggle(string name)
+		{
+			var response = await _fixture.Scenario(_ =>
 			{
 				_.Post
 					.Json(new { Name = name, Description = ToggleDescription })
@@ -32,7 +37,7 @@ namespace Crispin.Rest.Tests.Integration
 		}
 
 		[Fact]
-		public Task Fetching_a_non_existing_toggle_by_id_returns_not_found() => _system.Scenario(_ =>
+		public Task Fetching_a_non_existing_toggle_by_id_returns_not_found() => _fixture.Scenario(_ =>
 		{
 			_.Get.Url("/api/toggles/id/" + Guid.NewGuid());
 
@@ -40,7 +45,7 @@ namespace Crispin.Rest.Tests.Integration
 		});
 
 		[Fact]
-		public Task Fetching_a_non_existing_toggle_by_name_returns_not_found() => _system.Scenario(_ =>
+		public Task Fetching_a_non_existing_toggle_by_name_returns_not_found() => _fixture.Scenario(_ =>
 		{
 			_.Get.Url("/api/toggles/name/whaaaaat");
 
@@ -50,34 +55,37 @@ namespace Crispin.Rest.Tests.Integration
 		[Fact]
 		public async Task Once_created_a_toggle_can_be_fetched_by_id()
 		{
-			var location = await CreateToggle();
-			var getResponse = await _system.Scenario(_ => _.Get.Url(location));
+			var name = _fixture.Generate("toggle-create");
+			var location = await CreateToggle(name);
+			var getResponse = await _fixture.Scenario(_ => _.Get.Url(location));
 			var toggle = getResponse.ResponseBody.ReadAsJson<Dictionary<string, object>>();
 
-			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+			ValidateToggle(toggle, name, Regex.Match(location, Regexes.Guid).Value);
 		}
 
 		[Fact]
 		public async Task Once_created_a_toggle_can_be_fetched_by_name()
 		{
-			var location = await CreateToggle();
-			var getResponse = await _system.Scenario(_ => _.Get.Url("/api/toggles/name/" + ToggleName));
+			var name = _fixture.Generate("toggle-create");
+			var location = await CreateToggle(name);
+			var getResponse = await _fixture.Scenario(_ => _.Get.Url("/api/toggles/name/" + name));
 			var toggle = getResponse.ResponseBody.ReadAsJson<Dictionary<string, object>>();
 
-			ValidateToggle(toggle, Regex.Match(location, Regexes.Guid).Value);
+			ValidateToggle(toggle, name, Regex.Match(location, Regexes.Guid).Value);
 		}
 
 		[Fact]
 		public async Task Once_created_the_toggle_is_in_the_main_list()
 		{
-			var location = await CreateToggle();
-			var response = await _system.Scenario(_ => _.Get.Url("/api/toggles"));
+			var name = _fixture.Generate("toggle-create");
+			var location = await CreateToggle(name);
+			var response = await _fixture.Scenario(_ => _.Get.Url("/api/toggles"));
 			var expectedID = Regex.Match(location, Regexes.Guid).Value;
 
 			var toggles = response.ResponseBody.ReadAsJson<Dictionary<string, object>[]>();
 			var toggle = toggles.Single(x => (string)x["id"] == expectedID);
 
-			ValidateToggle(toggle, expectedID);
+			ValidateToggle(toggle, name, expectedID);
 		}
 
 		[Fact]
@@ -87,7 +95,7 @@ namespace Crispin.Rest.Tests.Integration
 			var two = Regex.Match(await CreateToggle("2"), Regexes.Guid).Value;
 			var three = Regex.Match(await CreateToggle("3"), Regexes.Guid).Value;
 
-			await _system.Scenario(_ =>
+			await _fixture.Scenario(_ =>
 			{
 				_.Get.Url("/api/toggles");
 
@@ -97,11 +105,11 @@ namespace Crispin.Rest.Tests.Integration
 			});
 		}
 
-		private static void ValidateToggle(Dictionary<string, object> toggle, string expectedID)
+		private static void ValidateToggle(Dictionary<string, object> toggle, string name, string expectedID)
 		{
 			toggle.ShouldSatisfyAllConditions(
 				() => toggle.ShouldContainKeyAndValue("id", expectedID),
-				() => toggle.ShouldContainKeyAndValue("name", ToggleName),
+				() => toggle.ShouldContainKeyAndValue("name", name),
 				() => toggle.ShouldContainKeyAndValue("description", ToggleDescription)
 			);
 		}

@@ -1,22 +1,23 @@
+using System;
 using System.Threading.Tasks;
 using Alba;
+using AutoFixture;
 using Crispin.Infrastructure.Storage;
 using Crispin.Views;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class IntegrationBase : IAsyncLifetime
+	public class ApiFixture : IDisposable
 	{
-		protected readonly SystemUnderTest _system;
-		protected readonly InMemoryStorage _storage;
-		protected Toggle _toggle;
-		protected readonly EditorID _editor;
+		private readonly SystemUnderTest _system;
+		private readonly InMemoryStorage _storage;
+		private readonly Fixture _fixture;
 
-		public IntegrationBase()
+		public ApiFixture()
 		{
+			_fixture = new Fixture();
 			_storage = new InMemoryStorage();
 			_storage.RegisterProjection<ToggleView>();
 			_storage.RegisterAggregate<ToggleID, Toggle>();
@@ -29,18 +30,24 @@ namespace Crispin.Rest.Tests.Integration
 				services.AddScoped(sp => _storage.CreateSession());
 			});
 
-			_editor = EditorID.Parse("me");
-			_toggle = Toggle.CreateNew(_editor, "toggle-1");
-			_toggle.AddTag(_editor, "readonly");
-
+			Editor = EditorID.Parse("me");
 		}
 
-		public async Task InitializeAsync()
+		public EditorID Editor { get; }
+
+		public string Generate(string prefix) => _fixture.Create(prefix);
+
+		public Task<IScenarioResult> Scenario(Action<Scenario> configure) => _system.Scenario(configure);
+
+		public async Task SaveToggle(Toggle toggle)
 		{
 			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
+				await session.Save(toggle);
 		}
 
-		public Task DisposeAsync() => Task.Run(() => _system.Dispose());
+		public void Dispose()
+		{
+			_system.Dispose();
+		}
 	}
 }

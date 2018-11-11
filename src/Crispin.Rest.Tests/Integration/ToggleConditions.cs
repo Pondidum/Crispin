@@ -7,15 +7,33 @@ using Xunit;
 
 namespace Crispin.Rest.Tests.Integration
 {
-	public class ToggleConditions : IntegrationBase
+	public class ToggleConditions : IClassFixture<ApiFixture>, IAsyncLifetime
 	{
+		private Toggle _toggle;
+		private readonly ApiFixture _fixture;
+
+		public ToggleConditions(ApiFixture fixture)
+		{
+			_fixture = fixture;
+		}
+
+		public async Task InitializeAsync()
+		{
+			_toggle = Toggle.CreateNew(_fixture.Editor, _fixture.Generate("toggle-conditions"));
+			_toggle.AddTag(_fixture.Editor, "readonly");
+
+			await _fixture.SaveToggle(_toggle);
+		}
+
+		public Task DisposeAsync() => Task.CompletedTask;
+
 		private static Dictionary<string, object> Condition(string type) => new Dictionary<string, object>
 		{
 			{ ConditionBuilder.TypeKey, type }
 		};
 
 		[Fact]
-		public Task When_adding_a_condition_to_a_toggle() => _system.Scenario(_ =>
+		public Task When_adding_a_condition_to_a_toggle() => _fixture.Scenario(_ =>
 		{
 			_.Post
 				.Json(new { Type = "enabled" })
@@ -32,10 +50,9 @@ namespace Crispin.Rest.Tests.Integration
 		public async Task When_removing_a_condition_from_a_toggle()
 		{
 			_toggle.AddCondition(EditorID.Parse("me"), Condition("disabled"));
-			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
+			await _fixture.SaveToggle(_toggle);
 
-			await _system.Scenario(_ =>
+			await _fixture.Scenario(_ =>
 			{
 				_.Delete
 					.Url($"/api/toggles/id/{_toggle.ID}/conditions/0");
@@ -46,7 +63,7 @@ namespace Crispin.Rest.Tests.Integration
 		}
 
 		[Fact]
-		public Task When_removing_a_non_existing_condition_from_a_toggle() => _system.Scenario(_ =>
+		public Task When_removing_a_non_existing_condition_from_a_toggle() => _fixture.Scenario(_ =>
 		{
 			_.Delete
 				.Url($"/api/toggles/id/{_toggle.ID}/conditions/0");
@@ -62,10 +79,9 @@ namespace Crispin.Rest.Tests.Integration
 			_toggle.AddCondition(editor, Condition("enabled"), ConditionID.Parse(0));
 			_toggle.AddCondition(editor, Condition("disabled"), ConditionID.Parse(0));
 
-			using (var session = _storage.CreateSession())
-				await session.Save(_toggle);
+			await _fixture.SaveToggle(_toggle);
 
-			await _system.Scenario(_ =>
+			await _fixture.Scenario(_ =>
 			{
 				_.Get
 					.Url($"/api/toggles/id/{_toggle.ID}/conditions");
