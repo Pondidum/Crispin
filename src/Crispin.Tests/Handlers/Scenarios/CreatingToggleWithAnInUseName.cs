@@ -8,12 +8,12 @@ namespace Crispin.Tests.Handlers.Scenarios
 {
 	public class CreatingToggleWithAnInUseName : HandlerPipelineTest<CreateToggleRequest, CreateTogglesResponse>
 	{
-		public override async Task InitializeAsync()
+		protected override async Task<CreateToggleRequest> When()
 		{
 			await CreateToggle();
 			var existing = await Read(ToggleID);
 
-			await Send(new CreateToggleRequest(Editor, existing.Name, "repeated name attempt"));
+			return new CreateToggleRequest(Editor, existing.Name, "repeated name attempt");
 		}
 
 		[Fact]

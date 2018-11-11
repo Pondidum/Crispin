@@ -16,7 +16,7 @@ namespace Crispin.Tests.Handlers.Scenarios
 			{ ConditionBuilder.TypeKey, type }
 		};
 
-		public override async Task InitializeAsync()
+		protected override async Task<RemoveToggleConditionRequest> When()
 		{
 			await CreateToggle(toggle =>
 			{
@@ -26,7 +26,8 @@ namespace Crispin.Tests.Handlers.Scenarios
 			});
 
 			var conditionID = (await Read(ToggleID)).Conditions.OfType<DisabledCondition>().Single().ID;
-			await Send(new RemoveToggleConditionRequest(Editor, ToggleLocator.Create(ToggleID), conditionID));
+
+			return new RemoveToggleConditionRequest(Editor, Locator, conditionID);
 		}
 
 		[Fact]

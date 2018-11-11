@@ -8,9 +8,9 @@ namespace Crispin.Tests.Handlers.Scenarios
 {
 	public class CreatingToggleWithNoName : HandlerPipelineTest<CreateToggleRequest, CreateTogglesResponse>
 	{
-		public override async Task InitializeAsync()
+		protected override Task<CreateToggleRequest> When()
 		{
-			await Send(new CreateToggleRequest(Editor, "", ""));
+			return Task.FromResult(new CreateToggleRequest(Editor, "", ""));
 		}
 
 		[Fact]

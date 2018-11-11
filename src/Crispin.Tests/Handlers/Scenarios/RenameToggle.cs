@@ -10,12 +10,12 @@ namespace Crispin.Tests.Handlers.Scenarios
 	{
 		private string _newName;
 
-		public override async Task InitializeAsync()
+		protected override async Task<RenameToggleRequest> When()
 		{
 			await CreateToggle();
 			_newName = Guid.NewGuid().ToString();
 
-			await Send(new RenameToggleRequest(Editor, ToggleLocator.Create(ToggleID), _newName));
+			return new RenameToggleRequest(Editor, Locator, _newName);
 		}
 
 		[Fact]

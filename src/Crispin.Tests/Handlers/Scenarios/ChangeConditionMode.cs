@@ -7,10 +7,10 @@ namespace Crispin.Tests.Handlers.Scenarios
 {
 	public class ChangeConditionMode : HandlerPipelineTest<ChangeConditionModeRequest, ChangeConditionModeResponse>
 	{
-		public override async Task InitializeAsync()
+		protected override async Task<ChangeConditionModeRequest> When()
 		{
 			await CreateToggle();
-			await Send(new ChangeConditionModeRequest(Editor, ToggleLocator.Create(ToggleID), ConditionModes.Any));
+			return new ChangeConditionModeRequest(Editor, Locator, ConditionModes.Any);
 		}
 
 		[Fact]

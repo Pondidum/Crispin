@@ -9,14 +9,14 @@ namespace Crispin.Tests.Handlers.Scenarios
 {
 	public class AddCondition : HandlerPipelineTest<AddToggleConditionRequest, AddToggleConditionResponse>
 	{
-		public override async Task InitializeAsync()
+		protected override async Task<AddToggleConditionRequest> When()
 		{
 			await CreateToggle();
 
-			await Send(new AddToggleConditionRequest(Editor, ToggleLocator.Create(ToggleID), new Dictionary<string, object>
+			return new AddToggleConditionRequest(Editor, Locator, new Dictionary<string, object>
 			{
 				{ "type", "enabled" }
-			}));
+			});
 		}
 
 		[Fact]

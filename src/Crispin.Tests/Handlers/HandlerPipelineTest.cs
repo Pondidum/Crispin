@@ -14,39 +14,57 @@ namespace Crispin.Tests.Handlers
 	public abstract class HandlerPipelineTest<TRequest, TResponse> : IAsyncLifetime
 		where TRequest : IRequest<TResponse>
 	{
-		protected InMemoryStorage Storage { get; }
 		protected EditorID Editor { get; }
 		protected ToggleID ToggleID { get; }
+		protected ToggleLocator Locator => ToggleLocator.Create(ToggleID);
 
 		protected Exception Exception { get; private set; }
 		protected TResponse Response { get; private set; }
 
 		private readonly IMediator _mediator;
+		private readonly InMemoryStorage _storage;
 
 		protected HandlerPipelineTest()
 		{
-			ToggleID = ToggleID.CreateNew();
-			Editor = EditorID.Parse("me");
-			Storage = new InMemoryStorage();
-			Storage.RegisterAggregate<ToggleID, Toggle>();
-			Storage.RegisterProjection<ToggleView>();
+			_storage = new InMemoryStorage();
+			_storage.RegisterAggregate<ToggleID, Toggle>();
+			_storage.RegisterProjection<ToggleView>();
 
 			var container = new Container(_ =>
 			{
 				_.IncludeRegistry<MediatrRegistry>();
 
-				_.For<IStorage>().Use(Storage);
+				_.For<IStorage>().Use(_storage);
 				_.For<IStorageSession>().Use(c => c.GetInstance<IStorage>().CreateSession()).Scoped();
 				_.For<ILoggerFactory>().Use(Substitute.For<ILoggerFactory>());
 				_.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 			});
 
 			_mediator = container.GetInstance<IMediator>();
+
+			ToggleID = ToggleID.CreateNew();
+			Editor = EditorID.Parse("me");
 		}
+
+		public async Task InitializeAsync()
+		{
+			var request = await When();
+
+			try
+			{
+				Response = await _mediator.Send(request);
+			}
+			catch (Exception e)
+			{
+				Exception = e;
+			}
+		}
+
+		protected abstract Task<TRequest> When();
 
 		protected async Task CreateToggle(Action<Toggle> setup = null)
 		{
-			using (var session = Storage.CreateSession())
+			using (var session = _storage.CreateSession())
 			{
 				var toggle = Toggle.CreateNew(
 					Editor,
@@ -60,28 +78,13 @@ namespace Crispin.Tests.Handlers
 			}
 		}
 
-		protected async Task<TResponse> Send(TRequest message)
-		{
-			try
-			{
-				return Response = await _mediator.Send(message);
-			}
-			catch (Exception e)
-			{
-				Exception = e;
-				return default(TResponse);
-			}
-		}
-
 		protected async Task<Toggle> Read(ToggleID toggleID)
 		{
-			using (var session = Storage.CreateSession())
-			{
+			using (var session = _storage.CreateSession())
 				return await session.LoadAggregate<Toggle>(toggleID);
-			}
 		}
 
-		public virtual Task InitializeAsync() => CreateToggle();
-		public virtual Task DisposeAsync() => Task.CompletedTask;
+
+		public Task DisposeAsync() => Task.CompletedTask;
 	}
 }
