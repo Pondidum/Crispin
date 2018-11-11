@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Crispin.Infrastructure.Storage
 {
@@ -7,13 +9,13 @@ namespace Crispin.Infrastructure.Storage
 	{
 		private readonly Func<object> _createBlank;
 		private readonly Aggregator _aggregator;
-		private Dictionary<object, object> _items;
+		private ConcurrentDictionary<object, object> _items;
 
 		public Projector(Type projection, Func<object> createBlank)
 		{
 			_createBlank = createBlank;
 			_aggregator = new Aggregator(projection);
-			_items = new Dictionary<object, object>();
+			_items = new ConcurrentDictionary<object, object>();
 			For = projection;
 		}
 
@@ -21,15 +23,14 @@ namespace Crispin.Infrastructure.Storage
 
 		public void Apply(IEvent @event)
 		{
-			object aggregate;
-
-			if (_items.TryGetValue(@event.AggregateID, out aggregate) == false)
-				_items[@event.AggregateID] = aggregate = _createBlank();
+			var aggregate = _items.GetOrAdd(@event.AggregateID, key => _createBlank());
+//			if (_items.TryGetValue(@event.AggregateID, out aggregate) == false)
+//				_items[@event.AggregateID] = aggregate = _createBlank();
 
 			@event.Apply(aggregate, _aggregator);
 		}
 
-		public Dictionary<object, object> ToMemento() => _items;
-		public void FromMemento(Dictionary<object, object> items) => _items = items;
+		public Dictionary<object, object> ToMemento() => _items.ToDictionary(x => x.Key, x => x.Value);
+		public void FromMemento(Dictionary<object, object> items) => _items = new ConcurrentDictionary<object, object>(items);
 	}
 }
