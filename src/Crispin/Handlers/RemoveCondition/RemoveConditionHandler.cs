@@ -24,6 +24,7 @@ namespace Crispin.Handlers.RemoveCondition
 
 			return new RemoveToggleConditionResponse
 			{
+				ToggleID = toggle.ID,
 				ConditionMode = toggle.ConditionMode,
 				Conditions = toggle.Conditions
 			};

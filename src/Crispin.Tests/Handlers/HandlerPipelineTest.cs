@@ -44,15 +44,19 @@ namespace Crispin.Tests.Handlers
 			_mediator = container.GetInstance<IMediator>();
 		}
 
-		protected async Task CreateToggle()
+		protected async Task CreateToggle(Action<Toggle> setup = null)
 		{
 			using (var session = Storage.CreateSession())
 			{
-				await session.Save(Toggle.CreateNew(
+				var toggle = Toggle.CreateNew(
 					Editor,
 					"Test Toggle One",
 					"Some toggle description goes here",
-					ToggleID));
+					ToggleID);
+
+				setup?.Invoke(toggle);
+
+				await session.Save(toggle);
 			}
 		}
 
