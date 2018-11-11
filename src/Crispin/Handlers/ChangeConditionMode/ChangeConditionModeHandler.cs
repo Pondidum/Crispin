@@ -27,6 +27,7 @@ namespace Crispin.Handlers.ChangeConditionMode
 
 			return new ChangeConditionModeResponse
 			{
+				ToggleID = toggle.ID,
 				ConditionMode = toggle.ConditionMode,
 				Conditions = toggle.Conditions
 			};

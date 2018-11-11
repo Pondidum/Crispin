@@ -14,14 +14,18 @@ namespace Crispin.Tests.Handlers
 	public abstract class HandlerPipelineTest<TRequest, TResponse> : IAsyncLifetime
 		where TRequest : IRequest<TResponse>
 	{
-		protected TResponse Response { get; set; }
 		protected InMemoryStorage Storage { get; }
 		protected EditorID Editor { get; }
+		protected ToggleID ToggleID { get; }
+
+		protected Exception Exception { get; private set; }
+		protected TResponse Response { get; private set; }
 
 		private readonly IMediator _mediator;
 
 		protected HandlerPipelineTest()
 		{
+			ToggleID = ToggleID.CreateNew();
 			Editor = EditorID.Parse("me");
 			Storage = new InMemoryStorage();
 			Storage.RegisterAggregate<ToggleID, Toggle>();
@@ -40,20 +44,30 @@ namespace Crispin.Tests.Handlers
 			_mediator = container.GetInstance<IMediator>();
 		}
 
-		protected async Task<ToggleID> CreateToggle(Action<Toggle> callback = null)
+		protected async Task CreateToggle()
 		{
 			using (var session = Storage.CreateSession())
 			{
-				var toggle = Toggle.CreateNew(Editor, "Test Toggle One", "Some toggle description goes here");
-				callback?.Invoke(toggle);
-
-				await session.Save(toggle);
-
-				return toggle.ID;
+				await session.Save(Toggle.CreateNew(
+					Editor,
+					"Test Toggle One",
+					"Some toggle description goes here",
+					ToggleID));
 			}
 		}
 
-		protected async Task<TResponse> Send(TRequest message) => Response = await _mediator.Send(message);
+		protected async Task<TResponse> Send(TRequest message)
+		{
+			try
+			{
+				return Response = await _mediator.Send(message);
+			}
+			catch (Exception e)
+			{
+				Exception = e;
+				return default(TResponse);
+			}
+		}
 
 		protected async Task<Toggle> Read(ToggleID toggleID)
 		{
@@ -63,7 +77,7 @@ namespace Crispin.Tests.Handlers
 			}
 		}
 
-		public virtual Task InitializeAsync() => Task.CompletedTask;
+		public virtual Task InitializeAsync() => CreateToggle();
 		public virtual Task DisposeAsync() => Task.CompletedTask;
 	}
 }
