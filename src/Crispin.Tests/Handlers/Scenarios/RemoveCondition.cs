@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class RemoveCondition : HandlerPipelineTest<RemoveToggleConditionRequest, RemoveToggleConditionResponse>
+	public class RemoveCondition : HandlerTest<RemoveToggleConditionRequest, RemoveToggleConditionResponse>
 	{
 		private static Dictionary<string, object> Type(string type) => new Dictionary<string, object>
 		{

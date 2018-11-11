@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class CreatingToggle : HandlerPipelineTest<CreateToggleRequest, CreateTogglesResponse>
+	public class CreatingToggle : HandlerTest<CreateToggleRequest, CreateTogglesResponse>
 	{
 		protected override Task<CreateToggleRequest> When()
 		{

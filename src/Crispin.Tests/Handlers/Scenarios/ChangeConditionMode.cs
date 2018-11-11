@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class ChangeConditionMode : HandlerPipelineTest<ChangeConditionModeRequest, ChangeConditionModeResponse>
+	public class ChangeConditionMode : HandlerTest<ChangeConditionModeRequest, ChangeConditionModeResponse>
 	{
 		protected override async Task<ChangeConditionModeRequest> When()
 		{

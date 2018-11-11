@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class AddConditionWithInvalidType : HandlerPipelineTest<AddToggleConditionRequest, AddToggleConditionResponse>
+	public class AddConditionWithInvalidType : HandlerTest<AddToggleConditionRequest, AddToggleConditionResponse>
 	{
 		protected override async Task<AddToggleConditionRequest> When()
 		{

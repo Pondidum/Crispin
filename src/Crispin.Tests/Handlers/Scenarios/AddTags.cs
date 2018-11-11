@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class AddTags : HandlerPipelineTest<AddToggleTagRequest, UpdateToggleTagsResponse>
+	public class AddTags : HandlerTest<AddToggleTagRequest, UpdateToggleTagsResponse>
 	{
 		protected override async Task<AddToggleTagRequest> When()
 		{

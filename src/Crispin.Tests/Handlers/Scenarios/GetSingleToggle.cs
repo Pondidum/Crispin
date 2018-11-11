@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class GetSingleToggle : HandlerPipelineTest<GetToggleRequest, GetToggleResponse>
+	public class GetSingleToggle : HandlerTest<GetToggleRequest, GetToggleResponse>
 	{
 		protected override async Task<GetToggleRequest> When()
 		{

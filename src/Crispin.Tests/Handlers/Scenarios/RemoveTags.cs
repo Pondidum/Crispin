@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class RemoveTags : HandlerPipelineTest<RemoveToggleTagRequest, UpdateToggleTagsResponse>
+	public class RemoveTags : HandlerTest<RemoveToggleTagRequest, UpdateToggleTagsResponse>
 	{
 		protected override async Task<RemoveToggleTagRequest> When()
 		{

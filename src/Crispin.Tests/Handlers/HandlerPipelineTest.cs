@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers
 {
-	public abstract class HandlerPipelineTest<TRequest, TResponse> : IAsyncLifetime
+	public abstract class HandlerTest<TRequest, TResponse> : IAsyncLifetime
 		where TRequest : IRequest<TResponse>
 	{
 		protected EditorID Editor { get; }
@@ -23,14 +23,15 @@ namespace Crispin.Tests.Handlers
 
 		private readonly IMediator _mediator;
 		private readonly InMemoryStorage _storage;
+		private readonly Container _container;
 
-		protected HandlerPipelineTest()
+		protected HandlerTest()
 		{
 			_storage = new InMemoryStorage();
 			_storage.RegisterAggregate<ToggleID, Toggle>();
 			_storage.RegisterProjection<ToggleView>();
 
-			var container = new Container(_ =>
+			_container = new Container(_ =>
 			{
 				_.IncludeRegistry<MediatrRegistry>();
 
@@ -40,7 +41,7 @@ namespace Crispin.Tests.Handlers
 				_.For(typeof(ILogger<>)).Use(typeof(Logger<>));
 			});
 
-			_mediator = container.GetInstance<IMediator>();
+			_mediator = _container.GetInstance<IMediator>();
 
 			ToggleID = ToggleID.CreateNew();
 			Editor = EditorID.Parse("me");
@@ -85,7 +86,10 @@ namespace Crispin.Tests.Handlers
 				return await session.LoadAggregate<Toggle>(toggleID);
 		}
 
-
-		public Task DisposeAsync() => Task.CompletedTask;
+		public Task DisposeAsync()
+		{
+			_container.Dispose();
+			return Task.CompletedTask;
+		}
 	}
 }

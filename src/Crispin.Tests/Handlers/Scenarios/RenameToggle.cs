@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Crispin.Tests.Handlers.Scenarios
 {
-	public class RenameToggle : HandlerPipelineTest<RenameToggleRequest, RenameToggleResponse>
+	public class RenameToggle : HandlerTest<RenameToggleRequest, RenameToggleResponse>
 	{
 		private string _newName;
 
