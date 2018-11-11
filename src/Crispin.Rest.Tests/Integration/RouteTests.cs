@@ -25,6 +25,18 @@ namespace Crispin.Rest.Tests.Integration
 		[InlineData("GET", "/api/toggles/id/{id}")]
 		[InlineData("GET", "/api/toggles/name/{name}")]
 		//
+		[InlineData("GET", "/api/toggles/id/{id}/name")]
+		[InlineData("GET", "/api/toggles/name/{name}/name")]
+		//
+		[InlineData("PUT", "/api/toggles/id/{id}/name", "{\"name\":\"wat\"}")]
+		[InlineData("PUT", "/api/toggles/name/{name}/name", "{\"name\":\"wat\"}")]
+		//
+		[InlineData("GET", "/api/toggles/id/{id}/description")]
+		[InlineData("GET", "/api/toggles/name/{name}/description")]
+		//
+		[InlineData("PUT", "/api/toggles/id/{id}/description", "{\"description\":\"wat\"}")]
+		[InlineData("PUT", "/api/toggles/name/{name}/description", "{\"description\":\"wat\"}")]
+		//
 		[InlineData("GET", "/api/toggles/id/{id}/tags")]
 		[InlineData("GET", "/api/toggles/name/{name}/tags")]
 		//
@@ -39,12 +51,15 @@ namespace Crispin.Rest.Tests.Integration
 		//
 		[InlineData("GET", "/api/toggles/id/{id}/conditions/0")]
 		[InlineData("GET", "/api/toggles/name/{name}/conditions/0")]
-		public Task Route_works(string method, string url) => _system.Scenario(_ =>
+		public Task Route_works(string method, string url, string body = null) => _system.Scenario(_ =>
 		{
-			url = url.Replace("{id}", _toggle.ID.ToString()).Replace("{name}", _toggle.Name);
-
 			_.Context.HttpMethod(method);
-			_.Context.RelativeUrl(url);
+			_.Context.RelativeUrl(url
+				.Replace("{id}", _toggle.ID.ToString())
+				.Replace("{name}", _toggle.Name));
+
+			if (body != null)
+				_.Body.JsonInputIs(body);
 
 			_.StatusCodeShouldBeOk();
 			_.ContentTypeShouldBe("application/json; charset=utf-8");
