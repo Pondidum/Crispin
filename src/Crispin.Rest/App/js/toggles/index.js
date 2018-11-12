@@ -8,7 +8,7 @@ import Details from "./details";
 
 const Toggles = ({ match }) => (
   <Row>
-    <Col sm="3" md="2">
+    <Col sm="3" md="2" className="sidebar">
       <ToggleNavigation match={match} />
     </Col>
     <Col sm="9" md="10">

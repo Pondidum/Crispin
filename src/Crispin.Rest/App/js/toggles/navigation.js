@@ -11,7 +11,7 @@ const mapPropsFromState = (state, ownProps) => {
 };
 
 const Navigation = ({ match, toggles }) => (
-  <Nav vertical>
+  <Nav vertical className="sidebar-sticky">
     {toggles.map(t => (
       <MenuEntry key={t.id} match={match} id={t.id} name={t.name} />
     ))}
