@@ -24,7 +24,7 @@ namespace Crispin.Handlers.Rename
 
 			return new RenameToggleResponse
 			{
-				ToggeleID = toggle.ID,
+				ToggleID = toggle.ID,
 				Name = toggle.Name
 			};
 		}

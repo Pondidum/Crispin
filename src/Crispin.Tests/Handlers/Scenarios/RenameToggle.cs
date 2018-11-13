@@ -19,7 +19,7 @@ namespace Crispin.Tests.Handlers.Scenarios
 		}
 
 		[Fact]
-		public void The_response_has_the_toggle_id() => Response.ToggeleID.ShouldBe(ToggleID);
+		public void The_response_has_the_toggle_id() => Response.ToggleID.ShouldBe(ToggleID);
 
 		[Fact]
 		public void The_response_has_the_toggle_name() => Response.Name.ShouldBe(_newName);
