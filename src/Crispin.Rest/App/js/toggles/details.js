@@ -6,7 +6,7 @@ import ToggleGraph from "./graph";
 import TextEditor from "./text-editor";
 import ConditionEditor from "./condition-editor";
 
-import { updateName } from "./actions";
+import { updateName, updateDescription } from "./actions";
 
 const mapStateToProps = (state, ownProps) => {
   const match = ownProps.match;
@@ -17,7 +17,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateName: (id, newName) => dispatch(updateName(id, newName))
+    updateName: (id, newName) => dispatch(updateName(id, newName)),
+    updateDescription: (id, newDescription) =>
+      dispatch(updateDescription(id, newDescription))
   };
 };
 
@@ -26,7 +28,7 @@ const connector = connect(
   mapDispatchToProps
 );
 
-const Details = ({ toggle, updateName }) => {
+const Details = ({ toggle, updateName, updateDescription }) => {
   if (!toggle) {
     return <div />;
   }
@@ -38,7 +40,11 @@ const Details = ({ toggle, updateName }) => {
           value={toggle.name}
           onAcceptEdit={value => updateName(toggle.id, value)}
         />
-        <TextEditor title="Description" value={toggle.description} />
+        <TextEditor
+          title="Description"
+          value={toggle.description}
+          onAcceptEdit={value => updateDescription(toggle.id, value)}
+        />
         <ConditionEditor />
       </Col>
       <Col md="6">

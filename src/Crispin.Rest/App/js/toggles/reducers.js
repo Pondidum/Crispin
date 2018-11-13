@@ -2,7 +2,9 @@ import {
   ALL_TOGGLES_REQUESTED,
   ALL_TOGGLES_RECEIVED,
   UPDATE_TOGGLE_NAME_REQUESTED,
-  UPDATE_TOGGLE_NAME_COMPLETED
+  UPDATE_TOGGLE_NAME_COMPLETED,
+  UPDATE_TOGGLE_DESCRIPTION_COMPLETED,
+  UPDATE_TOGGLE_DESCRIPTION_REQUESTED
 } from "./actions";
 
 const DefaultState = {
@@ -16,6 +18,10 @@ const reduceToggle = (state, action) => {
       return { ...state, name: action.newName, updating: true };
     case UPDATE_TOGGLE_NAME_COMPLETED:
       return { ...state, name: action.newName, updating: false };
+    case UPDATE_TOGGLE_DESCRIPTION_REQUESTED:
+      return { ...state, description: action.newDescription, updating: true };
+    case UPDATE_TOGGLE_DESCRIPTION_COMPLETED:
+      return { ...state, description: action.newDescription, updating: false };
     default:
       return state;
   }
@@ -24,7 +30,9 @@ const reduceToggle = (state, action) => {
 const reduceArray = (state, action) => {
   switch (action.type) {
     case UPDATE_TOGGLE_NAME_REQUESTED:
-    case UPDATE_TOGGLE_NAME_COMPLETED: {
+    case UPDATE_TOGGLE_NAME_COMPLETED:
+    case UPDATE_TOGGLE_DESCRIPTION_REQUESTED:
+    case UPDATE_TOGGLE_DESCRIPTION_COMPLETED: {
       const index = state.findIndex(t => t.id === action.toggleID);
       const newToggle = reduceToggle(state[index], action);
 
@@ -49,12 +57,19 @@ const reducer = (state = DefaultState, action) => {
     case ALL_TOGGLES_RECEIVED:
       return {
         ...state,
-        fetching: false,
+        isFetching: false,
         all: action.toggles
       };
 
     case UPDATE_TOGGLE_NAME_COMPLETED:
     case UPDATE_TOGGLE_NAME_REQUESTED:
+      return {
+        ...state,
+        all: reduceArray(state.all, action)
+      };
+
+    case UPDATE_TOGGLE_DESCRIPTION_COMPLETED:
+    case UPDATE_TOGGLE_DESCRIPTION_REQUESTED:
       return {
         ...state,
         all: reduceArray(state.all, action)
