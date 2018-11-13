@@ -17,9 +17,10 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateName: (id, newName) => dispatch(updateName(id, newName)),
+    updateName: (id, newName) =>
+      dispatch(updateName({ toggleID: id, name: newName })),
     updateDescription: (id, newDescription) =>
-      dispatch(updateDescription(id, newDescription))
+      dispatch(updateDescription({ toggleID: id, description: newDescription }))
   };
 };
 
