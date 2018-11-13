@@ -53,6 +53,7 @@ const reducer = (state = DefaultState, action) => {
         all: action.toggles
       };
 
+    case UPDATE_TOGGLE_NAME_COMPLETED:
     case UPDATE_TOGGLE_NAME_REQUESTED:
       return {
         ...state,
