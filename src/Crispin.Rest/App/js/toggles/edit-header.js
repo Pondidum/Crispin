@@ -13,7 +13,7 @@ const EditHeader = ({ editing, title, startEdit, cancelEdit, acceptEdit }) => {
       onClick={e => wrap(e, startEdit)}
       className="ml-1 align-text-bottom"
     >
-      <Glyph name="pencil" />
+      <Glyph name="pencil-alt" />
     </a>
   );
 

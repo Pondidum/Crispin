@@ -1,11 +1,5 @@
 import React from "react";
-import url from "../../img/open-iconic.min.svg";
-import "./glyph.css";
+import "@fortawesome/fontawesome-free/css/all.css";
 
-const Glyph = ({ name }) => (
-  <svg viewBox="0 0 8 8" className="glyph">
-    <use href={url + "#" + name} />
-  </svg>
-);
-
+const Glyph = ({ name }) => <span class={"glyph fas fa-" + name} />;
 export default Glyph;
