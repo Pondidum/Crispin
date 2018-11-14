@@ -1,6 +1,7 @@
 import React from "react";
 import { Nav, NavItem } from "reactstrap";
 import { NavLink } from "react-router-dom";
+import Glyph from "../util/Glyph";
 
 const Navigation = () => (
   <nav className="col-md-1 navbar-dark bg-dark sidebar">
@@ -8,12 +9,12 @@ const Navigation = () => (
       <Nav className="ml-auto" className="navbar-nav" vertical>
         <NavItem>
           <NavLink className="nav-link" to="/toggles/">
-            Toggles
+            <Glyph name="toggle-on" alt="Toggles" />
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink className="nav-link" to="/users/">
-            Users
+            <Glyph name="users" alt="Users" />
           </NavLink>
         </NavItem>
       </Nav>
