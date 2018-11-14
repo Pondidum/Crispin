@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import { Container, Col, Row } from "reactstrap";
+import { Row } from "reactstrap";
 import { Provider } from "react-redux";
 
 import Navigation from "./navigation";
@@ -13,8 +13,12 @@ const AppRouter = ({ store }) => (
   <Provider store={store}>
     <Router>
       <Row>
-        <Navigation />
-        <main className="col-sm-11" role="main">
+        <div className="col col-md-05 sidebar">
+          <div className="sidebar-sticky bg-dark">
+            <Navigation />
+          </div>
+        </div>
+        <main className="col col-md-115" role="main">
           <Route path="/" exact component={Dashboard} />
           <Route path="/toggles/" component={Toggles} />
           <Route path="/users/" component={Users} />
