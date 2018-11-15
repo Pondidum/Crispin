@@ -13,9 +13,11 @@ const mapPropsFromState = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  refresh: () => dispatch(fetchAllToggles())
-});
+const mapDispatchToProps = dispatch => {
+  return {
+    refresh: () => dispatch(fetchAllToggles())
+  };
+};
 
 const connector = connect(
   mapPropsFromState,

@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 import Glyph from "../util/Glyph";
 
 const Navigation = () => (
-  <nav class="navbar navbar-dark bg-dark justify-content-center">
-    <ul class="navbar-nav">
+  <nav className="navbar navbar-dark bg-dark justify-content-center">
+    <ul className="navbar-nav">
       <NavItem>
         <NavLink className="nav-link" to="/toggles/">
           <Glyph name="toggle-on" alt="Toggles" />
