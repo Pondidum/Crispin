@@ -23,6 +23,10 @@
   }
 }
 
+.bg-darker {
+  background-color: #292e33 !important;
+}
+
 .col-md-05 {
   -ms-flex: 0 0 4.166667%;
   flex: 0 0 4.166667%;

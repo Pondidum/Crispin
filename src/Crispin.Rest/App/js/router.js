@@ -14,7 +14,7 @@ const AppRouter = ({ store }) => (
     <Router>
       <Row>
         <div className="col col-md-05 sidebar">
-          <div className="sidebar-sticky bg-dark">
+          <div className="sidebar-sticky bg-darker">
             <Navigation />
           </div>
         </div>
