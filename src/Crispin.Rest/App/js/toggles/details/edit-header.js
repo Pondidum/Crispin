@@ -1,5 +1,5 @@
 import React from "react";
-import Glyph from "../util/glyph";
+import Glyph from "../../util/glyph";
 
 const EditHeader = ({ editing, title, startEdit, cancelEdit, acceptEdit }) => {
   const wrap = (e, action) => {

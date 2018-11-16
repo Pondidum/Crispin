@@ -6,7 +6,7 @@ import ToggleGraph from "./graph";
 import TextEditor from "./text-editor";
 import ConditionEditor from "./condition-editor";
 
-import { updateName, updateDescription } from "./actions";
+import { updateName, updateDescription } from "../actions";
 
 const mapStateToProps = (state, ownProps) => {
   const match = ownProps.match;

@@ -2,9 +2,9 @@ import { connect } from "react-redux";
 import React from "react";
 import { Col, Nav } from "reactstrap";
 import MenuEntry from "./menu-entry";
-import Glyph from "../util/glyph";
+import Glyph from "../../util/glyph";
 
-import { fetchAllToggles } from "./actions";
+import { fetchAllToggles } from "../actions";
 
 const mapPropsFromState = (state, ownProps) => {
   return {

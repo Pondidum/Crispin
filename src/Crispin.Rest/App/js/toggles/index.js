@@ -2,8 +2,7 @@ import React from "react";
 import { Col, Row } from "reactstrap";
 import { Route } from "react-router-dom";
 
-import ToggleNavigation from "./navigation";
-
+import ToggleNavigation from "./toggle-list";
 import Details from "./details";
 
 const Toggles = ({ match }) => (
