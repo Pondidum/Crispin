@@ -1,4 +1,8 @@
 .toggle-list-header a {
   padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0rem;
+}
+
+.toggle-list-header .updating {
+  height: 0.25rem;
 }

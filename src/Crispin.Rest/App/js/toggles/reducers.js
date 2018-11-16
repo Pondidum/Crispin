@@ -8,7 +8,7 @@ import {
 } from "./actions";
 
 const DefaultState = {
-  isFetching: false,
+  updating: false,
   all: []
 };
 
@@ -41,13 +41,13 @@ const reducer = (state = DefaultState, action) => {
     case FETCH_ALL_TOGGLES_STARTED:
       return {
         ...state,
-        isFetching: true
+        updating: true
       };
 
     case FETCH_ALL_TOGGLES_FINISHED:
       return {
         ...state,
-        isFetching: false,
+        updating: false,
         all: action.toggles
       };
 
