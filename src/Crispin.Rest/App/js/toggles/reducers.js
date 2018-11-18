@@ -4,7 +4,9 @@ import {
   UPDATE_TOGGLE_NAME_STARTED,
   UPDATE_TOGGLE_NAME_FINISHED,
   UPDATE_TOGGLE_DESCRIPTION_STARTED,
-  UPDATE_TOGGLE_DESCRIPTION_FINISHED
+  UPDATE_TOGGLE_DESCRIPTION_FINISHED,
+  CREATE_TOGGLE_STARTED,
+  CREATE_TOGGLE_FINISHED
 } from "./actions";
 
 const DefaultState = {
@@ -58,6 +60,19 @@ const reducer = (state = DefaultState, action) => {
       return {
         ...state,
         all: reduceArray(state.all, action)
+      };
+
+    case CREATE_TOGGLE_STARTED:
+      return {
+        ...state,
+        updating: true
+      };
+
+    case CREATE_TOGGLE_FINISHED:
+      return {
+        ...state,
+        updating: false,
+        all: [...state.all, action]
       };
 
     default:

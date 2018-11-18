@@ -53,7 +53,7 @@ class Navigation extends Component {
       <Col sm="3" md="2" className="sidebar">
         <Header
           updating={this.props.updating}
-          handleCreate={() => this.createDialog.current.toggle()}
+          handleCreate={() => this.createDialog.current.show()}
           handleRefresh={handleRefresh}
         />
         <CreateToggleDialog ref={this.createDialog} />

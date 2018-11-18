@@ -1,41 +1,44 @@
 import React, { Component } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
+import CreateToggleForm from "./create-toggle-form";
+import CreateButton from "./create-button";
+
 class CreateToggleDialog extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isOpen: false
-    };
-
-    this.toggle = this.toggle.bind(this);
+    this.state = { isOpen: false, name: "", description: "" };
+    this.show = this.show.bind(this);
   }
 
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
+  show() {
+    this.setState({ isOpen: true });
   }
 
   render() {
+    const toggle = () => this.setState({ isOpen: !this.state.isOpen });
+
+    const clear = () => {
+      this.setState({ name: "", description: "" });
+    };
+
     return (
-      <Modal isOpen={this.state.isOpen} toggle={this.toggle}>
-        <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+      <Modal isOpen={this.state.isOpen} toggle={toggle}>
+        <ModalHeader toggle={toggle}>Create a new Toggle</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          <CreateToggleForm onChange={values => this.setState(values)} />
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={this.toggle}>
-            Create Toggle
+          <Button color="danger" className="mr-auto" outline onClick={clear}>
+            Clear
           </Button>{" "}
-          <Button color="secondary" onClick={this.toggle}>
+          <CreateButton
+            name={this.state.name}
+            description={this.state.description}
+            onCreate={toggle}
+          />{" "}
+          <Button color="secondary" outline onClick={toggle}>
             Cancel
           </Button>
         </ModalFooter>

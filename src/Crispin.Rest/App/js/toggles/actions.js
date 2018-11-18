@@ -29,6 +29,14 @@ const desc = makeAsync(
     }).then(response => response.json())
 );
 
+const create = makeAsync("CREATE_TOGGLE", ({ name, description }) =>
+  fetch(`/api/toggles`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description })
+  }).then(response => response.json())
+);
+
 export const FETCH_ALL_TOGGLES_STARTED = allToggles.started;
 export const FETCH_ALL_TOGGLES_FINISHED = allToggles.finished;
 export const fetchAllToggles = allToggles.action;
@@ -40,3 +48,7 @@ export const updateName = updateToggleName.action;
 export const UPDATE_TOGGLE_DESCRIPTION_STARTED = desc.started;
 export const UPDATE_TOGGLE_DESCRIPTION_FINISHED = desc.finished;
 export const updateDescription = desc.action;
+
+export const CREATE_TOGGLE_STARTED = create.started;
+export const CREATE_TOGGLE_FINISHED = create.finished;
+export const createToggle = create.action;
