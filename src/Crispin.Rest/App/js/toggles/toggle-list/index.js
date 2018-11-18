@@ -4,6 +4,7 @@ import { Col, Nav } from "reactstrap";
 
 import Header from "./header";
 import Filter from "./filter";
+import CreateToggleDialog from "../create";
 import MenuEntry from "./menu-entry";
 
 import "./toggle-list.css";
@@ -33,6 +34,8 @@ class Navigation extends Component {
   constructor(props) {
     super(props);
     this.state = { filter: "" };
+
+    this.createDialog = React.createRef();
   }
 
   render() {
@@ -50,9 +53,10 @@ class Navigation extends Component {
       <Col sm="3" md="2" className="sidebar">
         <Header
           updating={this.props.updating}
-          handleCreate={handleRefresh}
+          handleCreate={() => this.createDialog.current.toggle()}
           handleRefresh={handleRefresh}
         />
+        <CreateToggleDialog ref={this.createDialog} />
         <Filter onFilterChanged={value => this.setState({ filter: value })} />
         <Nav vertical className="sidebar-sticky">
           {filteredToggles.map(t => (
