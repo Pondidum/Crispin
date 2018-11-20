@@ -36,3 +36,34 @@ describe("fetching all toggles", () => {
     expect(state.all).toEqual(["three", "four", "five"]);
   });
 });
+
+describe("create toggle", () => {
+  it("should mark the collection as updating when starting", () => {
+    const initialState = freeze({ updating: false, all: [] });
+    const state = reducer(initialState, { type: CREATE_TOGGLE_STARTED });
+    expect(state.updating).toBe(true);
+  });
+
+  it("should mark the collection as updating when finishing", () => {
+    const initialState = freeze({ updating: true, all: [] });
+    const state = reducer(initialState, { type: CREATE_TOGGLE_FINISHED });
+    expect(state.updating).toBe(false);
+  });
+
+  it("should append the new toggle to the existing toggles", () => {
+    const initialState = freeze({
+      updating: true,
+      all: [{ name: "one" }, { name: "two" }]
+    });
+    const state = reducer(initialState, {
+      type: CREATE_TOGGLE_FINISHED,
+      name: "new"
+    });
+
+    expect(state.all).toEqual([
+      { name: "one" },
+      { name: "two" },
+      { name: "new" }
+    ]);
+  });
+});

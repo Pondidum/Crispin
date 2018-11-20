@@ -69,10 +69,11 @@ const reducer = (state = DefaultState, action) => {
       };
 
     case CREATE_TOGGLE_FINISHED:
+      const { type, ...toggle } = action;
       return {
         ...state,
         updating: false,
-        all: [...state.all, action]
+        all: [...state.all, toggle]
       };
 
     default:
