@@ -20,9 +20,9 @@ const reduceToggle = (state, action) => {
       return { ...state, name: action.name, updating: true };
     case UPDATE_TOGGLE_NAME_FINISHED:
       return { ...state, name: action.name, updating: false };
-    case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
-      return { ...state, description: action.description, updating: true };
     case UPDATE_TOGGLE_DESCRIPTION_STARTED:
+      return { ...state, description: action.description, updating: true };
+    case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
       return { ...state, description: action.description, updating: false };
     default:
       return state;

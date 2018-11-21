@@ -67,3 +67,87 @@ describe("create toggle", () => {
     ]);
   });
 });
+
+describe("updating a toggle name", () => {
+  let initialState;
+  beforeEach(
+    () =>
+      (initialState = freeze({
+        all: [
+          { id: 1, name: "one" },
+          { id: 2, name: "two" },
+          { id: 3, name: "three" }
+        ]
+      }))
+  );
+
+  it("should update the toggle name and set updating on", () => {
+    const state = reducer(initialState, {
+      type: UPDATE_TOGGLE_NAME_STARTED,
+      toggleID: 2,
+      name: "updated"
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one" },
+      { id: 2, name: "updated", updating: true },
+      { id: 3, name: "three" }
+    ]);
+  });
+
+  it("should update the toggle name and set updating off", () => {
+    const state = reducer(initialState, {
+      type: UPDATE_TOGGLE_NAME_FINISHED,
+      toggleID: 2,
+      name: "updated"
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one" },
+      { id: 2, name: "updated", updating: false },
+      { id: 3, name: "three" }
+    ]);
+  });
+});
+
+describe("updating a toggle description", () => {
+  let initialState;
+  beforeEach(
+    () =>
+      (initialState = freeze({
+        all: [
+          { id: 1, name: "one", description: "aaa" },
+          { id: 2, name: "two", description: "bbb" },
+          { id: 3, name: "three", description: "ccc" }
+        ]
+      }))
+  );
+
+  it("should update the toggle name and set updating on", () => {
+    const state = reducer(initialState, {
+      type: UPDATE_TOGGLE_DESCRIPTION_STARTED,
+      toggleID: 2,
+      description: "updated"
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", description: "aaa" },
+      { id: 2, name: "two", description: "updated", updating: true },
+      { id: 3, name: "three", description: "ccc" }
+    ]);
+  });
+
+  it("should update the toggle name and set updating off", () => {
+    const state = reducer(initialState, {
+      type: UPDATE_TOGGLE_DESCRIPTION_FINISHED,
+      toggleID: 2,
+      description: "updated"
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", description: "aaa" },
+      { id: 2, name: "two", description: "updated", updating: false },
+      { id: 3, name: "three", description: "ccc" }
+    ]);
+  });
+});
