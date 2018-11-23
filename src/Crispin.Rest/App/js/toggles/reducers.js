@@ -14,24 +14,24 @@ const DefaultState = {
   all: []
 };
 
-const reduceToggle = (state, action) => {
-  switch (action.type) {
+const reduceToggle = (state, type, payload) => {
+  switch (type) {
     case UPDATE_TOGGLE_NAME_STARTED:
-      return { ...state, name: action.name, updating: true };
+      return { ...state, name: payload.name, updating: true };
     case UPDATE_TOGGLE_NAME_FINISHED:
-      return { ...state, name: action.name, updating: false };
+      return { ...state, name: payload.name, updating: false };
     case UPDATE_TOGGLE_DESCRIPTION_STARTED:
-      return { ...state, description: action.description, updating: true };
+      return { ...state, description: payload.description, updating: true };
     case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
-      return { ...state, description: action.description, updating: false };
+      return { ...state, description: payload.description, updating: false };
     default:
       return state;
   }
 };
 
 const reduceArray = (state, action) => {
-  const index = state.findIndex(t => t.id === action.toggleID);
-  const newToggle = reduceToggle(state[index], action);
+  const index = state.findIndex(t => t.id === action.payload.toggleID);
+  const newToggle = reduceToggle(state[index], action.type, action.payload);
 
   return Object.assign([], state, {
     [index]: newToggle
@@ -50,7 +50,7 @@ const reducer = (state = DefaultState, action) => {
       return {
         ...state,
         updating: false,
-        all: action.toggles
+        all: action.payload
       };
 
     case UPDATE_TOGGLE_NAME_STARTED:
@@ -69,11 +69,10 @@ const reducer = (state = DefaultState, action) => {
       };
 
     case CREATE_TOGGLE_FINISHED:
-      const { type, ...toggle } = action;
       return {
         ...state,
         updating: false,
-        all: [...state.all, toggle]
+        all: [...state.all, action.payload]
       };
 
     default:

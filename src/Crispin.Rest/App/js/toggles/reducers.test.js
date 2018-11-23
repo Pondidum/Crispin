@@ -29,7 +29,7 @@ describe("fetching all toggles", () => {
     const initialState = freeze({ all: ["one", "two"] });
     const event = freeze({
       type: FETCH_ALL_TOGGLES_FINISHED,
-      toggles: ["three", "four", "five"]
+      payload: ["three", "four", "five"]
     });
     const state = reducer(initialState, event);
 
@@ -57,7 +57,7 @@ describe("create toggle", () => {
     });
     const state = reducer(initialState, {
       type: CREATE_TOGGLE_FINISHED,
-      name: "new"
+      payload: { name: "new" }
     });
 
     expect(state.all).toEqual([
@@ -84,8 +84,7 @@ describe("updating a toggle name", () => {
   it("should update the toggle name and set updating on", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_NAME_STARTED,
-      toggleID: 2,
-      name: "updated"
+      payload: { toggleID: 2, name: "updated" }
     });
 
     expect(state.all).toEqual([
@@ -98,8 +97,7 @@ describe("updating a toggle name", () => {
   it("should update the toggle name and set updating off", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_NAME_FINISHED,
-      toggleID: 2,
-      name: "updated"
+      payload: { toggleID: 2, name: "updated" }
     });
 
     expect(state.all).toEqual([
@@ -126,8 +124,7 @@ describe("updating a toggle description", () => {
   it("should update the toggle name and set updating on", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_DESCRIPTION_STARTED,
-      toggleID: 2,
-      description: "updated"
+      payload: { toggleID: 2, description: "updated" }
     });
 
     expect(state.all).toEqual([
@@ -140,8 +137,7 @@ describe("updating a toggle description", () => {
   it("should update the toggle name and set updating off", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_DESCRIPTION_FINISHED,
-      toggleID: 2,
-      description: "updated"
+      payload: { toggleID: 2, description: "updated" }
     });
 
     expect(state.all).toEqual([

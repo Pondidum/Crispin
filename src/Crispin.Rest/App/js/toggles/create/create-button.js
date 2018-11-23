@@ -5,8 +5,7 @@ import { createToggle } from "../actions";
 
 const mapDispatchToProps = dispatch => {
   return {
-    createToggle: (name, description) =>
-      dispatch(createToggle({ name, description }))
+    createToggle: (name, desc) => dispatch(createToggle(name, desc))
   };
 };
 

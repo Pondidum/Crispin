@@ -1,54 +1,75 @@
-import "babel-polyfill";
-import makeAsync from "../util/async-action";
+const RSAA = "@@redux-api-middleware/RSAA";
 
-const allToggles = makeAsync("ALL_TOGGLES", () =>
-  fetch(`/api/toggles`)
-    .then(response => response.json())
-    .then(toggles => ({ toggles }))
-);
+export const FETCH_ALL_TOGGLES_STARTED = "FETCH_ALL_TOGGLES_STARTED";
+export const FETCH_ALL_TOGGLES_FINISHED = "FETCH_ALL_TOGGLES_FINISHED";
 
-const updateToggleName = makeAsync("UPDATE_TOGGLE_NAME", ({ toggleID, name }) =>
-  fetch(`/api/toggles/id/${toggleID}/name`, {
+export const fetchAllToggles = () => ({
+  [RSAA]: {
+    endpoint: "/api/toggles",
+    method: "GET",
+    types: [
+      FETCH_ALL_TOGGLES_STARTED,
+      FETCH_ALL_TOGGLES_FINISHED,
+      "FETCH_ALL_TOGGLES_FAILURE"
+    ]
+  }
+});
+
+export const UPDATE_TOGGLE_NAME_STARTED = "UPDATE_TOGGLE_NAME_STARTED";
+export const UPDATE_TOGGLE_NAME_FINISHED = "UPDATE_TOGGLE_NAME_FINISHED";
+
+export const updateName = (toggleID, name) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/name`,
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name: name })
-  }).then(response => response.json())
-);
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name }),
+    types: [
+      { type: UPDATE_TOGGLE_NAME_STARTED, payload: { toggleID, name } },
+      UPDATE_TOGGLE_NAME_FINISHED,
+      "UPDATE_TOGGLE_NAME_FAILURE"
+    ]
+  }
+});
 
-const desc = makeAsync(
-  "UPDATE_TOGGLE_DESCRIPTION",
-  ({ toggleID, description }) =>
-    fetch(`/api/toggles/id/${toggleID}/description`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
+export const UPDATE_TOGGLE_DESCRIPTION_STARTED =
+  "UPDATE_TOGGLE_DESCRIPTION_STARTED";
+export const UPDATE_TOGGLE_DESCRIPTION_FINISHED =
+  "UPDATE_TOGGLE_DESCRIPTION_FINISHED";
+
+export const updateDescription = (toggleID, description) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/description`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ description: description }),
+    types: [
+      {
+        type: UPDATE_TOGGLE_DESCRIPTION_STARTED,
+        payload: { toggleID, description }
       },
-      body: JSON.stringify({ description: description })
-    }).then(response => response.json())
-);
+      UPDATE_TOGGLE_DESCRIPTION_FINISHED,
+      "UPDATE_TOGGLE_DESCRIPTION_FAILURE"
+    ]
+  }
+});
 
-const create = makeAsync("CREATE_TOGGLE", ({ name, description }) =>
-  fetch(`/api/toggles`, {
+export const CREATE_TOGGLE_STARTED = "CREATE_TOGGLE_STARTED";
+export const CREATE_TOGGLE_FINISHED = "CREATE_TOGGLE_FINISHED";
+
+export const createToggle = (name, description) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, description })
-  }).then(response => response.json())
-);
-
-export const FETCH_ALL_TOGGLES_STARTED = allToggles.started;
-export const FETCH_ALL_TOGGLES_FINISHED = allToggles.finished;
-export const fetchAllToggles = allToggles.action;
-
-export const UPDATE_TOGGLE_NAME_STARTED = updateToggleName.started;
-export const UPDATE_TOGGLE_NAME_FINISHED = updateToggleName.finished;
-export const updateName = updateToggleName.action;
-
-export const UPDATE_TOGGLE_DESCRIPTION_STARTED = desc.started;
-export const UPDATE_TOGGLE_DESCRIPTION_FINISHED = desc.finished;
-export const updateDescription = desc.action;
-
-export const CREATE_TOGGLE_STARTED = create.started;
-export const CREATE_TOGGLE_FINISHED = create.finished;
-export const createToggle = create.action;
+    body: JSON.stringify({ name, description }),
+    types: [
+      {
+        type: CREATE_TOGGLE_STARTED,
+        payload: { name, description }
+      },
+      CREATE_TOGGLE_FINISHED,
+      "CREATE_TOGGLE_FAILURE"
+    ]
+  }
+});
