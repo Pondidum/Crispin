@@ -1,9 +1,8 @@
-import { connect } from "react-redux";
-import React, { Component } from "react";
-
+import React from "react";
 import CreateToggleDialog from "../create";
 import Navigation from "./navigation";
 
+import { connect } from "react-redux";
 import { fetchAllToggles } from "../actions";
 
 const mapPropsFromState = (state, ownProps) => {
@@ -25,41 +24,37 @@ const connector = connect(
   mapDispatchToProps
 );
 
-class ToggleNavigation extends Component {
-  constructor(props) {
-    super(props);
+const ToggleNavigation = ({ match, updating, toggles, refresh }) => {
+  const createDialog = React.createRef();
+  const buttons = [
+    {
+      glyph: "plus",
+      alt: "Create a new Toggle",
+      position: "left",
+      handler: () => createDialog.current.show()
+    },
+    {
+      glyph: "sync",
+      alt: "Refresh",
+      position: "right",
+      handler: () => refresh()
+    }
+  ];
 
-    this.createDialog = React.createRef();
-  }
+  const filterToggles = (toggle, filter) =>
+    toggle.name.toLowerCase().includes(filter);
 
-  render() {
-    const buttons = [
-      {
-        glyph: "plus",
-        alt: "Create a new Toggle",
-        position: "left",
-        handler: () => this.createDialog.current.show()
-      },
-      {
-        glyph: "sync",
-        alt: "Refresh",
-        position: "right",
-        handler: () => this.props.refresh()
-      }
-    ];
-
-    return (
-      <Navigation
-        match={this.props.match}
-        updating={this.props.updating}
-        headerButtons={buttons}
-        items={this.props.toggles}
-        where={(toggle, filter) => toggle.name.toLowerCase().includes(filter)}
-      >
-        <CreateToggleDialog ref={this.createDialog} />
-      </Navigation>
-    );
-  }
-}
+  return (
+    <Navigation
+      match={match}
+      updating={updating}
+      headerButtons={buttons}
+      items={toggles}
+      where={filterToggles}
+    >
+      <CreateToggleDialog ref={createDialog} />
+    </Navigation>
+  );
+};
 
 export default connector(ToggleNavigation);
