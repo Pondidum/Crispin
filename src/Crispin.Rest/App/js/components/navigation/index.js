@@ -5,7 +5,7 @@ import Header from "./header";
 import Filter from "./filter";
 import MenuEntry from "./menu-entry";
 
-import "./toggle-list.css";
+import "./navigation.css";
 
 class Navigation extends Component {
   constructor(props) {

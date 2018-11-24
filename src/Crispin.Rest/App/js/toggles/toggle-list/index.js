@@ -1,6 +1,6 @@
 import React from "react";
 import CreateToggleDialog from "../create";
-import Navigation from "./navigation";
+import Navigation from "../../components/navigation";
 
 import { connect } from "react-redux";
 import { fetchAllToggles } from "../actions";
