@@ -15,18 +15,22 @@ const HeaderButton = ({ glyph, alt, handler }) => (
   </a>
 );
 
-const Header = ({ updating, leftButtons, rightButtons }) => (
+const Header = ({ updating, buttons }) => (
   <div className="toggle-list-header">
     <nav className="navbar navbar-expand navbar-dark bg-dark justify-content-between ">
       <div className="navbar-nav">
-        {leftButtons.map((x, i) => (
-          <HeaderButton key={i} {...x} />
-        ))}
+        {buttons
+          .filter(x => x.position === "left")
+          .map((x, i) => (
+            <HeaderButton key={i} {...x} />
+          ))}
       </div>
       <div className="navbar-nav">
-        {rightButtons.map((x, i) => (
-          <HeaderButton key={i} {...x} />
-        ))}
+        {buttons
+          .filter(x => x.position === "right")
+          .map((x, i) => (
+            <HeaderButton key={i} {...x} />
+          ))}
       </div>
     </nav>
     <Updating updating={updating} />

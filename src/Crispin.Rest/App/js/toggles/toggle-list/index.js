@@ -50,21 +50,24 @@ class Navigation extends Component {
 
     const showCreate = () => this.createDialog.current.show();
 
-    const leftButtons = [
-      { glyph: "plus", alt: "Create a new Toggle", handler: showCreate }
-    ];
-
-    const rightButtons = [
-      { glyph: "sync", alt: "Refresh", handler: handleRefresh }
+    const buttons = [
+      {
+        glyph: "plus",
+        alt: "Create a new Toggle",
+        handler: showCreate,
+        position: "left"
+      },
+      {
+        glyph: "sync",
+        alt: "Refresh",
+        handler: handleRefresh,
+        position: "right"
+      }
     ];
 
     return (
       <Col sm="3" md="2" className="sidebar">
-        <Header
-          updating={this.props.updating}
-          leftButtons={leftButtons}
-          rightButtons={rightButtons}
-        />
+        <Header updating={this.props.updating} buttons={buttons} />
         <CreateToggleDialog ref={this.createDialog} />
         <Filter onFilterChanged={value => this.setState({ filter: value })} />
         <Nav vertical className="sidebar-sticky">
