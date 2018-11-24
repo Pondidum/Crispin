@@ -39,22 +39,31 @@ class Navigation extends Component {
   }
 
   render() {
-    const handleRefresh = e => {
-      e.preventDefault();
-      this.props.refresh();
-    };
-
     const filter = this.state.filter;
     const filteredToggles = filter
       ? this.props.toggles.filter(t => t.name.toLowerCase().includes(filter))
       : this.props.toggles;
 
+    const handleRefresh = () => {
+      this.props.refresh();
+    };
+
+    const showCreate = () => this.createDialog.current.show();
+
+    const leftButtons = [
+      { glyph: "plus", alt: "Create a new Toggle", handler: showCreate }
+    ];
+
+    const rightButtons = [
+      { glyph: "sync", alt: "Refresh", handler: handleRefresh }
+    ];
+
     return (
       <Col sm="3" md="2" className="sidebar">
         <Header
           updating={this.props.updating}
-          handleCreate={() => this.createDialog.current.show()}
-          handleRefresh={handleRefresh}
+          leftButtons={leftButtons}
+          rightButtons={rightButtons}
         />
         <CreateToggleDialog ref={this.createDialog} />
         <Filter onFilterChanged={value => this.setState({ filter: value })} />
