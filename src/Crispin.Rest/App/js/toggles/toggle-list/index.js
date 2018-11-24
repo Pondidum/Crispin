@@ -1,13 +1,8 @@
 import { connect } from "react-redux";
 import React, { Component } from "react";
-import { Col, Nav } from "reactstrap";
 
-import Header from "./header";
-import Filter from "./filter";
 import CreateToggleDialog from "../create";
-import MenuEntry from "./menu-entry";
-
-import "./toggle-list.css";
+import Navigation from "./navigation";
 
 import { fetchAllToggles } from "../actions";
 
@@ -30,54 +25,41 @@ const connector = connect(
   mapDispatchToProps
 );
 
-class Navigation extends Component {
+class ToggleNavigation extends Component {
   constructor(props) {
     super(props);
-    this.state = { filter: "" };
 
     this.createDialog = React.createRef();
   }
 
   render() {
-    const filter = this.state.filter;
-    const filteredToggles = filter
-      ? this.props.toggles.filter(t => t.name.toLowerCase().includes(filter))
-      : this.props.toggles;
-
-    const handleRefresh = () => {
-      this.props.refresh();
-    };
-
-    const showCreate = () => this.createDialog.current.show();
-
     const buttons = [
       {
         glyph: "plus",
         alt: "Create a new Toggle",
-        handler: showCreate,
-        position: "left"
+        position: "left",
+        handler: () => this.createDialog.current.show()
       },
       {
         glyph: "sync",
         alt: "Refresh",
-        handler: handleRefresh,
-        position: "right"
+        position: "right",
+        handler: () => this.props.refresh()
       }
     ];
 
     return (
-      <Col sm="3" md="2" className="sidebar">
-        <Header updating={this.props.updating} buttons={buttons} />
+      <Navigation
+        match={this.props.match}
+        updating={this.props.updating}
+        headerButtons={buttons}
+        items={this.props.toggles}
+        where={(toggle, filter) => toggle.name.toLowerCase().includes(filter)}
+      >
         <CreateToggleDialog ref={this.createDialog} />
-        <Filter onFilterChanged={value => this.setState({ filter: value })} />
-        <Nav vertical className="sidebar-sticky">
-          {filteredToggles.map(t => (
-            <MenuEntry key={t.id} match={this.props.match} toggle={t} />
-          ))}
-        </Nav>
-      </Col>
+      </Navigation>
     );
   }
 }
 
-export default connector(Navigation);
+export default connector(ToggleNavigation);
