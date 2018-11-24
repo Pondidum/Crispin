@@ -31,7 +31,12 @@ class Navigation extends Component {
         <Filter onFilterChanged={value => this.setState({ filter: value })} />
         <Nav vertical className="sidebar-sticky">
           {items.map(t => (
-            <MenuEntry key={t.id} match={this.props.match} toggle={t} />
+            <MenuEntry
+              key={t.id}
+              match={this.props.match}
+              id={t.id}
+              name={t.name}
+            />
           ))}
         </Nav>
       </Col>
