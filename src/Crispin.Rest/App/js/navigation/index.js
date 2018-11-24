@@ -12,6 +12,11 @@ const Navigation = () => (
         </NavLink>
       </NavItem>
       <NavItem>
+        <NavLink className="nav-link" to="/stats/">
+          <Glyph name="chart-bar" alt="Statistics" />
+        </NavLink>
+      </NavItem>
+      <NavItem>
         <NavLink className="nav-link" to="/users/">
           <Glyph name="users" alt="Users" />
         </NavLink>

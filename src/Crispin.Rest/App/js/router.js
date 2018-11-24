@@ -7,6 +7,7 @@ import Navigation from "./navigation";
 import Dashboard from "./dashboard";
 import Toggles from "./toggles";
 
+const Stats = () => <h2>Stats</h2>;
 const Users = () => <h2>Users</h2>;
 
 const AppRouter = ({ store }) => (
@@ -21,6 +22,7 @@ const AppRouter = ({ store }) => (
         <main className="col col-md-115" role="main">
           <Route path="/" exact component={Dashboard} />
           <Route path="/toggles/" component={Toggles} />
+          <Route path="/stats/" component={Stats} />
           <Route path="/users/" component={Users} />
         </main>
       </Row>
