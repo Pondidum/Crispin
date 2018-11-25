@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Crispin.Handlers.ChangeConditionMode;
 using Crispin.Handlers.ChangeDescription;
 using Crispin.Handlers.Create;
 using Crispin.Handlers.GetAll;
@@ -48,7 +49,7 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.Toggle?.Name);
+			return new JsonResult(new { response.Toggle?.Name });
 		}
 
 		[Route("id/{id}/description")]
@@ -59,7 +60,18 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.Toggle?.Description);
+			return new JsonResult(new { response.Toggle?.Description });
+		}
+
+		[Route("id/{id}/conditionMode")]
+		[Route("name/{id}/conditionMode")]
+		[HttpGet]
+		public async Task<IActionResult> GetConditionMode(ToggleLocator id)
+		{
+			var request = new GetToggleRequest(id);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(new { response.Toggle?.ConditionMode });
 		}
 
 		[Route("")]
@@ -94,6 +106,18 @@ namespace Crispin.Rest.Api.Toggles
 		{
 			var editor = EditorID.Parse("TestApiUser"); //User.Identity.Name
 			var request = new ChangeToggleDescriptionRequest(editor, id, model.Description);
+			var response = await _mediator.Send(request);
+
+			return new JsonResult(response);
+		}
+
+		[Route("id/{id}/conditionMode")]
+		[Route("name/{id}/conditionMode")]
+		[HttpPut]
+		public async Task<IActionResult> PutConditionMode(ToggleLocator id, [FromBody] ConditionModePutRequest model)
+		{
+			var editor = EditorID.Parse("TestApiUser"); //User.Identity.Name
+			var request = new ChangeConditionModeRequest(editor, id, model.ConditionMode);
 			var response = await _mediator.Send(request);
 
 			return new JsonResult(response);

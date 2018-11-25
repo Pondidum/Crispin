@@ -50,6 +50,12 @@ namespace Crispin.Rest.Tests.Integration
 		[InlineData("PUT", "/api/toggles/id/{id}/description", "{\"description\":\"wat\"}")]
 		[InlineData("PUT", "/api/toggles/name/{name}/description", "{\"description\":\"wat\"}")]
 		//
+		[InlineData("GET", "/api/toggles/id/{id}/conditionMode")]
+		[InlineData("GET", "/api/toggles/name/{name}/conditionMode")]
+		//
+		[InlineData("PUT", "/api/toggles/id/{id}/conditionMode", "{\"conditionMode\":\"any\"}")]
+		[InlineData("PUT", "/api/toggles/name/{name}/conditionMode", "{\"conditionMode\":\"any\"}")]
+		//
 		[InlineData("GET", "/api/toggles/id/{id}/tags")]
 		[InlineData("GET", "/api/toggles/name/{name}/tags")]
 		//
