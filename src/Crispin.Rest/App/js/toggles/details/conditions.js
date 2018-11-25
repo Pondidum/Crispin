@@ -2,11 +2,6 @@ import React from "react";
 
 const Conditions = () => (
   <div>
-    <p>
-      Toggle is active when <b>any</b> | <a href="#">all</a> conditions are
-      true.
-    </p>
-
     <ul>
       <li>
         When user is in group <b>Alpha Testers</b>
