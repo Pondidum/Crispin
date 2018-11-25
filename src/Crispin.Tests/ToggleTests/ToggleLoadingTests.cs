@@ -15,7 +15,8 @@ namespace Crispin.Tests.ToggleTests
 				Editor,
 				toggleID,
 				"toggle name",
-				"toggle desc");
+				"toggle desc",
+				ConditionModes.All);
 
 			Toggle = new Toggle();
 

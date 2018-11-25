@@ -31,6 +31,7 @@ namespace Crispin.Views
 			ID = e.NewToggleID;
 			Name = e.Name;
 			Description = e.Description;
+			ConditionMode = e.ConditionMode;
 		}
 
 		public void Apply(ToggleRenamed e) => Name = e.NewName;

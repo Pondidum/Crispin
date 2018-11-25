@@ -23,7 +23,8 @@ namespace Crispin.Tests.ToggleTests
 				Editor,
 				ToggleID.CreateNew(),
 				"Test Toggle",
-				"some description");
+				"some description",
+				ConditionModes.All);
 
 			Toggle = new Toggle();
 

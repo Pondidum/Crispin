@@ -17,14 +17,16 @@ namespace Crispin.Tests.ToggleTests
 			Toggle.ShouldSatisfyAllConditions(
 				() => Toggle.ID.ShouldNotBe(ToggleID.Empty),
 				() => Toggle.Name.ShouldBe("first-toggle"),
-				() => Toggle.Description.ShouldBe(string.Empty)
+				() => Toggle.Description.ShouldBe(string.Empty),
+				() => Toggle.ConditionMode.ShouldBe(ConditionModes.All)
 			);
 
 			var created = SingleEvent<ToggleCreated>();
 			created.ShouldSatisfyAllConditions(
 				() => created.NewToggleID.ShouldBe(Toggle.ID),
 				() => created.Name.ShouldBe("first-toggle"),
-				() => created.Description.ShouldBe(string.Empty)
+				() => created.Description.ShouldBe(string.Empty),
+				() => created.ConditionMode.ShouldBe(ConditionModes.All)
 			);
 		}
 

@@ -71,7 +71,7 @@ namespace Crispin.Tests.Infrastructure.Storage
 
 			await WriteEvents(
 				toggleID,
-				new ToggleCreated(Editor, toggleID, "First", "hi").AsAct(toggleID),
+				new ToggleCreated(Editor, toggleID, "First", "hi", ConditionModes.All).AsAct(toggleID),
 				new TagAdded(Editor, "one").AsAct(toggleID)
 			);
 

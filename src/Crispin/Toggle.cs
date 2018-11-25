@@ -20,7 +20,8 @@ namespace Crispin
 				creator,
 				toggleID ?? ToggleID.CreateNew(),
 				name.Trim(),
-				description));
+				description,
+				ConditionModes.All));
 
 			return toggle;
 		}
@@ -154,7 +155,7 @@ namespace Crispin
 			ID = e.NewToggleID;
 			Name = e.Name;
 			Description = e.Description;
-			ConditionMode = ConditionModes.All;
+			ConditionMode = e.ConditionMode;
 		}
 
 		private void Apply(ToggleRenamed e) => Name = e.NewName;

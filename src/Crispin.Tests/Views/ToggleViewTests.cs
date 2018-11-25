@@ -21,12 +21,13 @@ namespace Crispin.Tests.Views
 		[Fact]
 		public void When_applying_toggle_created()
 		{
-			_view.Apply(new ToggleCreated(_editor, _id, "a toggle", "some description"));
+			_view.Apply(new ToggleCreated(_editor, _id, "a toggle", "some description", ConditionModes.All));
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view.ID.ShouldBe(_id),
 				() => _view.Name.ShouldBe("a toggle"),
-				() => _view.Description.ShouldBe("some description")
+				() => _view.Description.ShouldBe("some description"),
+				() => _view.ConditionMode.ShouldBe(ConditionModes.All)
 			);
 		}
 
