@@ -54,7 +54,7 @@ namespace Crispin.Infrastructure.Storage
 			if (projection == null)
 				throw new ProjectionNotRegisteredException(typeof(TProjection).Name);
 
-			var projectionPath = Path.Combine(_root, projection.GetType().Name + ".json");
+			var projectionPath = Path.Combine(_root, typeof(TProjection).Name + ".json");
 
 			if (await _fileSystem.FileExists(projectionPath) == false)
 				return projection.ToMemento().Values.Cast<TProjection>();
@@ -130,7 +130,7 @@ namespace Crispin.Infrastructure.Storage
 				projection.Apply(@event);
 
 				var projectionPath = Path.Combine(_root, projection.For.Name + ".json");
-				var projectionJson = JsonConvert.SerializeObject(projection.ToMemento(), JsonSerializerSettings);
+				var projectionJson = JsonConvert.SerializeObject(projection.ToMemento(), Formatting.Indented, JsonSerializerSettings);
 
 				await _fileSystem.WriteFile(projectionPath, async stream =>
 				{
