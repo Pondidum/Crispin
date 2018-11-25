@@ -6,7 +6,9 @@ import {
   UPDATE_TOGGLE_DESCRIPTION_STARTED,
   UPDATE_TOGGLE_DESCRIPTION_FINISHED,
   CREATE_TOGGLE_STARTED,
-  CREATE_TOGGLE_FINISHED
+  CREATE_TOGGLE_FINISHED,
+  CHANGE_TOGGLE_CONDITION_MODE_STARTED,
+  CHANGE_TOGGLE_CONDITION_MODE_FINISHED
 } from "./actions";
 
 const DefaultState = {
@@ -24,6 +26,14 @@ const reduceToggle = (state, type, payload) => {
       return { ...state, description: payload.description, updating: true };
     case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
       return { ...state, description: payload.description, updating: false };
+    case CHANGE_TOGGLE_CONDITION_MODE_STARTED:
+      return { ...state, conditionMode: payload.conditionMode, updating: true };
+    case CHANGE_TOGGLE_CONDITION_MODE_FINISHED:
+      return {
+        ...state,
+        conditionMode: payload.conditionMode,
+        updating: false
+      };
     default:
       return state;
   }
@@ -57,6 +67,8 @@ const reducer = (state = DefaultState, action) => {
     case UPDATE_TOGGLE_NAME_FINISHED:
     case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
     case UPDATE_TOGGLE_DESCRIPTION_STARTED:
+    case CHANGE_TOGGLE_CONDITION_MODE_STARTED:
+    case CHANGE_TOGGLE_CONDITION_MODE_FINISHED:
       return {
         ...state,
         all: reduceArray(state.all, action)

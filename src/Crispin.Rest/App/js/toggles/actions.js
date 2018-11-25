@@ -73,3 +73,25 @@ export const createToggle = (name, description) => ({
     ]
   }
 });
+
+export const CHANGE_TOGGLE_CONDITION_MODE_STARTED =
+  "CHANGE_TOGGLE_CONDITION_MODE_STARTED";
+export const CHANGE_TOGGLE_CONDITION_MODE_FINISHED =
+  "CHANGE_TOGGLE_CONDITION_MODE_FINISHED";
+
+export const changeConditionMode = (toggleID, conditionMode) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/conditionMode`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ conditionMode }),
+    types: [
+      {
+        type: CHANGE_TOGGLE_CONDITION_MODE_STARTED,
+        payload: { toggleID, conditionMode }
+      },
+      CHANGE_TOGGLE_CONDITION_MODE_FINISHED,
+      "CHANGE_TOGGLE_CONDITION_MODE_FAILURE"
+    ]
+  }
+});

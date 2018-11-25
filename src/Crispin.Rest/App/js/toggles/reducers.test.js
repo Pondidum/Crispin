@@ -8,6 +8,8 @@ import {
   UPDATE_TOGGLE_NAME_FINISHED,
   UPDATE_TOGGLE_DESCRIPTION_STARTED,
   UPDATE_TOGGLE_DESCRIPTION_FINISHED,
+  CHANGE_TOGGLE_CONDITION_MODE_STARTED,
+  CHANGE_TOGGLE_CONDITION_MODE_FINISHED,
   CREATE_TOGGLE_STARTED,
   CREATE_TOGGLE_FINISHED
 } from "./actions";
@@ -121,7 +123,7 @@ describe("updating a toggle description", () => {
       }))
   );
 
-  it("should update the toggle name and set updating on", () => {
+  it("should update the toggle description and set updating on", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_DESCRIPTION_STARTED,
       payload: { toggleID: 2, description: "updated" }
@@ -134,7 +136,7 @@ describe("updating a toggle description", () => {
     ]);
   });
 
-  it("should update the toggle name and set updating off", () => {
+  it("should update the toggle description and set updating off", () => {
     const state = reducer(initialState, {
       type: UPDATE_TOGGLE_DESCRIPTION_FINISHED,
       payload: { toggleID: 2, description: "updated" }
@@ -144,6 +146,46 @@ describe("updating a toggle description", () => {
       { id: 1, name: "one", description: "aaa" },
       { id: 2, name: "two", description: "updated", updating: false },
       { id: 3, name: "three", description: "ccc" }
+    ]);
+  });
+});
+
+describe("updating a toggle condition mode", () => {
+  let initialState;
+  beforeEach(
+    () =>
+      (initialState = freeze({
+        all: [
+          { id: 1, name: "one", conditionMode: "all" },
+          { id: 2, name: "two", conditionMode: "all" },
+          { id: 3, name: "three", conditionMode: "all" }
+        ]
+      }))
+  );
+
+  it("should update the toggle conditionMode and set updating on", () => {
+    const state = reducer(initialState, {
+      type: CHANGE_TOGGLE_CONDITION_MODE_STARTED,
+      payload: { toggleID: 2, conditionMode: "any" }
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", conditionMode: "all" },
+      { id: 2, name: "two", conditionMode: "any", updating: true },
+      { id: 3, name: "three", conditionMode: "all" }
+    ]);
+  });
+
+  it("should update the toggle conditionMode and set updating off", () => {
+    const state = reducer(initialState, {
+      type: CHANGE_TOGGLE_CONDITION_MODE_FINISHED,
+      payload: { toggleID: 2, conditionMode: "any" }
+    });
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", conditionMode: "all" },
+      { id: 2, name: "two", conditionMode: "any", updating: false },
+      { id: 3, name: "three", conditionMode: "all" }
     ]);
   });
 });
