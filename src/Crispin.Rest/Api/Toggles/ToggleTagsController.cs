@@ -37,7 +37,7 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new AddToggleTagRequest(GetEditor(), id, tagName);
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.Tags);
+			return new JsonResult(response);
 		}
 
 		[Route("id/{id}/tags/{tagName}")]
@@ -48,7 +48,7 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new RemoveToggleTagRequest(GetEditor(), id, tagName);
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.Tags);
+			return new JsonResult(response);
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_.Put.Url($"/api/toggles/id/{_toggle.ID}/tags/env:test");
 			_.StatusCodeShouldBe(HttpStatusCode.OK);
-			_.ContentShouldBe("[\"readonly\",\"env:test\"]");
+			_.ContentShouldContain("\"tags\":[\"readonly\",\"env:test\"]");
 		});
 
 		[Fact]
@@ -39,7 +39,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_.Put.Url($"/api/toggles/id/{_toggle.ID}/tags/readonly");
 			_.StatusCodeShouldBe(HttpStatusCode.OK);
-			_.ContentShouldBe("[\"readonly\"]");
+			_.ContentShouldContain("\"tags\":[\"readonly\"]");
 		});
 
 		[Fact]
@@ -54,7 +54,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_.Delete.Url($"/api/toggles/id/{_toggle.ID}/tags/readonly");
 			_.StatusCodeShouldBe(HttpStatusCode.OK);
-			_.ContentShouldBe("[]");
+			_.ContentShouldContain("\"tags\":[]");
 		});
 
 		[Fact]
@@ -62,7 +62,7 @@ namespace Crispin.Rest.Tests.Integration
 		{
 			_.Delete.Url($"/api/toggles/id/{_toggle.ID}/tags/env:test");
 			_.StatusCodeShouldBe(HttpStatusCode.OK);
-			_.ContentShouldBe("[\"readonly\"]");
+			_.ContentShouldContain("\"tags\":[\"readonly\"]");
 		});
 
 		[Fact]
