@@ -95,3 +95,18 @@ export const changeConditionMode = (toggleID, conditionMode) => ({
     ]
   }
 });
+
+export const REMOVE_TOGGLE_TAG_STARTED = "REMOVE_TOGGLE_TAG_STARTED";
+export const REMOVE_TOGGLE_TAG_FINISHED = "REMOVE_TOGGLE_TAG_FINISHED";
+
+export const removeTag = (toggleID, tag) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/tags/${tag}`,
+    method: "DELETE",
+    types: [
+      { type: REMOVE_TOGGLE_TAG_STARTED, payload: { toggleID, tag } },
+      REMOVE_TOGGLE_TAG_FINISHED,
+      "REMOVE_TOGGLE_TAG_FAILURE"
+    ]
+  }
+});

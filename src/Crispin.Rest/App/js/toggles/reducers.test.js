@@ -11,7 +11,9 @@ import {
   CHANGE_TOGGLE_CONDITION_MODE_STARTED,
   CHANGE_TOGGLE_CONDITION_MODE_FINISHED,
   CREATE_TOGGLE_STARTED,
-  CREATE_TOGGLE_FINISHED
+  CREATE_TOGGLE_FINISHED,
+  REMOVE_TOGGLE_TAG_STARTED,
+  REMOVE_TOGGLE_TAG_FINISHED
 } from "./actions";
 
 describe("fetching all toggles", () => {
@@ -186,6 +188,46 @@ describe("updating a toggle condition mode", () => {
       { id: 1, name: "one", conditionMode: "all" },
       { id: 2, name: "two", conditionMode: "any", updating: false },
       { id: 3, name: "three", conditionMode: "all" }
+    ]);
+  });
+});
+
+describe("removing a tag from a toggle", () => {
+  const initialState = freeze({
+    all: [
+      { id: 1, name: "one", tags: ["aaa", "bbb", "ccc"] },
+      { id: 2, name: "two", tags: ["aaa", "bbb", "ccc"] },
+      { id: 3, name: "three", tags: ["aaa", "bbb", "ccc"] }
+    ]
+  });
+
+  it("should remove the tag from the tags array when starting", () => {
+    const event = {
+      type: REMOVE_TOGGLE_TAG_STARTED,
+      payload: { toggleID: 2, tag: "bbb" }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", tags: ["aaa", "bbb", "ccc"] },
+      { id: 2, name: "two", tags: ["aaa", "ccc"], updating: true },
+      { id: 3, name: "three", tags: ["aaa", "bbb", "ccc"] }
+    ]);
+  });
+
+  it("should remove the tag from the tags array when starting", () => {
+    const event = {
+      type: REMOVE_TOGGLE_TAG_FINISHED,
+      payload: { toggleID: 2, tags: ["bbb", "ccc"] }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", tags: ["aaa", "bbb", "ccc"] },
+      { id: 2, name: "two", tags: ["bbb", "ccc"], updating: false },
+      { id: 3, name: "three", tags: ["aaa", "bbb", "ccc"] }
     ]);
   });
 });
