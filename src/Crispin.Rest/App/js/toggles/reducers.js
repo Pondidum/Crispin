@@ -25,27 +25,15 @@ const updating = (state, action) => {
 
 const reduceToggle = (state, type, payload) => {
   switch (type) {
-    case UPDATE_TOGGLE_NAME_STARTED:
-      return { ...state, name: payload.name };
-    case UPDATE_TOGGLE_NAME_FINISHED:
-      return { ...state, name: payload.name };
-    case UPDATE_TOGGLE_DESCRIPTION_STARTED:
-      return { ...state, description: payload.description };
-    case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
-      return { ...state, description: payload.description };
-    case CHANGE_TOGGLE_CONDITION_MODE_STARTED:
-      return { ...state, conditionMode: payload.conditionMode };
-    case CHANGE_TOGGLE_CONDITION_MODE_FINISHED:
-      return { ...state, conditionMode: payload.conditionMode };
     case REMOVE_TOGGLE_TAG_STARTED:
       return {
         ...state,
         tags: state.tags.filter(t => t !== payload.tag)
       };
-    case REMOVE_TOGGLE_TAG_FINISHED:
-      return { ...state, tags: payload.tags };
+
     default:
-      return state;
+      const { toggleID, ...delta } = payload;
+      return { ...state, ...delta, id: toggleID };
   }
 };
 
