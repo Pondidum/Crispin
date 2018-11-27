@@ -18,32 +18,32 @@ const DefaultState = {
   all: []
 };
 
+const updating = (state, action) => {
+  const isStart = action.type.endsWith("_STARTED");
+  return { ...state, updating: isStart };
+};
+
 const reduceToggle = (state, type, payload) => {
   switch (type) {
     case UPDATE_TOGGLE_NAME_STARTED:
-      return { ...state, name: payload.name, updating: true };
+      return { ...state, name: payload.name };
     case UPDATE_TOGGLE_NAME_FINISHED:
-      return { ...state, name: payload.name, updating: false };
+      return { ...state, name: payload.name };
     case UPDATE_TOGGLE_DESCRIPTION_STARTED:
-      return { ...state, description: payload.description, updating: true };
+      return { ...state, description: payload.description };
     case UPDATE_TOGGLE_DESCRIPTION_FINISHED:
-      return { ...state, description: payload.description, updating: false };
+      return { ...state, description: payload.description };
     case CHANGE_TOGGLE_CONDITION_MODE_STARTED:
-      return { ...state, conditionMode: payload.conditionMode, updating: true };
+      return { ...state, conditionMode: payload.conditionMode };
     case CHANGE_TOGGLE_CONDITION_MODE_FINISHED:
-      return {
-        ...state,
-        conditionMode: payload.conditionMode,
-        updating: false
-      };
+      return { ...state, conditionMode: payload.conditionMode };
     case REMOVE_TOGGLE_TAG_STARTED:
       return {
         ...state,
-        tags: state.tags.filter(t => t !== payload.tag),
-        updating: true
+        tags: state.tags.filter(t => t !== payload.tag)
       };
     case REMOVE_TOGGLE_TAG_FINISHED:
-      return { ...state, tags: payload.tags, updating: false };
+      return { ...state, tags: payload.tags };
     default:
       return state;
   }
@@ -54,7 +54,7 @@ const reduceArray = (state, action) => {
   const newToggle = reduceToggle(state[index], action.type, action.payload);
 
   return Object.assign([], state, {
-    [index]: newToggle
+    [index]: updating(newToggle, action)
   });
 };
 
