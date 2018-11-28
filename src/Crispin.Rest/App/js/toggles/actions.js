@@ -110,3 +110,18 @@ export const removeTag = (toggleID, tag) => ({
     ]
   }
 });
+
+export const ADD_TOGGLE_TAG_STARTED = "ADD_TOGGLE_TAG_STARTED";
+export const ADD_TOGGLE_TAG_FINISHED = "ADD_TOGGLE_TAG_FINISHED";
+
+export const addTag = (toggleID, tag) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/tags/${tag}`,
+    method: "PUT",
+    types: [
+      { type: ADD_TOGGLE_TAG_STARTED, payload: { toggleID, tag } },
+      ADD_TOGGLE_TAG_FINISHED,
+      "ADD_TOGGLE_TAG_FAILURE"
+    ]
+  }
+});

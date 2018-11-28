@@ -12,6 +12,8 @@ import {
   CHANGE_TOGGLE_CONDITION_MODE_FINISHED,
   CREATE_TOGGLE_STARTED,
   CREATE_TOGGLE_FINISHED,
+  ADD_TOGGLE_TAG_STARTED,
+  ADD_TOGGLE_TAG_FINISHED,
   REMOVE_TOGGLE_TAG_STARTED,
   REMOVE_TOGGLE_TAG_FINISHED
 } from "./actions";
@@ -228,6 +230,46 @@ describe("removing a tag from a toggle", () => {
       { id: 1, name: "one", tags: ["aaa", "bbb", "ccc"] },
       { id: 2, name: "two", tags: ["bbb", "ccc"], updating: false },
       { id: 3, name: "three", tags: ["aaa", "bbb", "ccc"] }
+    ]);
+  });
+});
+
+describe("adding a tag to a toggle", () => {
+  const initialState = freeze({
+    all: [
+      { id: 1, name: "one", tags: ["aaa", "bbb"] },
+      { id: 2, name: "two", tags: ["aaa", "bbb"] },
+      { id: 3, name: "three", tags: ["aaa", "bbb"] }
+    ]
+  });
+
+  it("should remove the tag from the tags array when starting", () => {
+    const event = {
+      type: ADD_TOGGLE_TAG_STARTED,
+      payload: { toggleID: 2, tag: "new" }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", tags: ["aaa", "bbb"] },
+      { id: 2, name: "two", tags: ["aaa", "bbb", "new"], updating: true },
+      { id: 3, name: "three", tags: ["aaa", "bbb"] }
+    ]);
+  });
+
+  it("should remove the tag from the tags array when starting", () => {
+    const event = {
+      type: ADD_TOGGLE_TAG_FINISHED,
+      payload: { toggleID: 2, tags: ["aaa", "bbb", "new"] }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", tags: ["aaa", "bbb"] },
+      { id: 2, name: "two", tags: ["aaa", "bbb", "new"], updating: false },
+      { id: 3, name: "three", tags: ["aaa", "bbb"] }
     ]);
   });
 });
