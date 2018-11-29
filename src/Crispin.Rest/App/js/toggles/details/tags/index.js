@@ -1,6 +1,6 @@
 import React from "react";
 import { Col, Badge } from "reactstrap";
-import Glyph from "../../util/glyph";
+import Glyph from "../../../util/glyph";
 
 import TagAddDialog from "./tag-add-dialog";
 

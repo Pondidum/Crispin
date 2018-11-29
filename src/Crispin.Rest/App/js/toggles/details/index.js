@@ -5,7 +5,7 @@ import { Row, Col } from "reactstrap";
 import ToggleGraph from "./graph";
 import TextEditor from "./text-editor";
 import ConditionEditor from "./condition-editor";
-import TagsEditor from "./tags-editor";
+import TagsEditor from "./tags";
 
 import {
   updateName,

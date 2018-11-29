@@ -1,6 +1,6 @@
 import React from "react";
 import { Popover, PopoverBody, Input } from "reactstrap";
-import Glyph from "../../util/glyph";
+import Glyph from "../../../util/glyph";
 
 class TagAddDialog extends React.Component {
   constructor(props) {
