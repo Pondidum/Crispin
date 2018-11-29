@@ -7,13 +7,7 @@ import TextEditor from "./text-editor";
 import ConditionEditor from "./condition-editor";
 import TagsEditor from "./tags";
 
-import {
-  updateName,
-  updateDescription,
-  changeConditionMode,
-  addTag,
-  removeTag
-} from "../actions";
+import { updateName, updateDescription, changeConditionMode } from "../actions";
 
 const mapStateToProps = (state, ownProps) => {
   const match = ownProps.match;
@@ -26,9 +20,7 @@ const mapDispatchToProps = dispatch => {
   return {
     updateName: (id, name) => dispatch(updateName(id, name)),
     updateDescription: (id, desc) => dispatch(updateDescription(id, desc)),
-    updateConditionMode: (id, mode) => dispatch(changeConditionMode(id, mode)),
-    addTag: (id, tag) => dispatch(addTag(id, tag)),
-    removeTag: (id, tag) => dispatch(removeTag(id, tag))
+    updateConditionMode: (id, mode) => dispatch(changeConditionMode(id, mode))
   };
 };
 
@@ -41,9 +33,7 @@ const Details = ({
   toggle,
   updateName,
   updateDescription,
-  updateConditionMode,
-  addTag,
-  removeTag
+  updateConditionMode
 }) => {
   if (!toggle) {
     return <div />;
@@ -65,11 +55,7 @@ const Details = ({
           conditionMode={toggle.conditionMode}
           updateConditionMode={value => updateConditionMode(toggle.id, value)}
         />
-        <TagsEditor
-          tags={toggle.tags}
-          addTag={tag => addTag(toggle.id, tag)}
-          removeTag={tag => removeTag(toggle.id, tag)}
-        />
+        <TagsEditor toggle={toggle} />
       </Col>
       <Col md="6">
         <ToggleGraph title="Usage Graph" />
