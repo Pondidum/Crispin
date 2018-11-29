@@ -2,7 +2,9 @@ import React from "react";
 import { Col, Badge } from "reactstrap";
 import Glyph from "../../util/glyph";
 
-const TagsEditor = ({ tags, removeTag }) => {
+import TagAddDialog from "./tag-add-dialog";
+
+const TagsEditor = ({ tags, addTag, removeTag }) => {
   const handleRemoveClick = (e, tag) => {
     e.preventDefault();
     removeTag(tag);
@@ -26,6 +28,7 @@ const TagsEditor = ({ tags, removeTag }) => {
             </a>
           </Badge>
         ))}
+        <TagAddDialog addTag={addTag} />
       </div>
     </Col>
   );

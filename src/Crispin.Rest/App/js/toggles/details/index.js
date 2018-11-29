@@ -11,6 +11,7 @@ import {
   updateName,
   updateDescription,
   changeConditionMode,
+  addTag,
   removeTag
 } from "../actions";
 
@@ -26,6 +27,7 @@ const mapDispatchToProps = dispatch => {
     updateName: (id, name) => dispatch(updateName(id, name)),
     updateDescription: (id, desc) => dispatch(updateDescription(id, desc)),
     updateConditionMode: (id, mode) => dispatch(changeConditionMode(id, mode)),
+    addTag: (id, tag) => dispatch(addTag(id, tag)),
     removeTag: (id, tag) => dispatch(removeTag(id, tag))
   };
 };
@@ -40,6 +42,7 @@ const Details = ({
   updateName,
   updateDescription,
   updateConditionMode,
+  addTag,
   removeTag
 }) => {
   if (!toggle) {
@@ -64,6 +67,7 @@ const Details = ({
         />
         <TagsEditor
           tags={toggle.tags}
+          addTag={tag => addTag(toggle.id, tag)}
           removeTag={tag => removeTag(toggle.id, tag)}
         />
       </Col>
