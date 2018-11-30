@@ -21,7 +21,7 @@ class TagAddDialog extends React.Component {
       const value = this.editor.current.value;
 
       if (value && value.trim() !== "") {
-        this.props.addTag();
+        this.props.addTag(value);
       }
     };
 
