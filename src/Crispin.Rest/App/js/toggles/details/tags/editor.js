@@ -10,9 +10,11 @@ const TagsEditor = ({ tags, addTag, removeTag }) => {
     removeTag(tag);
   };
 
-  const badges = tags.map((tag, i) => (
-    <TagBadge key={i} tag={tag} handleRemove={handleRemove} />
-  ));
+  const badges = [...tags]
+    .sort()
+    .map((tag, i) => (
+      <TagBadge key={i} tag={tag} handleRemove={handleRemove} />
+    ));
 
   return (
     <Col md="12">
