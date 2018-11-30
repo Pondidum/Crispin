@@ -30,7 +30,7 @@ const reduceToggle = (state, type, payload) => {
     case ADD_TOGGLE_TAG_STARTED:
       return {
         ...state,
-        tags: [...state.tags, payload.tag]
+        tags: [...new Set(state.tags).add(payload.tag)]
       };
 
     case REMOVE_TOGGLE_TAG_STARTED:

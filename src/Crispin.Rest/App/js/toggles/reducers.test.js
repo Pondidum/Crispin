@@ -218,7 +218,7 @@ describe("removing a tag from a toggle", () => {
     ]);
   });
 
-  it("should remove the tag from the tags array when starting", () => {
+  it("should remove the tag from the tags array when finishing", () => {
     const event = {
       type: REMOVE_TOGGLE_TAG_FINISHED,
       payload: { toggleID: 2, tags: ["bbb", "ccc"] }
@@ -243,7 +243,22 @@ describe("adding a tag to a toggle", () => {
     ]
   });
 
-  it("should remove the tag from the tags array when starting", () => {
+  it("should not add a duplicate tag to the tags array when starting", () => {
+    const event = {
+      type: ADD_TOGGLE_TAG_STARTED,
+      payload: { toggleID: 2, tag: "bbb" }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      { id: 1, name: "one", tags: ["aaa", "bbb"] },
+      { id: 2, name: "two", tags: ["aaa", "bbb"], updating: true },
+      { id: 3, name: "three", tags: ["aaa", "bbb"] }
+    ]);
+  });
+
+  it("should add the tag to the tags array when starting", () => {
     const event = {
       type: ADD_TOGGLE_TAG_STARTED,
       payload: { toggleID: 2, tag: "new" }
@@ -258,7 +273,7 @@ describe("adding a tag to a toggle", () => {
     ]);
   });
 
-  it("should remove the tag from the tags array when starting", () => {
+  it("should add the tag to the tags array when finishing", () => {
     const event = {
       type: ADD_TOGGLE_TAG_FINISHED,
       payload: { toggleID: 2, tags: ["aaa", "bbb", "new"] }
