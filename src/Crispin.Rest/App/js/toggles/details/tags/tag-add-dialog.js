@@ -18,7 +18,11 @@ class TagAddDialog extends React.Component {
     const accept = e => {
       e.preventDefault();
       this.setState({ open: false });
-      this.props.addTag(this.editor.current.value);
+      const value = this.editor.current.value;
+
+      if (value && value.trim() !== "") {
+        this.props.addTag();
+      }
     };
 
     const handleKeyDown = e => {
