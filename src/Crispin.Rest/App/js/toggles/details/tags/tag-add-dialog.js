@@ -1,5 +1,5 @@
 import React from "react";
-import { Popover, PopoverBody, Input } from "reactstrap";
+import { Popover, PopoverBody, PopoverHeader, Input } from "reactstrap";
 import Glyph from "../../../util/glyph";
 
 class TagAddDialog extends React.Component {
@@ -45,6 +45,7 @@ class TagAddDialog extends React.Component {
           isOpen={this.state.open}
           toggle={toggle}
         >
+          <PopoverHeader>Add Tag</PopoverHeader>
           <PopoverBody>
             <Input
               autoFocus
