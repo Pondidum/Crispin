@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Col } from "reactstrap";
 
 import ConditionModeEditor from "./condition-mode-editor";

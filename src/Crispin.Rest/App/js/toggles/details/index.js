@@ -4,10 +4,10 @@ import { Row, Col } from "reactstrap";
 
 import ToggleGraph from "./graph";
 import TextEditor from "./text-editor";
-import ConditionEditor from "./condition-editor";
+import ConditionEditor from "./conditions";
 import TagsEditor from "./tags";
 
-import { updateName, updateDescription, changeConditionMode } from "../actions";
+import { updateName, updateDescription } from "../actions";
 
 const mapStateToProps = (state, ownProps) => {
   const match = ownProps.match;
@@ -19,8 +19,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     updateName: (id, name) => dispatch(updateName(id, name)),
-    updateDescription: (id, desc) => dispatch(updateDescription(id, desc)),
-    updateConditionMode: (id, mode) => dispatch(changeConditionMode(id, mode))
+    updateDescription: (id, desc) => dispatch(updateDescription(id, desc))
   };
 };
 
@@ -29,12 +28,7 @@ const connector = connect(
   mapDispatchToProps
 );
 
-const Details = ({
-  toggle,
-  updateName,
-  updateDescription,
-  updateConditionMode
-}) => {
+const Details = ({ toggle, updateName, updateDescription }) => {
   if (!toggle) {
     return <div />;
   }
@@ -51,10 +45,7 @@ const Details = ({
           value={toggle.description}
           onAcceptEdit={value => updateDescription(toggle.id, value)}
         />
-        <ConditionEditor
-          conditionMode={toggle.conditionMode}
-          updateConditionMode={value => updateConditionMode(toggle.id, value)}
-        />
+        <ConditionEditor toggle={toggle} />
         <TagsEditor toggle={toggle} />
       </Col>
       <Col md="6">
