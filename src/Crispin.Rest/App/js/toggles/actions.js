@@ -125,3 +125,19 @@ export const addTag = (toggleID, tag) => ({
     ]
   }
 });
+
+export const ADD_TOGGLE_CONDITION_STARTED = "ADD_TOGGLE_CONDITION_STARTED";
+export const ADD_TOGGLE_CONDITION_FINISHED = "ADD_TOGGLE_CONDITION_FINISHED";
+
+export const addCondition = (toggleID, type, details) => ({
+  [RSAA]: {
+    endpoint: `/api/toggles/id/${toggleID}/conditions`,
+    method: "POST",
+    body: JSON.stringify({ ...details, type }),
+    types: [
+      { type: ADD_TOGGLE_CONDITION_STARTED, payload: { toggleID } },
+      ADD_TOGGLE_CONDITION_FINISHED,
+      "ADD_TOGGLE_CONDITION_FAILURE"
+    ]
+  }
+});

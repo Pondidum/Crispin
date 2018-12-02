@@ -15,7 +15,9 @@ import {
   ADD_TOGGLE_TAG_STARTED,
   ADD_TOGGLE_TAG_FINISHED,
   REMOVE_TOGGLE_TAG_STARTED,
-  REMOVE_TOGGLE_TAG_FINISHED
+  REMOVE_TOGGLE_TAG_FINISHED,
+  ADD_TOGGLE_CONDITION_STARTED,
+  ADD_TOGGLE_CONDITION_FINISHED
 } from "./actions";
 
 describe("fetching all toggles", () => {
@@ -285,6 +287,48 @@ describe("adding a tag to a toggle", () => {
       { id: 1, name: "one", tags: ["aaa", "bbb"] },
       { id: 2, name: "two", tags: ["aaa", "bbb", "new"], updating: false },
       { id: 3, name: "three", tags: ["aaa", "bbb"] }
+    ]);
+  });
+});
+
+describe("adding a condition to a toggle", () => {
+  const initialState = freeze({
+    all: [{ id: 1, name: "one", conditions: [{ id: 0, type: "all" }] }]
+  });
+
+  it("should mark the toggle as updating when starting", () => {
+    const event = {
+      type: ADD_TOGGLE_CONDITION_STARTED,
+      payload: { toggleID: 1 }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      {
+        id: 1,
+        name: "one",
+        conditions: [{ id: 0, type: "all" }],
+        updating: true
+      }
+    ]);
+  });
+
+  it("should add the condition when finishing", () => {
+    const event = {
+      type: ADD_TOGGLE_CONDITION_FINISHED,
+      payload: { toggleID: 1, condition: { id: 1, type: "ingroup" } }
+    };
+
+    const state = reducer(initialState, event);
+
+    expect(state.all).toEqual([
+      {
+        id: 1,
+        name: "one",
+        conditions: [{ id: 0, type: "all" }, { id: 1, type: "ingroup" }],
+        updating: false
+      }
     ]);
   });
 });

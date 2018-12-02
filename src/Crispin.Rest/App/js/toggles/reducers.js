@@ -12,7 +12,9 @@ import {
   ADD_TOGGLE_TAG_STARTED,
   ADD_TOGGLE_TAG_FINISHED,
   REMOVE_TOGGLE_TAG_STARTED,
-  REMOVE_TOGGLE_TAG_FINISHED
+  REMOVE_TOGGLE_TAG_FINISHED,
+  ADD_TOGGLE_CONDITION_STARTED,
+  ADD_TOGGLE_CONDITION_FINISHED
 } from "./actions";
 
 const DefaultState = {
@@ -37,6 +39,12 @@ const reduceToggle = (state, type, payload) => {
       return {
         ...state,
         tags: state.tags.filter(t => t !== payload.tag)
+      };
+
+    case ADD_TOGGLE_CONDITION_FINISHED:
+      return {
+        ...state,
+        conditions: [...state.conditions, payload.condition]
       };
 
     default:
@@ -79,6 +87,8 @@ const reducer = (state = DefaultState, action) => {
     case ADD_TOGGLE_TAG_FINISHED:
     case REMOVE_TOGGLE_TAG_STARTED:
     case REMOVE_TOGGLE_TAG_FINISHED:
+    case ADD_TOGGLE_CONDITION_STARTED:
+    case ADD_TOGGLE_CONDITION_FINISHED:
       return {
         ...state,
         all: reduceArray(state.all, action)
