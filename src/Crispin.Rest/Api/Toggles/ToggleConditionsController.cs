@@ -36,7 +36,7 @@ namespace Crispin.Rest.Api.Toggles
 		[Route("id/{id}/conditions/{condition}")]
 		[Route("name/{id}/conditions/{condition}")]
 		[HttpGet]
-		public async Task<IActionResult> GetConditions(ToggleLocator id, ConditionID condition)
+		public async Task<IActionResult> GetCondition(ToggleLocator id, ConditionID condition)
 		{
 			var request = new GetToggleRequest(id);
 			var response = await _mediator.Send(request);
@@ -52,13 +52,13 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new AddToggleConditionRequest(GetEditor(), id, condition);
 			var response = await _mediator.Send(request);
 
-			var uri = Url.Action(nameof(GetConditions), new
+			var uri = Url.Action(nameof(GetCondition), new
 			{
 				id = response.ToggleID,
 				condition = response.Condition.ID
 			});
 
-			return Created(uri, response.Condition);
+			return Created(uri, response);
 		}
 
 		[Route("id/{id}/conditions/{condition}")]
@@ -69,7 +69,7 @@ namespace Crispin.Rest.Api.Toggles
 			var request = new RemoveToggleConditionRequest(GetEditor(), id, condition);
 			var response = await _mediator.Send(request);
 
-			return new JsonResult(response.Conditions);
+			return new JsonResult(response);
 		}
 	}
 
