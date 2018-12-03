@@ -48,16 +48,23 @@ namespace Crispin.Conditions
 
 		private static Dictionary<string, Func<Dictionary<string, object>, Condition>> BuildConditionsMap()
 		{
+			return AllConditionTypes()
+				.ToDictionary(
+					t => t.Name.Replace("Condition", ""),
+					t => new Func<Dictionary<string, object>, Condition>(props => Deserialize(t, props)),
+					StringComparer.OrdinalIgnoreCase);
+		}
+
+		public static IEnumerable<string> AvailableTypes() => AllConditionTypes().Select(t => t.Name.Replace("Condition", ""));
+
+		private static IEnumerable<Type> AllConditionTypes()
+		{
 			var condition = typeof(Condition);
 
 			return condition
 				.Assembly.GetExportedTypes()
 				.Where(t => t.IsAbstract == false)
-				.Where(t => condition.IsAssignableFrom(t))
-				.ToDictionary(
-					t => t.Name.Replace("Condition", ""),
-					t => new Func<Dictionary<string, object>, Condition>(props => Deserialize(t, props)),
-					StringComparer.OrdinalIgnoreCase);
+				.Where(t => condition.IsAssignableFrom(t));
 		}
 
 		private static Condition Deserialize(Type type, Dictionary<string, object> props) =>
