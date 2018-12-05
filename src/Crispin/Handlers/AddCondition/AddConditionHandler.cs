@@ -17,7 +17,7 @@ namespace Crispin.Handlers.AddCondition
 		public async Task<AddToggleConditionResponse> Handle(AddToggleConditionRequest message, CancellationToken cancellationToken)
 		{
 			var toggle = await message.Locator.LocateAggregate(_session);
-			var added = toggle.AddCondition(message.Editor, message.Properties);
+			var added = toggle.AddCondition(message.Editor, message.Properties, message.ParentID);
 
 			await _session.Save(toggle);
 
