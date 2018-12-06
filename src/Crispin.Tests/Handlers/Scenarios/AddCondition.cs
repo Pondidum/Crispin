@@ -23,7 +23,7 @@ namespace Crispin.Tests.Handlers.Scenarios
 		public void The_response_contains_the_toggle_id() => Response.ToggleID.ShouldBe(ToggleID);
 
 		[Fact]
-		public void The_response_contains_the_condition() => Response.Condition.ShouldBeOfType<EnabledCondition>();
+		public void The_response_contains_the_condition() => Response.Conditions.ShouldHaveSingleItem().ShouldBeOfType<EnabledCondition>();
 
 		[Fact]
 		public async Task The_toggles_has_the_condition_added() => (await Read(ToggleID))

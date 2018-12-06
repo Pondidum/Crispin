@@ -42,7 +42,7 @@ namespace Crispin.Rest.Tests.Integration
 			_.StatusCodeShouldBe(HttpStatusCode.Created);
 			_.Header("location").SingleValueShouldEqual($"/api/toggles/id/{_toggle.ID}/conditions/0");
 
-			_.ContentShouldContain(@"""condition"":{""conditionType"":""Enabled"",""id"":0}");
+			_.ContentShouldContain(@"""conditions"":[{""conditionType"":""Enabled"",""id"":0}]");
 			_.ContentTypeShouldBe("application/json; charset=utf-8");
 		});
 

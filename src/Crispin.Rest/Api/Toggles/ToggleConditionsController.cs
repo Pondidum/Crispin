@@ -55,7 +55,7 @@ namespace Crispin.Rest.Api.Toggles
 			var uri = Url.Action(nameof(GetCondition), new
 			{
 				id = response.ToggleID,
-				condition = response.Condition.ID
+				condition = response.AddedConditionID
 			});
 
 			return Created(uri, response);
@@ -83,7 +83,7 @@ namespace Crispin.Rest.Api.Toggles
 			var uri = Url.Action(nameof(GetCondition), new
 			{
 				id = response.ToggleID,
-				condition = response.Condition.ID
+				condition = response.AddedConditionID
 			});
 
 			return Created(uri, response);
