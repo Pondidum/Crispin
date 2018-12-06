@@ -71,6 +71,23 @@ namespace Crispin.Rest.Api.Toggles
 
 			return new JsonResult(response);
 		}
+
+		[Route("id/{id}/conditions/{parent}")]
+		[Route("name/{id}/conditions/{parent}")]
+		[HttpPost]
+		public async Task<IActionResult> AddConditionAsChild(ToggleLocator id, ConditionID parent, [FromBody] ConditionDto condition)
+		{
+			var request = new AddToggleConditionRequest(GetEditor(), id, parent, condition);
+			var response = await _mediator.Send(request);
+
+			var uri = Url.Action(nameof(GetCondition), new
+			{
+				id = response.ToggleID,
+				condition = response.Condition.ID
+			});
+
+			return Created(uri, response);
+		}
 	}
 
 	public class ConditionDto : Dictionary<string, object>
